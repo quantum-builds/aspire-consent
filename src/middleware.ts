@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export function middleware(request: NextRequest) {
-  const publicpath = [
+  const publicPaths = [
     "/login",
     "/signup",
     "/forgot-password",
@@ -10,18 +10,19 @@ export function middleware(request: NextRequest) {
   ];
   const { pathname } = request.nextUrl;
 
-  // Check if the current path is protected
-  const isProtectedPath = !publicpath.some((path) => pathname.startsWith(path));
+  const isProtectedPath = !publicPaths.some((path) =>
+    pathname.startsWith(path)
+  );
 
-  //   const isLoginPath = pathname === "/admin/login";
+  const sessionToken =
+    request.cookies.get("__Secure-next-auth.session-token")?.value ||
+    request.cookies.get("next-auth.session-token")?.value;
 
-  const accessToken = request.cookies.get("next-auth.session-token")?.value;
-
-  if (isProtectedPath && !accessToken) {
+  if (isProtectedPath && !sessionToken) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  if (!isProtectedPath && accessToken) {
+  if (!isProtectedPath && sessionToken) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
