@@ -1,0 +1,150 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                  String         @id @default(cuid())
+  email               String         @unique
+  role                UserRole
+  profilePicUrl       String?
+  createdAt           DateTime       @default(now())
+  password            String
+  fullName            String?
+  otp                 String?
+  Answers             Answer[]
+  dentistConsentPacks ConsentPack[]  @relation("DentistConsentPacks")
+  patientConsentPacks ConsentPack[]  @relation("PatientConsentPacks")
+  Notifications       Notification[]
+  Reports             Report[]
+  Videos              Video[]
+  practices           DentistToPractice[]
+}
+
+model Practice {
+  id           String        @id @default(cuid())
+  name         String
+  address      String
+  ConsentPacks ConsentPack[]
+  users        DentistToPractice[]
+}
+
+
+model DentistToPractice{
+  dentistId String
+  dentist User @relation(fields: [dentistId],references: [id])
+  practiceId String
+  practice Practice @relation(fields: [practiceId],references: [id])
+
+  @@id([practiceId,dentistId])
+}
+model Procedure {
+  id           String        @id @default(cuid())
+  name         String
+  description  String?
+  ConsentPacks ConsentPack[]
+  MCQs         MCQ[]
+  Videos       Video[]
+}
+
+model MCQ {
+  id              String           @id @default(cuid())
+  questionText    String
+  correctAnswer   String
+  dynamicField    String?
+  procedureId     String
+  ConsentPackMCQs ConsentPackMCQ[]
+  procedure       Procedure        @relation(fields: [procedureId], references: [id])
+}
+
+model Video {
+  id          String    @id @default(cuid())
+  title       String
+  url         String
+  isCustom    Boolean   @default(false)
+  uploadedAt  DateTime  @default(now())
+  procedureId String
+  userId      String?
+  procedure   Procedure @relation(fields: [procedureId], references: [id])
+  user        User?     @relation(fields: [userId], references: [id])
+}
+
+model ConsentPack {
+  id              String            @id @default(cuid())
+  treatmentReason String
+  status          ConsentPackStatus
+  createdAt       DateTime          @default(now())
+  practiceId      String
+  procedureId     String
+  dentistId       String
+  patientId       String
+  dentist         User              @relation("DentistConsentPacks", fields: [dentistId], references: [id])
+  patient         User              @relation("PatientConsentPacks", fields: [patientId], references: [id])
+  practice        Practice          @relation(fields: [practiceId], references: [id])
+  procedure       Procedure         @relation(fields: [procedureId], references: [id])
+  mcqs            ConsentPackMCQ[]
+  reports         Report[]
+}
+
+model ConsentPackMCQ {
+  id            String      @id @default(cuid())
+  consentPackId String
+  mcqId         String
+  answers       Answer[]
+  consentPack   ConsentPack @relation(fields: [consentPackId], references: [id])
+  mcq           MCQ         @relation(fields: [mcqId], references: [id])
+}
+
+model Answer {
+  id               String         @id @default(cuid())
+  attempt          Int            @default(1)
+  selectedAnswer   String
+  isCorrect        Boolean
+  videoWatched     Boolean        @default(false)
+  answeredAt       DateTime       @default(now())
+  consentPackMCQId String
+  patientId        String
+  consentPackMCQ   ConsentPackMCQ @relation(fields: [consentPackMCQId], references: [id])
+  patient          User           @relation(fields: [patientId], references: [id])
+}
+
+model Report {
+  id            String      @id @default(cuid())
+  pdfUrl        String
+  score         Int
+  passed        Boolean
+  generatedAt   DateTime    @default(now())
+  consentPackId String
+  patientId     String
+  consentPack   ConsentPack @relation(fields: [consentPackId], references: [id])
+  patient       User        @relation(fields: [patientId], references: [id])
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  type      NotificationType
+  message   String
+  sentAt    DateTime         @default(now())
+  patientId String
+  patient   User             @relation(fields: [patientId], references: [id])
+}
+
+enum UserRole {
+  dentist
+  patient
+}
+
+enum ConsentPackStatus {
+  pending
+  completed
+  failed
+}
+
+enum NotificationType {
+  reminder
+  completion
+}
