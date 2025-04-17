@@ -5,6 +5,16 @@ import { signOut } from "next-auth/react";
 import Image, { StaticImageData } from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "./ui/button";
+import { useState } from "react";
 
 type SideBarProps = {
   data: { text: string; logo: StaticImageData; link: string }[];
@@ -12,9 +22,11 @@ type SideBarProps = {
 
 export default function SideBar({ data }: SideBarProps) {
   const pathname = usePathname();
+  const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
 
   async function handleLogout() {
     await signOut();
+    setLogoutDialogOpen(false);
   }
 
   return (
@@ -53,11 +65,42 @@ export default function SideBar({ data }: SideBarProps) {
       </div>
       <div
         className="flex items-center gap-3 px-4 py-3 rounded-lg transition-all hover:bg-[#698AFF] text-white cursor-pointer"
-        onClick={handleLogout}
+        onClick={() => setLogoutDialogOpen(true)}
       >
         <Image src={LogoutIcon} alt="logout-logo" width={20} height={20} />
         <span className="text-lg text-white">Logout</span>
       </div>
+
+      <Dialog open={logoutDialogOpen} onOpenChange={setLogoutDialogOpen}>
+        <DialogContent className="sm:max-w-[400px] bg-white">
+          <DialogHeader>
+            <DialogTitle>Confirm Logout</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to log out of the admin panel?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="mt-4">
+            <Button
+              variant="outline"
+              onClick={() => setLogoutDialogOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleLogout}
+              className="bg-[#698AFF] hover:bg-[#698AFF]  text-white"
+            >
+              <Image
+                src={LogoutIcon}
+                alt="logout-logo"
+                width={20}
+                height={20}
+              />
+              Logout
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

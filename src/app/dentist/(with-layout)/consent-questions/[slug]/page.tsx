@@ -11,14 +11,15 @@ export default async function Page({
   // const consentName = params.slug;
   const { consentName } = await params;
 
-  if (!consentName) {
-    return (
-      <div className="flex justify-center items-center">
-        <p className="font-bold font-gillSans text-lg">Invalid Consent</p>
-      </div>
-    );
-  }
+  // if (!consentName) {
+  //   return (
+  //     <div className="flex justify-center items-center">
+  //       <p className="font-bold font-gillSans text-lg">Invalid Consent</p>
+  //     </div>
+  //   );
+  // }
 
+  console.log(consentName);
   return (
     <div>
       <Header showSearch={false} />

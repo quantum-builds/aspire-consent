@@ -56,7 +56,6 @@ const CONSENT_QUESTIONS = [
   },
 ];
 
-
 export default function QuestionList() {
   const [currentPage, setCurrentPage] = useState(0);
   const questionsPerPage = 1; // We'll show one actual question per page
@@ -81,7 +80,7 @@ export default function QuestionList() {
   return (
     <>
       <div className="bg-white rounded-lg shadow p-6 mb-6">
-        <h1 className="text-lg font-semibold mb-4">
+        <h1 className="text-xl font-semibold mb-4">
           Questions for Orthodontic Treatment
         </h1>
 
@@ -103,25 +102,25 @@ export default function QuestionList() {
             <div className="mb-4">
               <h2 className="font-medium mb-4">Question :</h2>
               <div className="p-4 mb-6 border-1">
-                <p className="mb-4">Q: </p>
+                <p className="mb-4 text-gray-400">Q: </p>
                 <div>
                   <div className="flex items-center mb-2">
-                    <p className="w-8">A.</p>
+                    <p className="w-8 text-gray-400">A.</p>
                     <p className="flex-1"></p>
                     <div className="h-4 w-4 border border-gray-300 rounded"></div>
                   </div>
                   <div className="flex items-center mb-2">
-                    <p className="w-8">B.</p>
+                    <p className="w-8 text-gray-400">B.</p>
                     <p className="flex-1"></p>
                     <div className="h-4 w-4 border border-gray-300 rounded"></div>
                   </div>
                   <div className="flex items-center mb-2">
-                    <p className="w-8">C.</p>
+                    <p className="w-8 text-gray-400">C.</p>
                     <p className="flex-1"></p>
                     <div className="h-4 w-4 border border-gray-300 rounded"></div>
                   </div>
                   <div className="flex items-center mb-2">
-                    <p className="w-8">D.</p>
+                    <p className="w-8 text-gray-400">D.</p>
                     <p className="flex-1"></p>
                     <div className="h-4 w-4 border border-gray-300 rounded"></div>
                   </div>

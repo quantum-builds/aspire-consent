@@ -33,14 +33,16 @@ export function QuestionCard({
 
   return (
     <div className="p-4">
-      <h2 className="font-medium mb-4">Question :</h2>
+      <h2 className="font-medium mb-4 text-lg">Question :</h2>
       <div className="mb-4 p-4 border-1">
         <div className="pl-4 mb-6">
-          <p className="mb-4">Q: {questionText}</p>
+          <p className="mb-4 text-md text-gray-400">
+            Q: <span className="text-lg text-black">{questionText}</span>
+          </p>
           {options.map((option, index) => (
             <div key={index} className="flex items-center mb-2">
-              <p className="w-8">{option.label}.</p>
-              <p className="flex-1">{option.text}</p>
+              <p className="w-8 text-md text-gray-400">{option.label}.</p>
+              <p className="flex-1 text-lg">{option.text}</p>
               <input
                 type="checkbox"
                 checked={
@@ -52,7 +54,7 @@ export function QuestionCard({
             </div>
           ))}
           <div className="mt-4">
-            <p>Answers: {answer || selectedOption || ""}</p>
+            <p className="text-lg">Answers: {answer || selectedOption || ""}</p>
           </div>
         </div>
       </div>
