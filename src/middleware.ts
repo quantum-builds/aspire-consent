@@ -18,12 +18,13 @@ export function middleware(request: NextRequest) {
     request.cookies.get("__Secure-next-auth.session-token")?.value ||
     request.cookies.get("next-auth.session-token")?.value;
 
+  console.log(sessionToken);
   if (isProtectedPath && !sessionToken) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
   if (!isProtectedPath && sessionToken) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+    return NextResponse.redirect(new URL("/dentist/dashboard", request.url));
   }
 
   return NextResponse.next();

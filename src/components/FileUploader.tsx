@@ -26,6 +26,7 @@ interface FileUploaderProps {
   disabled?: boolean;
   error?: string;
   allowedTypes?: string[];
+  alwaysShowDropzone?: boolean;
 }
 
 const formatFileSize = (size: number): string => {
@@ -155,7 +156,7 @@ const useFileUploader = (
     (acceptedFiles: File[], callback?: (files: FileType[] | null) => void) => {
       setErrorMessage(null);
 
-      if (acceptedFiles.length > maxFiles) {
+      if (selectedFiles.length + acceptedFiles.length > maxFiles) {
         setErrorMessage(`You can upload a maximum of ${maxFiles} file(s).`);
         return;
       }
@@ -185,7 +186,7 @@ const useFileUploader = (
         }
       }
 
-      const formattedFiles = acceptedFiles.slice(0, maxFiles).map((file) => {
+      const formattedFiles = acceptedFiles.map((file) => {
         const formattedFile = file as FileType;
         formattedFile.formattedSize = formatFileSize(file.size);
         formattedFile.isVideo = file.type.startsWith("video");
@@ -206,11 +207,13 @@ const useFileUploader = (
         return formattedFile;
       });
 
-      setSelectedFiles(formattedFiles);
-      onFileChange?.(formattedFiles.length > 0 ? formattedFiles : null);
-      callback?.(formattedFiles.length > 0 ? formattedFiles : null);
+      // Combine existing files with new files
+      const updatedFiles = [...selectedFiles, ...formattedFiles];
+      setSelectedFiles(updatedFiles);
+      onFileChange?.(updatedFiles.length > 0 ? updatedFiles : null);
+      callback?.(updatedFiles.length > 0 ? updatedFiles : null);
     },
-    [maxFiles, allowedTypes, onFileChange, MAX_FILE_SIZE_BYTES]
+    [maxFiles, allowedTypes, onFileChange, MAX_FILE_SIZE_BYTES, selectedFiles]
   );
 
   const removeFile = useCallback(
@@ -248,6 +251,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({
   disabled = false,
   error,
   allowedTypes = ["image/jpeg", "image/png", "video/mp4"],
+  alwaysShowDropzone = true,
 }) => {
   const {
     selectedFiles,
@@ -263,14 +267,16 @@ const FileUploader: React.FC<FileUploaderProps> = ({
     onFileUpload
   );
 
-  // Show dropzone only if there's no default preview and no selected files
+  // Always show dropzone if alwaysShowDropzone is true
   const showDropzone =
+    alwaysShowDropzone ||
     (!defaultName && selectedFiles.length === 0) ||
     (isInitialized && selectedFiles.length === 0);
 
   useEffect(() => {
     console.log("selected files are ", selectedFiles);
   }, [selectedFiles]);
+
   return (
     <>
       {showDropzone && (
@@ -280,19 +286,22 @@ const FileUploader: React.FC<FileUploaderProps> = ({
               handleAcceptedFiles(acceptedFiles, onFileUpload);
             }
           }}
-          maxFiles={maxFiles}
-          disabled={disabled}
+          maxFiles={maxFiles - selectedFiles.length}
+          disabled={disabled || selectedFiles.length >= maxFiles}
         >
           {({ getRootProps, getInputProps }) => (
             <div
               className={`border-2 border-dashed border-gray-300 rounded-lg p-6 text-center transition-colors ${
-                disabled
+                disabled || selectedFiles.length >= maxFiles
                   ? "opacity-60 bg-gray-100 cursor-not-allowed"
                   : "cursor-pointer hover:bg-gray-50"
               }`}
               {...getRootProps()}
             >
-              <input {...getInputProps()} disabled={disabled} />
+              <input
+                {...getInputProps()}
+                disabled={disabled || selectedFiles.length >= maxFiles}
+              />
               <div className="text-gray-500 mb-2">
                 {icon === "upload" ? (
                   <svg
@@ -315,6 +324,11 @@ const FileUploader: React.FC<FileUploaderProps> = ({
               <h3 className="text-gray-700 text-lg font-medium">{text}</h3>
               {extraText && (
                 <p className="text-gray-500 text-sm mt-1">{extraText}</p>
+              )}
+              {selectedFiles.length > 0 && (
+                <p className="text-gray-500 text-sm mt-2">
+                  {selectedFiles.length} of {maxFiles} files selected
+                </p>
               )}
             </div>
           )}

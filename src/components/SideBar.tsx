@@ -1,26 +1,16 @@
 "use client";
 
-import {
-  AspireConsentWhiteLogo,
-  ConsentFormIcon,
-  SettingIcon,
-  DashboardIcon,
-  PatientIcon,
-  LogoutIcon,
-} from "@/asssets";
+import { AspireConsentWhiteLogo, LogoutIcon } from "@/asssets";
 import { signOut } from "next-auth/react";
-import Image from "next/image";
+import Image, { StaticImageData } from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-const SIDE_BAR_DATA = [
-  { text: "Dashboard", logo: DashboardIcon, link: "/dashboard" },
-  { text: "Consent Forms", logo: ConsentFormIcon, link: "/consent-forms" },
-  { text: "Patients", logo: PatientIcon, link: "/patients" },
-  { text: "Settings", logo: SettingIcon, link: "/settings" },
-];
+type SideBarProps = {
+  data: { text: string; logo: StaticImageData; link: string }[];
+};
 
-export default function SideBar() {
+export default function SideBar({ data }: SideBarProps) {
   const pathname = usePathname();
 
   async function handleLogout() {
@@ -40,7 +30,7 @@ export default function SideBar() {
       </div>
 
       <div className="flex flex-col gap-4 mb-4">
-        {SIDE_BAR_DATA.map((content, index) => {
+        {data.map((content, index) => {
           const isActive = pathname === content.link;
           return (
             <Link

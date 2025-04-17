@@ -66,7 +66,11 @@ export default function LoginPage() {
     console.log("result is ", res);
     if (res?.ok) {
       toast.success("User logged in successfully");
-      router.replace("/");
+      if (data.role === "dentist") {
+        router.replace("/dentist/dashboard");
+      } else {
+        router.replace("/patient/dashboard");
+      }
     } else {
       toast.error("User logged in failed");
       setIsLoading(false);
@@ -230,7 +234,7 @@ export default function LoginPage() {
                   router.replace("/signup"); // Replaces current history entry
                 }}
               >
-                SignUp
+                Sign Up
               </a>
             </div>
           </form>

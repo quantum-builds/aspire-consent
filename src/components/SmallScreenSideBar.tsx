@@ -3,8 +3,14 @@
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import SideBar from "./SideBar";
+;
+import { StaticImageData } from "next/image";
 
-export default function SmallScreenSideBar() {
+type SideBarProps = {
+  data: { text: string; logo: StaticImageData; link: string }[];
+};
+
+export default function SmallScreenSideBar({ data }: SideBarProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -39,7 +45,7 @@ export default function SmallScreenSideBar() {
       {/* Mobile Sidebar (absolute positioned) */}
       {isOpen && (
         <div className="absolute top-16 left-0 w-10/12 md:w-4/12  bg-transparent z-50 shadow-xl -mt-2">
-          <SideBar />
+          <SideBar data={data} />
         </div>
       )}
     </div>

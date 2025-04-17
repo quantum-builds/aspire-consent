@@ -1,4 +1,4 @@
-import SearchInput from "@/app/(dentist)/components/SearchInput";
+import SearchInput from "@/components/SearchInput";
 import { ProfilePic } from "@/asssets";
 import { Bell } from "lucide-react";
 import Image from "next/image";

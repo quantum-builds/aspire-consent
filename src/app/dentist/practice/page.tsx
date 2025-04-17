@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import PracticeForm from "@/app/(dentist)/practice/components/PracticeForm";
+import PracticeForm from "@/app/dentist/practice/components/PracticeForm";
 import { getAllPractices } from "@/services/practice/PraticeQuery";
 import { Response } from "@/types/common";
 import { TPractice } from "@/types/practices";
