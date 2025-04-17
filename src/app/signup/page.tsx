@@ -340,17 +340,11 @@ export default function SignupForm() {
         </Tabs>
 
         <div className="text-center text-sm mt-4">
-          Already have an account?
+          Already have an account?{" "}
           <a
             className="text-[#7C5DFA] font-medium hover:underline cursor-pointer"
             onClick={(e) => {
               e.preventDefault();
-              // const email = dentistForm.getValues("email");
-              // if (dentistForm.getValues("role") === "dentist" && email) {
-              //   router.replace(`/practice?email=${encodeURIComponent(email)}`);
-              // } else {
-              //   router.replace("/login");
-              // }
               router.replace("/login");
             }}
           >

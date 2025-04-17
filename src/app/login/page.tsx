@@ -4,10 +4,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useState } from "react";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Mail, Lock, Loader2 } from "lucide-react";
+import { Mail, Lock, Loader2, Eye, EyeOff } from "lucide-react";
 import {
   Form,
   FormControl,
@@ -36,6 +35,7 @@ type LoginFormValues = z.infer<typeof loginFormSchema>;
 
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
   // Initialize the form with React Hook Form and Zod resolver
@@ -52,6 +52,11 @@ export default function LoginPage() {
   // Update the role field when the tab changes
   const handleRoleChange = (value: string) => {
     form.setValue("role", value as "patient" | "dentist");
+  };
+
+  // Toggle password visibility
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
   };
 
   async function onSubmit(data: LoginFormValues) {
@@ -83,7 +88,7 @@ export default function LoginPage() {
         <div className="flex flex-col items-center justify-center text-center">
           <div className="relative h-12 w-32 mb-2 mx-auto">
             <Image
-              src={AspireConsentBlackLogo}
+              src={AspireConsentBlackLogo || "/placeholder.svg"}
               alt="Aspire Logo"
               fill
               className="object-contain"
@@ -150,12 +155,22 @@ export default function LoginPage() {
                       </div>
                       <FormControl>
                         <Input
-                          type="password"
+                          type={showPassword ? "text" : "password"}
                           placeholder="Password"
-                          className="pl-10 py-5 border-gray-200"
+                          className="pl-10 pr-10 py-5 border-gray-200"
                           {...field}
                         />
                       </FormControl>
+                      <div
+                        className="absolute inset-y-0 right-3 flex items-center cursor-pointer"
+                        onClick={togglePasswordVisibility}
+                      >
+                        {showPassword ? (
+                          <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+                        ) : (
+                          <Eye className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+                        )}
+                      </div>
                     </div>
                     <FormMessage className="text-xs mt-1" />
                   </FormItem>
@@ -176,7 +191,7 @@ export default function LoginPage() {
             </div>
 
             <div className="flex items-center justify-between">
-              <FormField
+              {/* <FormField
                 control={form.control}
                 name="rememberMe"
                 render={({ field }) => (
@@ -197,7 +212,7 @@ export default function LoginPage() {
                     </label>
                   </FormItem>
                 )}
-              />
+              /> */}
               {/* <div className="text-sm">
                 <Link
                   href="/forgot-password"
