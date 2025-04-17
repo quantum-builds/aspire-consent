@@ -64,7 +64,7 @@ export default function ConsentFormsList() {
                     <div className="hidden md:flex space-x-2 justify-end">
                       <Button variant="ghost" size="sm" className="h-8">
                         <Link
-                          href={`/consent-questions/${form.name}`}
+                          href={`/dentist/consent-questions/${form.name}`}
                           className="flex gap-2 items-center"
                         >
                           <List width={20} height={20} className="mr-1" />
@@ -96,7 +96,7 @@ export default function ConsentFormsList() {
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem className="cursor-pointer">
                             <Link
-                              href={`/consent-questions/${form.name}`}
+                              href={`/dentist/consent-questions/${form.name}`}
                               className="flex gap-2 items-center"
                             >
                               <List width={16} height={16} className="mr-2" />
