@@ -54,7 +54,7 @@ const authOptions: AuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.email = user.email;
+        token.id = user.id;
         token.role = user.role;
         token.exp = Math.floor(Date.now() / 1000) + 24 * 60 * 60;
       }
@@ -62,7 +62,7 @@ const authOptions: AuthOptions = {
     },
     async session({ session, token }) {
       if (session.user) {
-        session.user.email = token.email as string;
+        session.user.id = token.id as string;
         session.user.role = token.role as string;
         session.expires = new Date(token.exp * 1000).toISOString(); // Add to session
       }

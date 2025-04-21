@@ -38,6 +38,11 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
+  const callbackUrl =
+    typeof window !== "undefined"
+      ? new URLSearchParams(window.location.search).get("callbackUrl")
+      : null;
+
   // Initialize the form with React Hook Form and Zod resolver
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginFormSchema),
@@ -71,10 +76,12 @@ export default function LoginPage() {
     console.log("result is ", res);
     if (res?.ok) {
       toast.success("User logged in successfully");
-      if (data.role === "dentist") {
-        router.replace("/dentist/dashboard");
+      if (callbackUrl) {
+        router.replace(callbackUrl);
       } else {
-        router.replace("/patient/dashboard");
+        router.replace(
+          data.role === "dentist" ? "/dentist/dashboard" : "/patient/dashboard"
+        );
       }
     } else {
       toast.error("User logged in failed");

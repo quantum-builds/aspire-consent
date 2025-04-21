@@ -11,7 +11,7 @@ export const useCreateDentistPractice = () => {
       dentistEmail: string;
     }) => {
       const response = await axiosInstance.put(
-        ENDPOINTS.dentistToPractice.updateDentisToPractice,
+        ENDPOINTS.dentistPractice.updateDentisToPractice,
         { practiceId, dentistEmail }
       );
       return response.data.data;

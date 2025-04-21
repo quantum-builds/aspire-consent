@@ -1,172 +1,175 @@
 "use client";
-import { useState } from "react";
-import { QuestionCard } from "@/app/dentist/(with-layout)/consent-questions/components/QuestionCard";
+import {
+  useCreateMCQ,
+  useDeleteMCQ,
+  usePatchMCQ,
+} from "@/services/mcq/MCQMutation";
+import { useUploadFile } from "@/services/s3/s3Mutation";
+import { ExtendedTMCQ, TMCQForm, TMCQProcessed } from "@/types/mcq";
+import { toast } from "react-hot-toast";
+import QuestionForm from "./QuestionForm";
+import { useRouter } from "next/navigation";
 
-const CONSENT_QUESTIONS = [
-  {
-    questionText:
-      "How long does typical orthodontic treatment with braces last?",
-    options: [
-      { label: "A", text: "2–4 months" },
-      { label: "B", text: "4–6 months" },
-      { label: "C", text: "6 months – 1 year" },
-      { label: "D", text: "1–3 years" },
-    ],
-    answer: "D",
-  },
-  {
-    questionText: "What is the recommended frequency for adjusting braces?",
-    options: [
-      { label: "A", text: "Every week" },
-      { label: "B", text: "Every 2-3 weeks" },
-      { label: "C", text: "Every 4-6 weeks" },
-      { label: "D", text: "Every 6 months" },
-    ],
-    answer: "C",
-  },
-  {
-    questionText: "What is a common side effect after braces adjustment?",
-    options: [
-      { label: "A", text: "Temporary discomfort" },
-      { label: "B", text: "Permanent tooth sensitivity" },
-      { label: "C", text: "Bleeding gums" },
-      { label: "D", text: "Tooth discoloration" },
-    ],
-    answer: "A",
-  },
-  {
-    questionText: "How often should patients with braces brush their teeth?",
-    options: [
-      { label: "A", text: "Once a day" },
-      { label: "B", text: "After every meal" },
-      { label: "C", text: "Twice a day" },
-      { label: "D", text: "Only in the morning" },
-    ],
-    answer: "B",
-  },
-  {
-    questionText: "What foods should be avoided with braces?",
-    options: [
-      { label: "A", text: "Soft foods" },
-      { label: "B", text: "Hard and sticky foods" },
-      { label: "C", text: "Cooked vegetables" },
-      { label: "D", text: "Dairy products" },
-    ],
-    answer: "B",
-  },
-];
+type QuestionListProps = {
+  data: ExtendedTMCQ[];
+  procedureId: string | null;
+  consentName: string;
+};
 
-export default function QuestionList() {
-  const [currentPage, setCurrentPage] = useState(0);
-  const questionsPerPage = 1; // We'll show one actual question per page
-  const totalPages = Math.ceil(CONSENT_QUESTIONS.length / questionsPerPage);
+export default function QuestionList({
+  data,
+  procedureId,
+  consentName,
+}: QuestionListProps) {
+  const router = useRouter();
+  console.log("procedure id is", procedureId);
 
-  const handleNextPage = () => {
-    if (currentPage < totalPages - 1) {
-      setCurrentPage(currentPage + 1);
+  const { mutateAsync: uploadFile, isPending: isFilePending } = useUploadFile();
+  const { mutate: createMCQ, isPending: isCreatePending } = useCreateMCQ();
+  const { mutate: patchMCQ, isPending: isPatchPending } = usePatchMCQ();
+  const { mutate: deleteMCQ, isPending: isDeletePending } = useDeleteMCQ();
+
+  const handleSubmit = async (
+    mcqs: (TMCQForm & {
+      dirtyFields?: {
+        procedureId?: boolean | undefined;
+        questionText?: boolean | undefined;
+        correctAnswer?: boolean | undefined;
+        options?:
+          | {
+              label?: boolean | undefined;
+              text?: boolean | undefined;
+            }[]
+          | undefined;
+        videoUrl?: boolean | undefined;
+        id?: boolean | undefined;
+      };
+    })[]
+  ) => {
+    console.log("mcqs are ", mcqs);
+    try {
+      // Separate new and existing MCQs
+      const newMCQs = mcqs.filter((mcq) => !mcq.id);
+      const existingMCQs = mcqs.filter((mcq) => mcq.id);
+
+      // Process new MCQs (create)
+      if (newMCQs.length > 0) {
+        console.log("in create mcq");
+        const processedNewMCQs: TMCQProcessed[] = await Promise.all(
+          newMCQs.map(async (mcq) => {
+            let videoUrl = "";
+            if (mcq.videoUrl) {
+              const uploadResponse = await uploadFile({
+                selectedFile: mcq.videoUrl,
+              });
+              videoUrl = `uploads/aspire-consent/${uploadResponse.name}`;
+            }
+
+            return {
+              questionText: mcq.questionText,
+              correctAnswer: mcq.correctAnswer,
+              options: mcq.options,
+              videoUrl,
+              procedureId: mcq.procedureId || (procedureId as string),
+            };
+          })
+        );
+
+        createMCQ(
+          { data: processedNewMCQs },
+          {
+            onSuccess: (data) => {
+              console.log("data is ", data);
+              toast.success("MCQ created successfully");
+            },
+            onError: (error) => {
+              toast.error(error.message);
+            },
+          }
+        );
+      }
+
+      // Process existing MCQs (patch) - only send changed fields
+      if (existingMCQs.length > 0) {
+        console.log("in edit mcq");
+
+        await Promise.all(
+          existingMCQs.map(async (mcq) => {
+            const updateData: Partial<TMCQProcessed> = {};
+            const dirtyFields = mcq.dirtyFields || {};
+
+            // Only include fields that were actually changed
+            if (dirtyFields.questionText) {
+              updateData.questionText = mcq.questionText;
+            }
+
+            if (dirtyFields.correctAnswer || dirtyFields.options) {
+              updateData.correctAnswer = mcq.correctAnswer;
+              console.log("options are ", dirtyFields.options);
+              updateData.options = mcq.options;
+            }
+
+            if (dirtyFields.videoUrl && mcq.videoUrl) {
+              const uploadResponse = await uploadFile({
+                selectedFile: mcq.videoUrl,
+              });
+              updateData.videoUrl = `uploads/aspire-consent/${uploadResponse.name}`;
+            } else if (dirtyFields.videoUrl && !mcq.videoUrl) {
+              updateData.videoUrl = "";
+            }
+
+            if (Object.keys(updateData).length > 0) {
+              return patchMCQ({
+                id: mcq.id!,
+                data: {
+                  ...updateData,
+                  procedureId: mcq.procedureId || (procedureId as string),
+                },
+              });
+            }
+            return Promise.resolve(); // No changes, skip
+          })
+        );
+      }
+
+      closeForm();
+    } catch (error) {
+      console.error("Error in MCQ submission:", error);
+      toast.error("Failed to save MCQs");
     }
   };
-
-  const handlePrevPage = () => {
-    if (currentPage > 0) {
-      setCurrentPage(currentPage - 1);
-    }
+  const handleDelete = async (id: string) => {
+    deleteMCQ(
+      { id },
+      {
+        onSuccess: (data) => {
+          console.log("data is ", data);
+          toast.success("MCQ deleted successfully");
+        },
+        onError: (error) => {
+          toast.error(error.message);
+        },
+      }
+    );
   };
 
-  // Get current question
-  const indexOfCurrentQuestion = currentPage;
-  const currentQuestion = CONSENT_QUESTIONS[indexOfCurrentQuestion];
+  const closeForm = () => {
+    router.replace("/dentist/dashboard");
+  };
 
   return (
-    <>
-      <div className="bg-white rounded-lg shadow p-6 mb-6">
-        <h1 className="text-xl font-semibold mb-4">
-          Questions for Orthodontic Treatment
-        </h1>
-
-        {/* First question - the actual question from the data */}
-        <QuestionCard
-          key={`question-${indexOfCurrentQuestion}`}
-          questionText={currentQuestion.questionText}
-          options={currentQuestion.options}
-          answer={currentQuestion.answer}
-          onNext={handleNextPage}
-          onBack={handlePrevPage}
-          isFirst={currentPage === 0}
-          isLast={currentPage === totalPages - 1}
-        />
-
-        {/* Second question - always empty and disabled */}
-        {currentPage !== totalPages - 1 && (
-          <div className="p-4 border-t mt-4 pt-6">
-            <div className="mb-4">
-              <h2 className="font-medium mb-4">Question :</h2>
-              <div className="p-4 mb-6 border-1">
-                <p className="mb-4 text-gray-400">Q: </p>
-                <div>
-                  <div className="flex items-center mb-2">
-                    <p className="w-8 text-gray-400">A.</p>
-                    <p className="flex-1"></p>
-                    <div className="h-4 w-4 border border-gray-300 rounded"></div>
-                  </div>
-                  <div className="flex items-center mb-2">
-                    <p className="w-8 text-gray-400">B.</p>
-                    <p className="flex-1"></p>
-                    <div className="h-4 w-4 border border-gray-300 rounded"></div>
-                  </div>
-                  <div className="flex items-center mb-2">
-                    <p className="w-8 text-gray-400">C.</p>
-                    <p className="flex-1"></p>
-                    <div className="h-4 w-4 border border-gray-300 rounded"></div>
-                  </div>
-                  <div className="flex items-center mb-2">
-                    <p className="w-8 text-gray-400">D.</p>
-                    <p className="flex-1"></p>
-                    <div className="h-4 w-4 border border-gray-300 rounded"></div>
-                  </div>
-                </div>
-                <div className="mt-4">
-                  <p>Answers: </p>
-                </div>
-              </div>
-            </div>
-            <div className="flex justify-end space-x-2 mt-6">
-              <button
-                className="px-5 py-2 border border-gray-300 rounded text-md opacity-50 cursor-not-allowed"
-                disabled
-              >
-                Back
-              </button>
-              <button
-                className="px-5 py-2 bg-[#698AFF] text-white rounded text-md opacity-50 cursor-not-allowed"
-                disabled
-              >
-                Next
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
-      <div className="flex justify-start gap-4 mt-6">
-        <button
-          onClick={handlePrevPage}
-          className={`px-5 py-2 border rounded ${
-            currentPage === 0
-              ? "text-gray-400 border-gray-200 cursor-not-allowed"
-              : "text-gray-700 border-gray-300 cursor-pointer"
-          }`}
-          disabled={currentPage === 0}
-        >
-          Go back
-        </button>
-        <button
-          onClick={handleNextPage}
-          className={`px-5 py-2 bg-[#698AFF] cursor-pointer text-white rounded`}
-          disabled={currentPage === totalPages - 1}
-        >
-          {currentPage === totalPages - 1 ? "Save" : "Next"}
-        </button>
-      </div>
-    </>
+    <div>
+      <QuestionForm
+        onSubmit={handleSubmit}
+        data={data}
+        onDelete={handleDelete}
+        isPending={
+          isCreatePending || isDeletePending || isFilePending || isPatchPending
+        }
+        onCancel={closeForm}
+        procedureId={procedureId}
+        consentName={consentName}
+      />
+    </div>
   );
 }

@@ -2,8 +2,22 @@ import Header from "@/components/Header";
 import ConsentFormsList from "@/app/dentist/(with-layout)/consent-forms/components/ConsentFormsList";
 import { Plus } from "lucide-react";
 import Link from "next/link";
+import { getDentistProcedure } from "@/services/dentist-procedure/DentistProcedureQuery";
+import { Response } from "@/types/common";
+import { TDentistProcedure } from "@/types/dentist-procedure";
 
-export default function Page() {
+export default async function Page() {
+  // console.log("data is ", useSession());
+  let errorMessage = undefined;
+  let consentForms: TDentistProcedure[] = [];
+
+  const response: Response<TDentistProcedure[]> = await getDentistProcedure();
+  if (response.data) {
+    consentForms = response.data;
+  } else {
+    errorMessage = response.message;
+  }
+
   return (
     <div>
       <Header showSearch={false} />
@@ -23,7 +37,7 @@ export default function Page() {
           New Consent
         </Link>
       </div>
-      <ConsentFormsList />
+      <ConsentFormsList data={consentForms} errorMessage={errorMessage} />
     </div>
   );
 }

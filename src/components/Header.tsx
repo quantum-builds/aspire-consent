@@ -27,8 +27,8 @@ export default function Header({ showSearch = true }: HeaderProps) {
           src={ProfilePic}
           alt="profile-pic"
           className="rounded-full cursor-pointer"
-          height={80}
-          width={80}
+          height={60}
+          width={60}
         />
       </div>
     </div>

@@ -22,10 +22,13 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { FileUploader, FileType } from "@/components/FileUploader";
 import { RichTextEditor } from "@/components/RichTextEditor";
 import toast from "react-hot-toast";
-import { useState } from "react";
+import { TDentistProcedure } from "@/types/dentist-procedure";
+import { ExtendedTUser } from "@/types/user";
+import { useCreateConsentFormLink } from "@/services/consent-form/ConsentFomMutation";
+import { useSendEmail } from "@/services/email/emailMutation";
+import axios from "axios";
 
 // Define the form schema with Zod
 const formSchema = z.object({
@@ -49,8 +52,20 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-export default function ConsentForm() {
-  const [uploadedFiles, setUploadedFiles] = useState<FileType[] | null>(null);
+type ConstsentFormProps = {
+  procedures: TDentistProcedure[];
+  patients: ExtendedTUser[];
+  procedureErrorMessage?: string;
+  patientErrorMessage?: string;
+};
+
+export default function ConsentForm({
+  procedures,
+  patients,
+}: ConstsentFormProps) {
+  const { mutate: createConsentLink, isPending: isLinkPending } =
+    useCreateConsentFormLink();
+  const { mutate: sendEmail, isPending: isEmailPending } = useSendEmail();
 
   // Initialize the form with react-hook-form and zod resolver
   const form = useForm<FormValues>({
@@ -64,20 +79,51 @@ export default function ConsentForm() {
     mode: "onSubmit", // Validate on form submission
   });
 
-  // Handle file upload
-  const handleFileUpload = (files: FileType[] | null) => {
-    setUploadedFiles(files);
-  };
-
   // Form submission handler
   function onSubmit(data: FormValues) {
-    const formData = {
-      ...data,
-      attachments: uploadedFiles,
-    };
-
-    toast.success("Consent form created");
-    console.log(formData);
+    console.log("data is ", data);
+    // Use the actual IDs from the form data
+    createConsentLink(
+      {
+        patientId: data.patient, // This now contains the actual patient ID
+        procedureId: data.treatment, // This now contains the actual procedure ID
+        expiresAt: data.treatmentDate,
+      },
+      {
+        onSuccess: (data: {
+          dentistEmail: string;
+          patientEmail: string;
+          token: string;
+        }) => {
+          sendEmail(
+            {
+              to: data.patientEmail,
+              subject: "Consent Form to Fill",
+              text: `This is the consent for you send by ${data.dentistEmail} \n ${process.env.NEXT_PUBLIC_BASE_URL}patient/consent-form/${data.token}?email=${data.patientEmail}`,
+            },
+            {
+              onSuccess: () => {
+                toast.success("Consent Link send on provided email");
+                form.reset();
+              },
+              onError: (err) => {
+                if (axios.isAxiosError(err) && err.response) {
+                  const message =
+                    err.response.data?.message || "Something went wrong";
+                  toast.error(message);
+                } else {
+                  toast.error("Network error. Please check your connection.");
+                }
+              },
+            }
+          );
+        },
+        onError: (error) => {
+          console.error("Error in generating Link:", error);
+          toast.error("Failed to generate Consent Link");
+        },
+      }
+    );
   }
 
   return (
@@ -111,8 +157,17 @@ export default function ConsentForm() {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent className="w-full max-h-40">
-                          <SelectItem value="patient1">John Doe</SelectItem>
-                          <SelectItem value="patient2">Jane Smith</SelectItem>
+                          {patients.length > 0 ? (
+                            patients.map((patient) => (
+                              <SelectItem key={patient.id} value={patient.id}>
+                                {patient.fullName} - {patient.email}
+                              </SelectItem>
+                            ))
+                          ) : (
+                            <div className="p-2 text-sm text-red- text-center">
+                              No patient found
+                            </div>
+                          )}
                         </SelectContent>
                       </Select>
                       <FormDescription className="text-md">
@@ -152,22 +207,20 @@ export default function ConsentForm() {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent className="w-full max-h-40">
-                          <SelectItem value="treatment1">
-                            Dental Cleaning
-                          </SelectItem>
-                          <SelectItem value="treatment2">Root Canal</SelectItem>
-                          <SelectItem value="treatment3">
-                            Tooth Extraction
-                          </SelectItem>
-                          <SelectItem value="treatment4">
-                            Orthodontic Treatment
-                          </SelectItem>
-                          <SelectItem value="treatment5">
-                            Wisdom Tooth Extractions
-                          </SelectItem>
-                          <SelectItem value="treatment6">
-                            Dental Implants
-                          </SelectItem>
+                          {procedures.length > 0 ? (
+                            procedures.map((procedure) => (
+                              <SelectItem
+                                key={procedure.procedure.id}
+                                value={procedure.procedure.id}
+                              >
+                                {procedure.procedure.name}
+                              </SelectItem>
+                            ))
+                          ) : (
+                            <div className="p-2 text-sm text-red-500 text-center">
+                              No procedure found
+                            </div>
+                          )}
                         </SelectContent>
                       </Select>
                       <FormDescription className="text-md">
@@ -214,36 +267,6 @@ export default function ConsentForm() {
 
               <Separator orientation="horizontal" className="mx-1 h-6" />
 
-              <h2 className="text-xl font-bold">Attachments & Custom Text</h2>
-
-              <FormItem className="flex flex-col md:flex-row justify-between items-start">
-                <FormLabel className="text-lg font-normal">
-                  Attach File(s)
-                </FormLabel>
-                <div className="w-full md:w-2/3 flex flex-col gap-2">
-                  <FileUploader
-                    onFileUpload={handleFileUpload}
-                    maxFiles={5}
-                    showPreview={true}
-                    text="Drop files here or click to upload"
-                    extraText="You can upload multiple files (up to 5)"
-                    allowedTypes={[
-                      "image/jpeg",
-                      "image/png",
-                      "application/pdf",
-                      "video/mp4",
-                    ]}
-                    alwaysShowDropzone={true}
-                  />
-                  <FormDescription className="text-lg text-muted-foreground">
-                    Upload single or multiple files to support this consent
-                    form.
-                  </FormDescription>
-                </div>
-              </FormItem>
-
-              <Separator orientation="horizontal" className="mx-1 h-6" />
-
               <FormField
                 control={form.control}
                 name="customNote"
@@ -280,14 +303,19 @@ export default function ConsentForm() {
               type="button"
               onClick={() => {
                 form.reset();
-                setUploadedFiles(null);
               }}
               className="cursor-pointer text-md hover:underline text-[#698AFF]"
             >
               Clear Form
             </button>
-            <Button type="submit" className="bg-[#698AFF] py-6 text-lg">
-              Save & send by email
+            <Button
+              type="submit"
+              className="bg-[#698AFF] py-6 text-lg"
+              disabled={isLinkPending || isEmailPending}
+            >
+              {isLinkPending || isEmailPending
+                ? "Processing..."
+                : "Save & send by email"}
             </Button>
           </div>
         </form>

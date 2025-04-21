@@ -9,7 +9,6 @@ export async function GET() {
     const practices = await prisma.practice.findMany({
       include: {
         users: true,
-        ConsentPacks: true,
       },
     });
     if (practices.length === 0) {

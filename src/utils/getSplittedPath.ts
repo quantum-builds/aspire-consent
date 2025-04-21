@@ -1,6 +1,6 @@
 export default function getPathAfterUploadsImages(fullPath: string) {
-  if (fullPath.includes("uploads/images/")) {
-    return fullPath.split("uploads/images/")[1];
+  if (fullPath.includes("uploads/aspire-consent/")) {
+    return fullPath.split("uploads/aspire-consent/")[1];
   }
   return fullPath;
 }

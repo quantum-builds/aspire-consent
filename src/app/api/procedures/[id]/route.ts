@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
 
     const procedure = await prisma.procedure.findUnique({
       where: { id: id },
-      include: { MCQs: true, ConsentPacks: true, Videos: true },
+      include: { MCQs: true },
     });
 
     if (!procedure) {

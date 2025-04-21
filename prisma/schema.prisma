@@ -16,126 +16,123 @@ model User {
   password            String
   fullName            String?
   otp                 String?
-  Answers             Answer[]
-  dentistConsentPacks ConsentPack[]  @relation("DentistConsentPacks")
-  patientConsentPacks ConsentPack[]  @relation("PatientConsentPacks")
-  Notifications       Notification[]
-  Reports             Report[]
-  Videos              Video[]
+  sentConsentLinks    ConsentFormLink[] @relation("DentistConsentLinks")
+  receivedConsentLinks ConsentFormLink[] @relation("PatientConsentLinks")
   practices           DentistToPractice[]
+  procedures DentistToProcedure[]
+  MCQs        MCQ[]
 }
-
 model Practice {
   id           String        @id @default(cuid())
   name         String
   address      String
-  ConsentPacks ConsentPack[]
   users        DentistToPractice[]
 }
 
-
 model DentistToPractice{
   dentistId String
-  dentist User @relation(fields: [dentistId],references: [id])
+  dentist User @relation(fields: [dentistId],references: [id],onDelete: Cascade)
   practiceId String
-  practice Practice @relation(fields: [practiceId],references: [id])
+  practice Practice @relation(fields: [practiceId],references: [id],onDelete: Cascade)
 
   @@id([practiceId,dentistId])
 }
+
 model Procedure {
-  id           String        @id @default(cuid())
-  name         String
-  description  String?
-  ConsentPacks ConsentPack[]
-  MCQs         MCQ[]
-  Videos       Video[]
+  id          String     @id @default(cuid())
+  name        String    @unique
+  description String?
+  MCQs        MCQ[]
+
+  consentLinks ConsentFormLink[]
+  dentists DentistToProcedure[]
+}
+
+model DentistToProcedure {
+  dentistId   String
+  dentist     User      @relation(fields: [dentistId], references: [id],onDelete: Cascade)
+  procedureId String
+  procedure   Procedure @relation(fields: [procedureId], references: [id],onDelete: Cascade)
+
+  @@id([dentistId, procedureId])
 }
 
 model MCQ {
-  id              String           @id @default(cuid())
+  id              String     @id @default(cuid())
   questionText    String
   correctAnswer   String
-  dynamicField    String?
+  options         String[]
+  videoUrl        String
   procedureId     String
-  ConsentPackMCQs ConsentPackMCQ[]
-  procedure       Procedure        @relation(fields: [procedureId], references: [id])
+  procedure       Procedure  @relation(fields: [procedureId], references: [id])
+  dentistId       String   
+  dentist         User       @relation(fields: [dentistId], references: [id])
+  answers         FormAnswer[] @relation("OriginalMCQAnswers")
+  
+  @@unique([procedureId, dentistId, id])
 }
 
-model Video {
-  id          String    @id @default(cuid())
-  title       String
-  url         String
-  isCustom    Boolean   @default(false)
-  uploadedAt  DateTime  @default(now())
-  procedureId String
-  userId      String?
-  procedure   Procedure @relation(fields: [procedureId], references: [id])
-  user        User?     @relation(fields: [userId], references: [id])
+model ConsentFormMCQSnapshot {
+  id              String     @id @default(cuid())
+  questionText    String
+  correctAnswer   String
+  options         String[]
+  videoUrl        String
+  consentFormLink ConsentFormLink @relation(fields: [consentFormLinkId], references: [id])
+  consentFormLinkId String
+  answers         FormAnswer[]
+  
+  // No relation back to original MCQ
 }
 
-model ConsentPack {
-  id              String            @id @default(cuid())
-  treatmentReason String
-  status          ConsentPackStatus
-  createdAt       DateTime          @default(now())
-  practiceId      String
-  procedureId     String
-  dentistId       String
-  patientId       String
-  dentist         User              @relation("DentistConsentPacks", fields: [dentistId], references: [id])
-  patient         User              @relation("PatientConsentPacks", fields: [patientId], references: [id])
-  practice        Practice          @relation(fields: [practiceId], references: [id])
-  procedure       Procedure         @relation(fields: [procedureId], references: [id])
-  mcqs            ConsentPackMCQ[]
-  reports         Report[]
+model ConsentFormLink {
+  id           String     @id @default(cuid())
+  token        String     @unique
+  dentistId    String
+  dentist      User       @relation("DentistConsentLinks", fields: [dentistId], references: [id])
+  patientId String 
+  patient      User      @relation("PatientConsentLinks", fields: [patientId], references: [id])
+  procedureId  String
+  procedure    Procedure  @relation(fields: [procedureId], references: [id])
+  snapshotMCQs ConsentFormMCQSnapshot[]
+  expiresAt    DateTime
+  // snapshotMCQs MCQ[] @relation("ConsentLinkMCQs")  
+  isActive     Boolean    @default(true)
+  createdAt    DateTime   @default(now())
+  progressPercentage Int            @default(0)
+  status             ConsentStatus  @default(PENDING)
+  answers      FormAnswer[]  
+  lastUpdated  DateTime     @default(now()) 
+  isDraft          Boolean        @default(true) 
+  completedAt      DateTime? 
 }
 
-model ConsentPackMCQ {
-  id            String      @id @default(cuid())
-  consentPackId String
-  mcqId         String
-  answers       Answer[]
-  consentPack   ConsentPack @relation(fields: [consentPackId], references: [id])
-  mcq           MCQ         @relation(fields: [mcqId], references: [id])
-}
-
-model Answer {
-  id               String         @id @default(cuid())
-  attempt          Int            @default(1)
-  selectedAnswer   String
-  isCorrect        Boolean
-  videoWatched     Boolean        @default(false)
-  answeredAt       DateTime       @default(now())
-  consentPackMCQId String
-  patientId        String
-  consentPackMCQ   ConsentPackMCQ @relation(fields: [consentPackMCQId], references: [id])
-  patient          User           @relation(fields: [patientId], references: [id])
-}
-
-model Report {
-  id            String      @id @default(cuid())
-  pdfUrl        String
-  score         Int
-  passed        Boolean
-  generatedAt   DateTime    @default(now())
-  consentPackId String
-  patientId     String
-  consentPack   ConsentPack @relation(fields: [consentPackId], references: [id])
-  patient       User        @relation(fields: [patientId], references: [id])
-}
-
-model Notification {
-  id        String           @id @default(cuid())
-  type      NotificationType
-  message   String
-  sentAt    DateTime         @default(now())
-  patientId String
-  patient   User             @relation(fields: [patientId], references: [id])
+model FormAnswer {
+  id              String         @id @default(cuid())
+  consentFormLink ConsentFormLink @relation(fields: [consentFormLinkId], references: [id], onDelete: Cascade)
+  consentFormLinkId String
+  mcqSnapshot     ConsentFormMCQSnapshot? @relation(fields: [mcqSnapshotId], references: [id], onDelete: Cascade)
+  mcqSnapshotId   String?
+  originalMCQ     MCQ?           @relation("OriginalMCQAnswers", fields: [originalMCQId], references: [id], onDelete: Cascade)
+  originalMCQId   String?
+  selectedAnswer  String         
+  isCorrect       Boolean        
+  answeredAt      DateTime      @default(now()) 
+  questionText    String        
+  questionOptions String[] 
+  isDraft         Boolean        @default(true)      
 }
 
 enum UserRole {
   dentist
   patient
+}
+
+enum ConsentStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  EXPIRED
 }
 
 enum ConsentPackStatus {

@@ -12,6 +12,7 @@ export const ENDPOINTS = {
   },
   user: {
     updateUser: (id: string) => `/api/user/${id}`,
+    getUsers: `/api/user`,
   },
   email: {
     sendEmail: "/api/email",
@@ -24,5 +25,41 @@ export const ENDPOINTS = {
     getAllPractices: "/api/practices",
     updatePractice: (email: string) => `/api/practices?${email}`,
   },
-  dentistToPractice: { updateDentisToPractice: "/api/dentist-practice" },
+  dentistPractice: { updateDentisToPractice: "/api/dentist-practice" },
+  dentistProcedure: {
+    getDentistProcedure: (procedureId?: string) =>
+      `/api/dentist-procedure?procedureId=${procedureId}`,
+  },
+  mcq: {
+    getMCQ: (procedureName?: string) => {
+      if (!procedureName) {
+        return "/api/mcq";
+      }
+      return `/api/mcq?procedureName=${encodeURIComponent(procedureName)}`;
+    },
+    createMCQ: "/api/mcq",
+    patchMCQ: (id: string) => `/api/mcq/${id}`,
+    deleteMCQ: (id: string) => `/api/mcq/${id}`,
+  },
+  consentLink: {
+    createConsentFormLink: "/api/consent-form",
+    getConsentForm: (token: string, dentistId?: string) =>
+      `/api/consent-form?token=${token}&dentistId=${dentistId}`,
+    updatePatientFormAnswers: (id: string) => `/api/consent-form/${id}`,
+    postPatientFormAnswers: (id: string) => `/api/consent-form/${id}`,
+  },
+  s3: {
+    getSignedUrl: "/api/s3",
+  },
+  uploads: {
+    getMedia: "/api/uploads",
+  },
 };
+
+// {
+//       const params = new URLSearchParams();
+//       if (procedureName) params.append("procedureName", procedureName);
+//       console.log(params);
+//       console.log(`/api/mcq?${params.toString()}`);
+//       return `/api/mcq?${params.toString()}`;
+//     },

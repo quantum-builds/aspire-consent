@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
 
     const practice = await prisma.practice.findUnique({
       where: { id: id },
-      include: { users: true, ConsentPacks: true },
+      include: { users: true },
     });
 
     if (!practice) {

@@ -1,3 +1,5 @@
+"use client";
+
 import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,21 +12,24 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
+import { TDentistProcedure } from "@/types/dentist-procedure";
+import { useEffect } from "react";
+import toast from "react-hot-toast";
 
-type ConsentForm = {
-  id: string;
-  name: string;
+type ConsentFormListProps = {
+  data: TDentistProcedure[];
+  errorMessage?: string | null;
 };
 
-export default function ConsentFormsList() {
-  const consentForms: ConsentForm[] = [
-    { id: "1", name: "Orthodontic Treatment" },
-    { id: "2", name: "Root Canal" },
-    { id: "3", name: "Wisdom Tooth Extractions" },
-    { id: "4", name: "Root Canal" },
-    { id: "5", name: "Dental Implants" },
-    { id: "6", name: "Orthodontic Treatment" },
-  ];
+export default function ConsentFormsList({
+  data,
+  errorMessage,
+}: ConsentFormListProps) {
+  useEffect(() => {
+    if (errorMessage) {
+      toast.error(errorMessage, { id: "fetch-dentist-procedure-error" });
+    }
+  }, [errorMessage]);
 
   return (
     <div className="flex w-full">
@@ -49,74 +54,94 @@ export default function ConsentFormsList() {
               </tr>
             </thead>
             <tbody>
-              {consentForms.map((form, index) => (
-                <tr
-                  key={form.id}
-                  className={
-                    index !== consentForms.length - 1 ? "border-b" : ""
-                  }
-                >
-                  <td className="p-3 text-gray-500 text-base sm:text-lg">
-                    {form.name}
-                  </td>
-                  <td className="p-3 text-right whitespace-nowrap">
-                    {/* Desktop view - show all buttons */}
-                    <div className="hidden md:flex space-x-2 justify-end">
-                      <Button variant="ghost" size="sm" className="h-8">
-                        <Link
-                          href={`/dentist/consent-questions/${form.name}`}
-                          className="flex gap-2 items-center"
-                        >
-                          <List width={20} height={20} className="mr-1" />
-                          View questions
-                        </Link>
-                      </Button>
-                      <Button variant="ghost" size="sm" className="h-8">
-                        <Edit2 width={20} height={20} className="mr-1" />
-                        Edit
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-8 text-red-500 hover:text-red-500 hover:bg-red-50"
-                      >
-                        <Trash width={20} height={20} className="mr-1" />
-                        Delete
-                      </Button>
-                    </div>
-
-                    {/* Mobile view - show dropdown menu */}
-                    <div className="md:hidden">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
+              {data?.length > 0 ? (
+                <>
+                  {data.map((form, index) => (
+                    <tr
+                      key={form.procedureId}
+                      className={index !== data.length - 1 ? "border-b" : ""}
+                    >
+                      <td className="p-3 text-gray-500 text-base sm:text-lg">
+                        {form.procedure.name}
+                      </td>
+                      <td className="p-3 text-right whitespace-nowrap">
+                        {/* Desktop view - show all buttons */}
+                        <div className="hidden md:flex space-x-2 justify-end">
                           <Button variant="ghost" size="sm" className="h-8">
-                            <MoreHorizontal width={20} height={20} />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem className="cursor-pointer">
                             <Link
-                              href={`/dentist/consent-questions/${form.name}`}
+                              href={`/dentist/consent-questions/${form.procedure.name}`}
                               className="flex gap-2 items-center"
                             >
-                              <List width={16} height={16} className="mr-2" />
+                              <List width={20} height={20} className="mr-1" />
                               View questions
                             </Link>
-                          </DropdownMenuItem>
-                          <DropdownMenuItem className="cursor-pointer">
-                            <Edit2 width={16} height={16} className="mr-2" />
+                          </Button>
+                          <Button variant="ghost" size="sm" className="h-8">
+                            <Edit2 width={20} height={20} className="mr-1" />
                             Edit
-                          </DropdownMenuItem>
-                          <DropdownMenuItem className="cursor-pointer text-red-500">
-                            <Trash width={16} height={16} className="mr-2" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 text-red-500 hover:text-red-500 hover:bg-red-50"
+                          >
+                            <Trash width={20} height={20} className="mr-1" />
                             Delete
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </div>
+                          </Button>
+                        </div>
+
+                        {/* Mobile view - show dropdown menu */}
+                        <div className="md:hidden">
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="sm" className="h-8">
+                                <MoreHorizontal width={20} height={20} />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem className="cursor-pointer">
+                                <Link
+                                  href={`/dentist/consent-questions/${form.procedure.name}`}
+                                  className="flex gap-2 items-center"
+                                >
+                                  <List
+                                    width={16}
+                                    height={16}
+                                    className="mr-2"
+                                  />
+                                  View questions
+                                </Link>
+                              </DropdownMenuItem>
+                              <DropdownMenuItem className="cursor-pointer">
+                                <Edit2
+                                  width={16}
+                                  height={16}
+                                  className="mr-2"
+                                />
+                                Edit
+                              </DropdownMenuItem>
+                              <DropdownMenuItem className="cursor-pointer text-red-500">
+                                <Trash
+                                  width={16}
+                                  height={16}
+                                  className="mr-2"
+                                />
+                                Delete
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </>
+              ) : (
+                <tr>
+                  <td colSpan={2} className="text-center p-4 text-red-500">
+                    No Procedure found for this dentist
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </CardContent>

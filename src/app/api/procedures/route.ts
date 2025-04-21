@@ -1,8 +1,6 @@
-import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { NextRequest, NextResponse } from "next/server";
 import { createResponse } from "@/utils/createResponse";
-
-const prisma = new PrismaClient();
+import prisma from "@/lib/db";
 
 export async function GET() {
   try {
@@ -26,32 +24,42 @@ export async function GET() {
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(req: NextRequest) {
   try {
-    const { name, description } = await request.json();
+    const procedures = await req.json();
 
-    if (!name) {
+    const proceduresArray = Array.isArray(procedures)
+      ? procedures
+      : [procedures];
+
+    // Validate that each procedure has a name
+    const invalidProcedures = proceduresArray.filter(
+      (procedure) => !procedure.name || typeof procedure.name !== "string"
+    );
+
+    if (invalidProcedures.length > 0) {
       return NextResponse.json(
-        { message: "Name is required" },
+        { message: "Each procedure must have a valid 'name' field" },
         { status: 400 }
       );
     }
 
-    const procedure = await prisma.procedure.create({
-      data: {
-        name,
-        description,
-      },
+    const createdProcedures = await prisma.procedure.createMany({
+      data: proceduresArray,
+      skipDuplicates: true,
     });
 
     return NextResponse.json(
-      { message: "Procedure is created successfully", practice: procedure },
+      {
+        message: "Procedure(s) created successfully",
+        practice: createdProcedures,
+      },
       { status: 201 }
     );
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return NextResponse.json(
-      { error: "Failed to create procedure" },
+      { error: "Failed to create procedures" },
       { status: 500 }
     );
   }
