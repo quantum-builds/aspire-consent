@@ -185,7 +185,7 @@ export default function ConsentFormContent({
   }
 
   return (
-    <div className="max-w-2xl mx-auto p-4 bg-white rounded-lg shadow-sm border border-gray-200">
+    <div className="max-w-3xl mx-auto p-4 bg-white rounded-lg shadow-sm border border-gray-200">
       <h1 className="text-xl font-medium text-gray-800 mb-2">
         Consent Form: {data.procedure.name}
       </h1>

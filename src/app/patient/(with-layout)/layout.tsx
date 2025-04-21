@@ -2,10 +2,7 @@ import type { Metadata } from "next";
 import SideBar from "@/components/SideBar";
 import SmallScreenSideBar from "@/components/SmallScreenSideBar";
 import {
-  ConsentFormIcon,
   DashboardIcon,
-  PatientIcon,
-  SettingIcon,
 } from "@/asssets";
 
 export const metadata: Metadata = {
@@ -14,13 +11,13 @@ export const metadata: Metadata = {
 };
 const SIDE_BAR_DATA = [
   { text: "Dashboard", logo: DashboardIcon, link: "/patient/dashboard" },
-  {
-    text: "Consent Forms",
-    logo: ConsentFormIcon,
-    link: "/patient/consent-forms",
-  },
-  { text: "Patients", logo: PatientIcon, link: "/patient/patients" },
-  { text: "Settings", logo: SettingIcon, link: "/settings" },
+  // {
+  //   text: "Consent Forms",
+  //   logo: ConsentFormIcon,
+  //   link: "/patient/consent-forms",
+  // },
+  // { text: "Patients", logo: PatientIcon, link: "/patient/patients" },
+  // { text: "Settings", logo: SettingIcon, link: "/settings" },
 ];
 
 export default function RootLayout({

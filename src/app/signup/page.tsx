@@ -13,13 +13,14 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { User, Phone, Mail, Lock, Loader2 } from "lucide-react";
+import { User, Phone, Mail, Lock, Loader2, Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { AspireConsentBlackLogo } from "@/asssets";
 import Image from "next/image";
 import axios from "axios";
 import { useSignUp } from "@/services/auth/authMutation";
+import { useState } from "react";
 
 // Patient schema with all fields
 const patientSchema = z.object({
@@ -50,6 +51,8 @@ type DentistFormValues = z.infer<typeof dentistSchema>;
 export default function SignupForm() {
   const { mutate: signUp, isPending } = useSignUp();
   const router = useRouter();
+  const [showPatientPassword, setShowPatientPassword] = useState(false);
+  const [showDentistPassword, setShowDentistPassword] = useState(false);
 
   const patientForm = useForm<PatientFormValues>({
     resolver: zodResolver(patientSchema),
@@ -62,7 +65,6 @@ export default function SignupForm() {
     },
   });
 
-  // Dentist form
   const dentistForm = useForm<DentistFormValues>({
     resolver: zodResolver(dentistSchema),
     defaultValues: {
@@ -72,8 +74,15 @@ export default function SignupForm() {
     },
   });
 
+  const togglePatientPasswordVisibility = () => {
+    setShowPatientPassword(!showPatientPassword);
+  };
+
+  const toggleDentistPasswordVisibility = () => {
+    setShowDentistPassword(!showDentistPassword);
+  };
+
   const onPatientSubmit = (data: PatientFormValues) => {
-    console.log("Patient signup:", data);
     signUp(
       {
         name: data.fullName,
@@ -84,7 +93,7 @@ export default function SignupForm() {
       },
       {
         onSuccess: () => {
-          toast.success("User registered successfully");
+          toast.success("Patient registered successfully");
           router.replace("/login");
         },
         onError: (err) => {
@@ -101,7 +110,6 @@ export default function SignupForm() {
   };
 
   const onDentistSubmit = (data: DentistFormValues) => {
-    console.log("Dentist signup:", data);
     signUp(
       {
         email: data.email,
@@ -110,7 +118,7 @@ export default function SignupForm() {
       },
       {
         onSuccess: () => {
-          toast.success("User registered successfully");
+          toast.success("Dentist registered successfully");
           router.replace("/login");
         },
         onError: (err) => {
@@ -125,16 +133,6 @@ export default function SignupForm() {
       }
     );
   };
-
-  // const watchedPatientEmail = patientForm.watch("email");
-  // const watchedDentistEmail = dentistForm.watch("email");
-  // const email =
-  //   userType === "patient" ? watchedPatientEmail : watchedDentistEmail;
-
-  // useEffect(() => {
-  //   console.log("dentist :", isSubmittingDentist);
-  //   console.log("patient :", isSubmittingPatient);
-  // }, [isSubmittingDentist, isSubmittingPatient]);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50">
@@ -241,11 +239,22 @@ export default function SignupForm() {
                         <div className="relative">
                           <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                           <Input
-                            type="password"
+                            type={showPatientPassword ? "text" : "password"}
                             placeholder="Password"
-                            className="pl-10"
+                            className="pl-10 pr-10"
                             {...field}
                           />
+                          <button
+                            type="button"
+                            className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                            onClick={togglePatientPasswordVisibility}
+                          >
+                            {showPatientPassword ? (
+                              <EyeOff className="h-4 w-4" />
+                            ) : (
+                              <Eye className="h-4 w-4" />
+                            )}
+                          </button>
                         </div>
                       </FormControl>
                       <FormMessage className="text-xs text-red-500" />
@@ -306,11 +315,22 @@ export default function SignupForm() {
                         <div className="relative">
                           <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                           <Input
-                            type="password"
+                            type={showDentistPassword ? "text" : "password"}
                             placeholder="Password"
-                            className="pl-10"
+                            className="pl-10 pr-10"
                             {...field}
                           />
+                          <button
+                            type="button"
+                            className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                            onClick={toggleDentistPasswordVisibility}
+                          >
+                            {showDentistPassword ? (
+                              <EyeOff className="h-4 w-4" />
+                            ) : (
+                              <Eye className="h-4 w-4" />
+                            )}
+                          </button>
                         </div>
                       </FormControl>
                       <FormMessage className="text-xs text-red-500" />

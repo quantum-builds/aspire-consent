@@ -1,12 +1,7 @@
 import type { Metadata } from "next";
 import SideBar from "@/components/SideBar";
 import SmallScreenSideBar from "@/components/SmallScreenSideBar";
-import {
-  ConsentFormIcon,
-  DashboardIcon,
-  PatientIcon,
-  SettingIcon,
-} from "@/asssets";
+import { ConsentFormIcon, DashboardIcon, PatientIcon } from "@/asssets";
 
 export const metadata: Metadata = {
   title: "Aspire Consent",
@@ -21,7 +16,7 @@ const SIDE_BAR_DATA = [
     link: "/dentist/consent-forms",
   },
   { text: "Patients", logo: PatientIcon, link: "/dentist/patients" },
-  { text: "Settings", logo: SettingIcon, link: "/settings" },
+  // { text: "Settings", logo: SettingIcon, link: "/settings" },
 ];
 
 export default function RootLayout({
@@ -38,7 +33,7 @@ export default function RootLayout({
 
       {/* Mobile Sidebar Wrapper */}
       <div className="lg:hidden relative z-40">
-        <SmallScreenSideBar  data={SIDE_BAR_DATA}/>
+        <SmallScreenSideBar data={SIDE_BAR_DATA} />
       </div>
 
       {/* Main Content */}

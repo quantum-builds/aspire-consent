@@ -78,7 +78,7 @@ model ConsentFormMCQSnapshot {
   correctAnswer   String
   options         String[]
   videoUrl        String
-  consentFormLink ConsentFormLink @relation(fields: [consentFormLinkId], references: [id])
+  consentFormLink ConsentFormLink @relation(fields: [consentFormLinkId], references: [id],onDelete: Cascade)
   consentFormLinkId String
   answers         FormAnswer[]
   
@@ -89,9 +89,9 @@ model ConsentFormLink {
   id           String     @id @default(cuid())
   token        String     @unique
   dentistId    String
-  dentist      User       @relation("DentistConsentLinks", fields: [dentistId], references: [id])
+  dentist      User       @relation("DentistConsentLinks", fields: [dentistId], references: [id], onDelete: Cascade)
   patientId String 
-  patient      User      @relation("PatientConsentLinks", fields: [patientId], references: [id])
+  patient      User      @relation("PatientConsentLinks", fields: [patientId], references: [id],onDelete: Cascade)
   procedureId  String
   procedure    Procedure  @relation(fields: [procedureId], references: [id])
   snapshotMCQs ConsentFormMCQSnapshot[]
