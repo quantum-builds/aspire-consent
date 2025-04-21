@@ -4,7 +4,7 @@ import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Trash, Edit2, List, MoreHorizontal } from "lucide-react";
+import {  List, MoreHorizontal } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -76,7 +76,7 @@ export default function ConsentFormsList({
                               View questions
                             </Link>
                           </Button>
-                          <Button variant="ghost" size="sm" className="h-8">
+                          {/* <Button variant="ghost" size="sm" className="h-8">
                             <Edit2 width={20} height={20} className="mr-1" />
                             Edit
                           </Button>
@@ -87,7 +87,7 @@ export default function ConsentFormsList({
                           >
                             <Trash width={20} height={20} className="mr-1" />
                             Delete
-                          </Button>
+                          </Button> */}
                         </div>
 
                         {/* Mobile view - show dropdown menu */}
@@ -112,7 +112,7 @@ export default function ConsentFormsList({
                                   View questions
                                 </Link>
                               </DropdownMenuItem>
-                              <DropdownMenuItem className="cursor-pointer">
+                              {/* <DropdownMenuItem className="cursor-pointer">
                                 <Edit2
                                   width={16}
                                   height={16}
@@ -127,7 +127,7 @@ export default function ConsentFormsList({
                                   className="mr-2"
                                 />
                                 Delete
-                              </DropdownMenuItem>
+                              </DropdownMenuItem> */}
                             </DropdownMenuContent>
                           </DropdownMenu>
                         </div>

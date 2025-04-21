@@ -173,12 +173,12 @@ export default function ConsentForm({
                       <FormDescription className="text-md">
                         Select existing patient or add a new patient
                       </FormDescription>
-                      <button
+                      {/* <button
                         type="button"
                         className="text-xl font-medium flex items-center mt-1 text-[#698AFF]"
                       >
                         + Add new patient
-                      </button>
+                      </button> */}
                       <FormMessage className="text-red-500" />
                     </div>
                   </FormItem>
