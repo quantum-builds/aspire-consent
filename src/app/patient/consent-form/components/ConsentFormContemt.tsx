@@ -40,9 +40,11 @@ export default function ConsentFormContent({
   const router = useRouter();
   const { data: session } = useSession();
   const token = session?.user;
-  if (token?.email !== email) {
-    router.replace("/unauthorize");
-  }
+  useEffect(() => {
+    if (token?.email && email && token.email !== email) {
+      router.replace("/unauthorize");
+    }
+  }, [token?.email, email, router]);
 
   const [answers, setAnswers] = useState<Record<string, string | null>>({});
   const [answerStatus, setAnswerStatus] = useState<Record<string, boolean>>({});

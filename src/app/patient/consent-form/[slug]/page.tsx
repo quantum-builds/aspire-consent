@@ -1,5 +1,6 @@
 import { Suspense } from "react";
-import ConsentForm from "../components/ConsentForm";
+import ConsentForm from "@/app/patient/consent-form/components/ConsentForm";
+import ConsentFormContentSkeleton from "@/app/patient/consent-form/components/ConsentFormContentSkeleton";
 
 type Params = Promise<{ slug: string }>;
 export default async function Page({ params }: { params: Params }) {
@@ -7,13 +8,7 @@ export default async function Page({ params }: { params: Params }) {
   const token = decodeURIComponent(slug);
   console.log("token is ", token);
   return (
-    <Suspense
-      fallback={
-        <div className="flex justify-center items-center h-screen">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-[#1D120C]"></div>
-        </div>
-      }
-    >
+    <Suspense fallback={<ConsentFormContentSkeleton />}>
       <ConsentForm token={token} />
     </Suspense>
   );
