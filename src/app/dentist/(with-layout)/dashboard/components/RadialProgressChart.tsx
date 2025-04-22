@@ -57,7 +57,7 @@ export default function RadialProgressChart() {
   return (
     <div className="w-full p-6 bg-white rounded-lg shadow-md h-full my-auto ">
       <div className="flex items-center justify-between flex-row md:flex-col lg:flex-row ">
-        <div className="w-[180px] h-[180px] relative">
+        <div className="w-[180px] h-[180px] xl:w-60 xl:h-60 relative">
           <ResponsiveContainer width="100%" height="100%">
             <RadialBarChart
               innerRadius="30%"
@@ -84,7 +84,7 @@ export default function RadialProgressChart() {
           </ResponsiveContainer>
         </div>
 
-        <div className="flex flex-col md:flex-row lg:flex-col 2xl:flex-row mx-0 2xl:mx-auto gap-3">
+        <div className="flex flex-col md:flex-row lg:flex-col gap-3">
           {data.map((entry, index) => (
             <div key={index} className="flex items-center gap-2">
               <div

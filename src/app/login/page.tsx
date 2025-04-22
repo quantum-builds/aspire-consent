@@ -19,6 +19,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { AspireConsentBlackLogo } from "@/asssets";
+import Link from "next/link";
 
 // Define the login form schema with Zod
 const loginFormSchema = z.object({
@@ -220,14 +221,14 @@ export default function LoginPage() {
                   </FormItem>
                 )}
               /> */}
-              {/* <div className="text-sm">
+              <div className="text-sm">
                 <Link
                   href="/forgot-password"
                   className="text-indigo-500 hover:text-indigo-600"
                 >
                   Forgot Password?
                 </Link>
-              </div> */}
+              </div>
             </div>
 
             <div>
