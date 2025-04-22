@@ -1,7 +1,6 @@
 import SearchInput from "@/components/SearchInput";
-import { ProfilePic } from "@/asssets";
 import { Bell } from "lucide-react";
-import Image from "next/image";
+import ProfilePiceDropDown from "@/components/ProfilePicDropDown";
 
 type HeaderProps = { showSearch?: boolean };
 
@@ -23,13 +22,14 @@ export default function Header({ showSearch = true }: HeaderProps) {
             2
           </p>
         </div>
-        <Image
+        {/* <Image
           src={ProfilePic}
           alt="profile-pic"
           className="rounded-full cursor-pointer"
           height={60}
           width={60}
-        />
+        /> */}
+        <ProfilePiceDropDown />
       </div>
     </div>
   );

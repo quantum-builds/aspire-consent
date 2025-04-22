@@ -62,13 +62,13 @@ export default function Dashboard() {
             <RadialProgressChart />
           </div>
         </div>
-        <div className="hidden lg:grid grid-cols-2 xl:grid-cols-3 col-span-3 gap-3">
+        <div className="hidden lg:grid grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 col-span-3 gap-3">
           {/*  */}
           <div className="col-span-1">
             <RadialProgressChart />
           </div>
           {/*  */}
-          <div className="col-span-1 xl:col-span-2">
+          <div className="col-span-1 xl:col-span-2 2xl:col-span-3">
             <AppointmentCard />
           </div>
         </div>

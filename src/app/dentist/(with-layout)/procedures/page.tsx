@@ -1,5 +1,5 @@
 import Header from "@/components/Header";
-import ConsentFormsList from "@/app/dentist/(with-layout)/consent-forms/components/ConsentFormsList";
+import ProcedureQuestionFormsList from "@/app/dentist/(with-layout)/procedures/components/ProceduresList";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import { getDentistProcedure } from "@/services/dentist-procedure/DentistProcedureQuery";
@@ -23,9 +23,9 @@ export default async function Page() {
       <Header showSearch={false} />
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center my-4">
         <div className="flex flex-col gap-2">
-          <p className="text-2xl font-bold mb-2">Consent Forms</p>
+          <p className="text-2xl font-bold mb-2">Procedures</p>
           <p className="text-[#0000004D] mb-5 text-lg">
-            Manage and edit your consent forms for each treatment.
+            Manage and edit your procedure question forms.
           </p>
         </div>
 
@@ -37,7 +37,10 @@ export default async function Page() {
           New Consent
         </Link>
       </div>
-      <ConsentFormsList data={consentForms} errorMessage={errorMessage} />
+      <ProcedureQuestionFormsList
+        data={consentForms}
+        errorMessage={errorMessage}
+      />
     </div>
   );
 }

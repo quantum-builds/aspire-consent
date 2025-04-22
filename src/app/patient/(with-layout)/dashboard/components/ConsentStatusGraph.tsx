@@ -20,8 +20,8 @@ const ProgressCircle = ({
   const strokeDashoffset = circumference - (percentage / 100) * circumference;
 
   return (
-    <div className="flex flex-col items-center">
-      <div className="relative w-32 h-32 flex items-center justify-center">
+    <div className="flex flex-col 2xl:flex-row gap-0 xl:gap-3 items-center">
+      <div className="relative w-32 h-32 2xl:w-40 2xl:h-40 flex items-center justify-center">
         <svg className="w-full h-full" viewBox="0 0 100 100">
           {/* Background circle */}
           <circle
@@ -60,13 +60,13 @@ const ProgressCircle = ({
 export default function ConsentStatus() {
   return (
     <Card className="w-full mx-auto shadow-md">
-      <CardHeader className="pb-2">
+      <CardHeader>
         <CardTitle className="text-xl font-medium text-gray-800">
           Consent Status
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="flex flex-wrap justify-around gap-8 py-6">
+        <div className="flex flex-wrap justify-around gap-8 py-2">
           <ProgressCircle
             percentage={30}
             label="Pending"

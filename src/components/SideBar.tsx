@@ -1,20 +1,9 @@
 "use client";
 
-import { AspireConsentWhiteLogo, LogoutIcon } from "@/asssets";
-import { signOut } from "next-auth/react";
+import { AspireConsentWhiteLogo } from "@/asssets";
 import Image, { StaticImageData } from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "./ui/button";
-import { useState } from "react";
 
 type SideBarProps = {
   data: { text: string; logo: StaticImageData; link: string }[];
@@ -22,12 +11,12 @@ type SideBarProps = {
 
 export default function SideBar({ data }: SideBarProps) {
   const pathname = usePathname();
-  const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
+  // const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
 
-  async function handleLogout() {
-    await signOut();
-    setLogoutDialogOpen(false);
-  }
+  // async function handleLogout() {
+  //   await signOut();
+  //   setLogoutDialogOpen(false);
+  // }
 
   return (
     <div className="bg-[#5353FF] w-full  min-h-screen  px-6 py-8 lg:flex flex-col z-50">
@@ -63,7 +52,7 @@ export default function SideBar({ data }: SideBarProps) {
           );
         })}
       </div>
-      <div
+      {/* <div
         className="flex items-center gap-3 px-4 py-3 rounded-lg transition-all hover:bg-[#698AFF] text-white cursor-pointer"
         onClick={() => setLogoutDialogOpen(true)}
       >
@@ -100,7 +89,7 @@ export default function SideBar({ data }: SideBarProps) {
             </Button>
           </DialogFooter>
         </DialogContent>
-      </Dialog>
+      </Dialog> */}
     </div>
   );
 }

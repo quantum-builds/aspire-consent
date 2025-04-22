@@ -12,6 +12,9 @@ import {
 import { useRouter, useSearchParams } from "next/navigation";
 import getPathAfterUploadsImages from "@/utils/getSplittedPath";
 import { useSession } from "next-auth/react";
+import Image from "next/image";
+import { AspireConsentBlackLogo } from "@/asssets";
+// import { useSendEmail } from "@/services/email/emailMutation";
 
 // Schema validation
 const submitFormSchema = z.object({
@@ -54,6 +57,7 @@ export default function ConsentFormContent({
   const { mutate: saveDraft, isPending: isSavingDraft } = useSaveDraftAnswers();
   const { mutate: submitForm, isPending: isSubmitting } =
     useSubmitConsentForm();
+  // const { mutate: sendEmail, isPending: isEmailPending } = useSendEmail();
 
   // Initialize answers with default values from data
   useEffect(() => {
@@ -164,6 +168,28 @@ export default function ConsentFormContent({
           onSuccess: () => {
             toast.success("Form submitted successfully!");
             router.replace("/patient/dashboard");
+            // sendEmail(
+            //   {
+            //     to: data?.dentist.email,
+            //     subject: "Consent Form to Fill",
+            //     text: `This is the consent for you send by ${data.dentistEmail} \n ${process.env.NEXT_PUBLIC_BASE_URL}patient/consent-form/${data.token}?email=${data.patientEmail}`,
+            //   },
+            //   {
+            //     onSuccess: () => {
+            //       toast.success("Consent Link send on provided email");
+            //       form.reset();
+            //     },
+            //     onError: (err) => {
+            //       if (axios.isAxiosError(err) && err.response) {
+            //         const message =
+            //           err.response.data?.message || "Something went wrong";
+            //         toast.error(message);
+            //       } else {
+            //         toast.error("Network error. Please check your connection.");
+            //       }
+            //     },
+            //   }
+            // );
           },
           onError: () => toast.error("Failed to submit form"),
         }
@@ -185,201 +211,213 @@ export default function ConsentFormContent({
   }
 
   return (
-    <div className="max-w-3xl mx-auto p-4 bg-white rounded-lg shadow-sm border border-gray-200">
-      <h1 className="text-xl font-medium text-gray-800 mb-2">
-        Consent Form: {data.procedure.name}
-      </h1>
-      <p className="text-sm text-gray-500 mb-6">
-        Please answer all questions correctly to proceed with the consent form.
-      </p>
-
-      <form onSubmit={handleSubmit}>
-        <div className="space-y-6">
-          {data.snapshotMCQs.map((mcq) => (
-            <div
-              key={mcq.id}
-              className={`p-4 border rounded-md ${
-                activeQuestion === mcq.id
-                  ? "border-blue-500 ring-1 ring-blue-500"
-                  : answerStatus[mcq.id]
-                  ? "border-green-200 bg-green-50"
-                  : answers[mcq.id] !== null && !answerStatus[mcq.id]
-                  ? "border-red-200 bg-red-50"
-                  : "border-gray-200"
-              }`}
-              onClick={() => setActiveQuestion(mcq.id)}
-            >
-              <p className="font-medium text-gray-700 mb-3">
-                Q: {mcq.questionText}
-              </p>
-
-              <div className="space-y-2">
-                {mcq.options.map((option, index) => (
-                  <div
-                    className="flex items-center justify-between"
-                    key={`${mcq.id}-${option}`}
-                  >
-                    <div className="flex items-center gap-2">
-                      <span className="text-gray-600">
-                        {String.fromCharCode(97 + index).toUpperCase()}.
-                      </span>
-                      <span className="text-gray-600">{option}</span>
-                    </div>
-                    <div
-                      className={`w-5 h-5 border rounded flex items-center justify-center cursor-pointer ${
-                        answers[mcq.id] === option
-                          ? answerStatus[mcq.id] !== undefined
-                            ? answerStatus[mcq.id]
-                              ? "bg-green-100 border-green-400"
-                              : "bg-red-100 border-red-400"
-                            : "bg-blue-50 border-blue-300"
-                          : "border-gray-300"
-                      }`}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleAnswerSelect(mcq.id, option);
-                      }}
-                    >
-                      {answers[mcq.id] === option &&
-                        answerStatus[mcq.id] !== undefined &&
-                        (answerStatus[mcq.id] ? (
-                          <Check className="w-4 h-4 text-green-600" />
-                        ) : (
-                          <X className="w-4 h-4 text-red-600" />
-                        ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <div className="flex justify-between mt-4">
-                <div className="text-sm">
-                  {answerStatus[mcq.id] !== undefined && answers[mcq.id] && (
-                    <span
-                      className={
-                        answerStatus[mcq.id] ? "text-green-600" : "text-red-600"
-                      }
-                    >
-                      {answerStatus[mcq.id] ? "Correct" : "Incorrect"}
-                    </span>
-                  )}
-                </div>
-
-                <div className="flex items-center gap-2">
-                  {currentVideo?.mcqId === mcq.id ? (
-                    <button
-                      type="button"
-                      className="text-sm text-blue-500 hover:underline"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setCurrentVideo(null);
-                      }}
-                    >
-                      Hide video
-                    </button>
-                  ) : (
-                    <button
-                      type="button"
-                      className="text-sm text-blue-500 hover:underline flex items-center gap-1"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setCurrentVideo({ mcqId: mcq.id, autoplay: false });
-                      }}
-                    >
-                      <Play className="w-3 h-3" /> Watch video
-                    </button>
-                  )}
-
-                  {answers[mcq.id] && answerStatus[mcq.id] === undefined && (
-                    <button
-                      type="button"
-                      className="text-sm bg-blue-500 text-white px-2 py-1 rounded"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        checkAnswer(mcq.id);
-                      }}
-                    >
-                      Check
-                    </button>
-                  )}
-                </div>
-              </div>
-
-              {currentVideo?.mcqId === mcq.id && (
-                <div className="mt-4 pt-4 border-t border-gray-200">
-                  <h4 className="text-sm font-medium text-gray-700 mb-2">
-                    Educational Video:
-                    {getPathAfterUploadsImages(
-                      mcq.videoName || "/uploads/aspire-consent/placeholder.mp4"
-                    ) || "Explanation"}
-                  </h4>
-                  <iframe
-                    src={`${mcq.videoUrl}${
-                      currentVideo.autoplay ? "?autoplay=1" : ""
-                    }`}
-                    className="w-full aspect-video rounded"
-                    allowFullScreen
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  ></iframe>
-                </div>
-              )}
-            </div>
-          ))}
-
-          <div className="mt-6 flex items-start gap-2">
-            <div
-              className={`mt-0.5 w-5 h-5 border rounded flex-shrink-0 flex items-center justify-center cursor-pointer ${
-                consent ? "border-blue-500 bg-blue-50" : "border-gray-300"
-              }`}
-              onClick={() => setConsent(!consent)}
-            >
-              {consent && <Check className="w-4 h-4 text-blue-600" />}
-            </div>
-            <label
-              className="text-sm text-gray-600 cursor-pointer"
-              onClick={() => setConsent(!consent)}
-            >
-              I understand the information provided and consent to the
-              treatment.
-            </label>
-          </div>
-
-          <div className="flex justify-between gap-2 mt-6">
-            <button
-              type="button"
-              className="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-50 disabled:opacity-50"
-              onClick={handleSaveDraft}
-              disabled={isSavingDraft}
-            >
-              {isSavingDraft ? "Saving..." : "Save Progress"}
-            </button>
-            <div className="flex gap-2">
-              {!allCorrect && (
-                <button
-                  type="button"
-                  className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-                  onClick={() => {
-                    Object.keys(answers).forEach((mcqId) => {
-                      if (!answerStatus[mcqId] && answers[mcqId]) {
-                        checkAnswer(mcqId);
-                      }
-                    });
-                  }}
-                >
-                  Check Answers
-                </button>
-              )}
-              <button
-                type="submit"
-                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
-                disabled={!allCorrect || !consent || isSubmitting}
+    <div className="flex flex-col gap-10 max-w-6xl mx-auto">
+      <Image
+        src={AspireConsentBlackLogo || "/placeholder.svg"}
+        alt="Aspire Logo"
+        width={140}
+        className="object-contain "
+        priority
+      />
+      <div className="py-10 px-10 bg-[#698AFF4D] rounded-lg shadow-sm border border-gray-200 text-lg">
+        Hi {data.patient.fullName}, You’ve scheduled a
+        <span className="font-semibold">{data.procedure.name}</span>! Please
+        take a moment to complete this short quiz to help you better understand
+        the procedure and what to expect. If you’re unsure about any answer,
+        feel free to watch the provided video.
+      </div>
+      <div className="p-4 bg-white rounded-lg shadow-sm border border-gray-200">
+        <form onSubmit={handleSubmit}>
+          <div className="space-y-6">
+            {data.snapshotMCQs.map((mcq) => (
+              <div
+                key={mcq.id}
+                className={`p-4 border rounded-md ${
+                  activeQuestion === mcq.id
+                    ? "border-blue-500 ring-1 ring-blue-500"
+                    : answerStatus[mcq.id]
+                    ? "border-green-200 bg-green-50"
+                    : answers[mcq.id] !== null && !answerStatus[mcq.id]
+                    ? "border-red-200 bg-red-50"
+                    : "border-gray-200"
+                }`}
+                onClick={() => setActiveQuestion(mcq.id)}
               >
-                {isSubmitting ? "Submitting..." : "Submit"}
+                <p className="font-medium text-gray-700 mb-3">
+                  Q: {mcq.questionText}
+                </p>
+
+                <div className="space-y-2">
+                  {mcq.options.map((option, index) => (
+                    <div
+                      className="flex items-center justify-between"
+                      key={`${mcq.id}-${option}`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="text-gray-600">
+                          {String.fromCharCode(97 + index).toUpperCase()}.
+                        </span>
+                        <span className="text-gray-600">{option}</span>
+                      </div>
+                      <div
+                        className={`w-5 h-5 border rounded flex items-center justify-center cursor-pointer ${
+                          answers[mcq.id] === option
+                            ? answerStatus[mcq.id] !== undefined
+                              ? answerStatus[mcq.id]
+                                ? "bg-green-100 border-green-400"
+                                : "bg-red-100 border-red-400"
+                              : "bg-blue-50 border-blue-300"
+                            : "border-gray-300"
+                        }`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleAnswerSelect(mcq.id, option);
+                        }}
+                      >
+                        {answers[mcq.id] === option &&
+                          answerStatus[mcq.id] !== undefined &&
+                          (answerStatus[mcq.id] ? (
+                            <Check className="w-4 h-4 text-green-600" />
+                          ) : (
+                            <X className="w-4 h-4 text-red-600" />
+                          ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="flex justify-between mt-4">
+                  <div className="text-sm">
+                    {answerStatus[mcq.id] !== undefined && answers[mcq.id] && (
+                      <span
+                        className={
+                          answerStatus[mcq.id]
+                            ? "text-green-600"
+                            : "text-red-600"
+                        }
+                      >
+                        {answerStatus[mcq.id] ? "Correct" : "Incorrect"}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    {currentVideo?.mcqId === mcq.id ? (
+                      <button
+                        type="button"
+                        className="text-sm text-blue-500 hover:underline"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setCurrentVideo(null);
+                        }}
+                      >
+                        Hide video
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        className="text-sm text-blue-500 hover:underline flex items-center gap-1"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setCurrentVideo({ mcqId: mcq.id, autoplay: false });
+                        }}
+                      >
+                        <Play className="w-3 h-3" /> Watch video
+                      </button>
+                    )}
+
+                    {answers[mcq.id] && answerStatus[mcq.id] === undefined && (
+                      <button
+                        type="button"
+                        className="text-sm bg-blue-500 text-white px-2 py-1 rounded"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          checkAnswer(mcq.id);
+                        }}
+                      >
+                        Check
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {currentVideo?.mcqId === mcq.id && (
+                  <div className="mt-4 pt-4 border-t border-gray-200">
+                    <h4 className="text-sm font-medium text-gray-700 mb-2">
+                      Educational Video:
+                      {getPathAfterUploadsImages(
+                        mcq.videoName ||
+                          "/uploads/aspire-consent/placeholder.mp4"
+                      ) || "Explanation"}
+                    </h4>
+                    <iframe
+                      src={`${mcq.videoUrl}${
+                        currentVideo.autoplay ? "?autoplay=1" : ""
+                      }`}
+                      className="w-full aspect-video rounded"
+                      allowFullScreen
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    ></iframe>
+                  </div>
+                )}
+              </div>
+            ))}
+
+            <div className="mt-6 flex items-start gap-2">
+              <div
+                className={`mt-0.5 w-5 h-5 border rounded flex-shrink-0 flex items-center justify-center cursor-pointer ${
+                  consent ? "border-blue-500 bg-blue-50" : "border-gray-300"
+                }`}
+                onClick={() => setConsent(!consent)}
+              >
+                {consent && <Check className="w-4 h-4 text-blue-600" />}
+              </div>
+              <label
+                className="text-sm text-gray-600 cursor-pointer"
+                onClick={() => setConsent(!consent)}
+              >
+                I understand the information provided and consent to the
+                treatment.
+              </label>
+            </div>
+
+            <div className="flex justify-between gap-2 mt-6">
+              <button
+                type="button"
+                className="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                onClick={handleSaveDraft}
+                disabled={isSavingDraft}
+              >
+                {isSavingDraft ? "Saving..." : "Save Progress"}
               </button>
+              <div className="flex gap-2">
+                {!allCorrect && (
+                  <button
+                    type="button"
+                    className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+                    onClick={() => {
+                      Object.keys(answers).forEach((mcqId) => {
+                        if (!answerStatus[mcqId] && answers[mcqId]) {
+                          checkAnswer(mcqId);
+                        }
+                      });
+                    }}
+                  >
+                    Check Answers
+                  </button>
+                )}
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={!allCorrect || !consent || isSubmitting}
+                >
+                  {isSubmitting ? "Submitting..." : "Submit"}
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
   );
 }

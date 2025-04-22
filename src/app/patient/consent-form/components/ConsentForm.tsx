@@ -1,4 +1,3 @@
-import Header from "@/components/Header";
 import { PatientInputConsentForm } from "@/types/consent-form";
 import { Response } from "@/types/common";
 import { getConsentForm } from "@/services/consent-form/ConsentFormQuery";
@@ -24,8 +23,8 @@ export default async function ConsentForm({ token }: ConsentFormProps) {
   }
 
   return (
-    <div className="p-3 md:p-6">
-      <Header showSearch={false} />
+    <div className="p-6 md:p-12">
+      {/* <Header showSearch={false} /> */}
       {errorMessage ? (
         <div className="max-w-2xl mx-auto p-4 bg-white rounded-lg shadow-sm border border-gray-200 mt-8">
           <h1 className="text-xl font-medium text-gray-800 mb-2">

@@ -65,7 +65,7 @@ export default function Page() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center my-4">
         <div className="flex flex-col gap-2">
           <p className="text-2xl font-bold mb-3">Dashboard</p>
-          <p className="text-[#0000004D] mb-6">17th April 2025</p>
+          <p className="text-[#0000004D] mb-6">22th April 2025</p>
         </div>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-3 gap-y-5">

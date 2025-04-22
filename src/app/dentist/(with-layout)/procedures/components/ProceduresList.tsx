@@ -4,7 +4,7 @@ import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import {  List, MoreHorizontal } from "lucide-react";
+import { List, MoreHorizontal } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,15 +16,15 @@ import { TDentistProcedure } from "@/types/dentist-procedure";
 import { useEffect } from "react";
 import toast from "react-hot-toast";
 
-type ConsentFormListProps = {
+type ProcedureQuestionFormListProps = {
   data: TDentistProcedure[];
   errorMessage?: string | null;
 };
 
-export default function ConsentFormsList({
+export default function ProcedureQuestionFormsList({
   data,
   errorMessage,
-}: ConsentFormListProps) {
+}: ProcedureQuestionFormListProps) {
   useEffect(() => {
     if (errorMessage) {
       toast.error(errorMessage, { id: "fetch-dentist-procedure-error" });
@@ -36,7 +36,7 @@ export default function ConsentFormsList({
       <Card className="w-full mx-auto shadow-sm">
         <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-2 space-y-3 sm:space-y-0">
           <CardTitle className="text-lg sm:text-xl font-medium">
-            All Consent Forms
+            All Procedures
           </CardTitle>
           <div className="relative w-full sm:w-1/3">
             <Search className="absolute left-2 top-4 h-4 w-4 text-muted-foreground" />

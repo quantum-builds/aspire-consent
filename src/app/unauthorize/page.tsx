@@ -36,7 +36,7 @@ export default function UnauthorizedPage() {
               console.log("hdwehduwdhuwehduwhdwhe");
               router.replace(dashboardLink);
             }}
-            className="inline-flex items-center gap-2 bg-[#698AFF] hover:bg-[#5470E0] text-white font-medium py-3 px-6 rounded-lg transition-all shadow-lg shadow-[#698AFF]/30 hover:shadow-xl hover:shadow-[#698AFF]/40"
+            className="inline-flex items-center gap-2 bg-[#698AFF] hover:bg-[#5470E0] text-white font-medium py-5 px-6 rounded-lg transition-all shadow-lg shadow-[#698AFF]/30 hover:shadow-xl hover:shadow-[#698AFF]/40"
           >
             <ArrowLeft size={20} />
             <span>Back to Dashboard</span>

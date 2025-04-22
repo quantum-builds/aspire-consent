@@ -11,9 +11,9 @@ export const metadata: Metadata = {
 const SIDE_BAR_DATA = [
   { text: "Dashboard", logo: DashboardIcon, link: "/dentist/dashboard" },
   {
-    text: "Consent Forms",
+    text: "Procedures",
     logo: ConsentFormIcon,
-    link: "/dentist/consent-forms",
+    link: "/dentist/procedures",
   },
   { text: "Patients", logo: PatientIcon, link: "/dentist/patients" },
   // { text: "Settings", logo: SettingIcon, link: "/settings" },

@@ -50,9 +50,13 @@ export async function middleware(req: NextRequest) {
     const callbackUrl = encodeURIComponent(
       req.nextUrl.pathname + req.nextUrl.search
     );
-    return NextResponse.redirect(
-      new URL(`/login?callbackUrl=${callbackUrl}`, req.url)
-    );
+    if (req.nextUrl.pathname.startsWith("/patient/consent-form")) {
+      return NextResponse.redirect(
+        new URL(`/login?callbackUrl=${callbackUrl}`, req.url)
+      );
+    } else {
+      return NextResponse.redirect(new URL(`/login`, req.url));
+    }
   }
 
   if (token && isProtectedPath) {

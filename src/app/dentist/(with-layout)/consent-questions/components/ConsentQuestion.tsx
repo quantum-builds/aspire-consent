@@ -1,6 +1,4 @@
 import Header from "@/components/Header";
-import { Plus } from "lucide-react";
-import Link from "next/link";
 import QuestionList from "@/app/dentist/(with-layout)/consent-questions/components/QuestionList";
 import { ExtendedTMCQ } from "@/types/mcq";
 import { Response } from "@/types/common";
@@ -42,13 +40,13 @@ export default async function ConsentQuestion({
             Review questions and give answers for this treatment.
           </p>
         </div>
-        <Link
+        {/* <Link
           className="bg-[#698AFF] hover:bg-[#698AFF] text-white cursor-pointer py-2 px-4 text-sm flex items-center justify-center rounded-md"
           href={"/dentist/new-consent-form"}
         >
           <Plus width={16} height={16} className="mr-1" />
           New Consent
-        </Link>
+        </Link> */}
       </div>
 
       <QuestionList
