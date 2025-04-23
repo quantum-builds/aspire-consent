@@ -5,6 +5,8 @@ import { Response } from "@/types/common";
 import { getDentistProcedure } from "@/services/dentist-procedure/DentistProcedureQuery";
 import { ExtendedTUser } from "@/types/user";
 import { getUsers } from "@/services/user/UserQuery";
+import Link from "next/link";
+import { MoveLeft } from "lucide-react";
 
 export default async function Page() {
   let procedureErrorMessage = undefined;
@@ -34,7 +36,12 @@ export default async function Page() {
   return (
     <div className="">
       <Header showSearch={false} />
-      <p className="text-2xl font-bold mb-2">New Consent</p>
+      <div className="flex items-center gap-4">
+        <Link href={"/dentist/dashboard"}>
+          <MoveLeft size={30} className="cursor-pointer" />
+        </Link>
+        <p className="text-2xl font-bold mb-2">New Consent</p>
+      </div>
       <p className="text-[#0000004D] mb-5 text-lg">
         Create new consent request to be sent to a patient.
       </p>
