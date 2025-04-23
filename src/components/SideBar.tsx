@@ -11,15 +11,9 @@ type SideBarProps = {
 
 export default function SideBar({ data }: SideBarProps) {
   const pathname = usePathname();
-  // const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
-
-  // async function handleLogout() {
-  //   await signOut();
-  //   setLogoutDialogOpen(false);
-  // }
 
   return (
-    <div className="bg-[#5353FF] w-full  min-h-screen  px-6 py-8 lg:flex flex-col z-50">
+    <div className="bg-[#5353FF] w-full min-h-screen px-6 py-8 lg:flex flex-col z-50">
       <div className="mb-10 flex items-center justify-center">
         <Image
           src={AspireConsentWhiteLogo}
@@ -32,7 +26,10 @@ export default function SideBar({ data }: SideBarProps) {
 
       <div className="flex flex-col gap-4 mb-4">
         {data.map((content, index) => {
-          const isActive = pathname === content.link;
+          // Check if current path exactly matches or starts with the link
+          const isActive =
+            pathname === content.link ||
+            pathname.startsWith(`${content.link}/`);
           return (
             <Link
               key={index}
@@ -52,44 +49,6 @@ export default function SideBar({ data }: SideBarProps) {
           );
         })}
       </div>
-      {/* <div
-        className="flex items-center gap-3 px-4 py-3 rounded-lg transition-all hover:bg-[#698AFF] text-white cursor-pointer"
-        onClick={() => setLogoutDialogOpen(true)}
-      >
-        <Image src={LogoutIcon} alt="logout-logo" width={20} height={20} />
-        <span className="text-lg text-white">Logout</span>
-      </div>
-
-      <Dialog open={logoutDialogOpen} onOpenChange={setLogoutDialogOpen}>
-        <DialogContent className="sm:max-w-[400px] bg-white">
-          <DialogHeader>
-            <DialogTitle>Confirm Logout</DialogTitle>
-            <DialogDescription>
-              Are you sure you want to log out of the admin panel?
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="mt-4">
-            <Button
-              variant="outline"
-              onClick={() => setLogoutDialogOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={handleLogout}
-              className="bg-[#698AFF] hover:bg-[#698AFF]  text-white"
-            >
-              <Image
-                src={LogoutIcon}
-                alt="logout-logo"
-                width={20}
-                height={20}
-              />
-              Logout
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog> */}
     </div>
   );
 }

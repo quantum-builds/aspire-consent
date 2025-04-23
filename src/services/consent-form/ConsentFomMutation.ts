@@ -32,56 +32,175 @@ export const useCreateConsentFormLink = () => {
   });
 };
 
+// export const useSaveDraftAnswers = () => {
+//   return useMutation({
+//     mutationFn: async ({
+//       formId,
+//       answers,
+//     }: {
+//       formId: string;
+//       answers: Array<{
+//         mcqId: string;
+//         selectedAnswer: string;
+//       }>;
+//     }) => {
+//       const response = await axiosInstance.patch(
+//         ENDPOINTS.consentLink.updatePatientFormAnswers(formId),
+//         { answers }
+//       );
+//       return response.data;
+//     },
+//     onError: (err) => {
+//       console.error("Error saving draft answers:", err);
+//     },
+//     onSuccess: (data) => {
+//       console.log("Draft answers saved:", data);
+//     },
+//   });
+// };
+
+// export const useSubmitConsentForm = () => {
+//   return useMutation({
+//     mutationFn: async ({
+//       formId,
+//       answers = [],
+//     }: {
+//       formId: string;
+//       answers?: Array<{
+//         mcqId: string;
+//         selectedAnswer: string;
+//       }>;
+//     }) => {
+//       const response = await axiosInstance.post(
+//         ENDPOINTS.consentLink.postPatientFormAnswers(formId),
+//         { answers }
+//       );
+//       return response.data;
+//     },
+//     onError: (err) => {
+//       console.error("Error submitting form:", err);
+//     },
+//     onSuccess: (data) => {
+//       console.log("Form submitted:", data);
+//     },
+//   });
+// };
+
+import { useSession } from "next-auth/react";
+import { UserRole } from "@prisma/client";
+
 export const useSaveDraftAnswers = () => {
   return useMutation({
     mutationFn: async ({
+      role,
       formId,
       answers,
+      formUpdates,
+      mcqUpdates,
     }: {
+      role?: string;
       formId: string;
-      answers: Array<{
+      answers?: Array<{
         mcqId: string;
         selectedAnswer: string;
       }>;
+      formUpdates?: {
+        expiresAt?: Date;
+        isActive?: boolean;
+      };
+      mcqUpdates?: Array<{
+        id: string;
+        questionText?: string;
+        correctAnswer?: string;
+        options?: string[];
+        videoUrl?: string;
+      }>;
     }) => {
-      const response = await axiosInstance.patch(
-        ENDPOINTS.consentLink.updatePatientFormAnswers(formId),
-        { answers }
-      );
-      return response.data;
+      console.log("IN MUTATION ", formId);
+      console.log("snap shot mcq is ", mcqUpdates);
+      // For patients - only answers
+      if (role === "dentist") {
+        const response = await axiosInstance.patch(
+          ENDPOINTS.consentLink.updatePatientFormAnswers(formId),
+          {
+            expiresAt: formUpdates?.expiresAt,
+            isActive: formUpdates?.isActive,
+            snapshotMCQs: mcqUpdates,
+          }
+        );
+        return response.data;
+      } else {
+        const response = await axiosInstance.patch(
+          ENDPOINTS.consentLink.updatePatientFormAnswers(formId),
+          { answers }
+        );
+        return response.data;
+      }
+
+      // For dentists - form metadata and MCQs
     },
     onError: (err) => {
-      console.error("Error saving draft answers:", err);
+      console.error("Error saving draft:", err);
     },
     onSuccess: (data) => {
-      console.log("Draft answers saved:", data);
+      console.log("Draft saved successfully:", data);
     },
   });
 };
 
 export const useSubmitConsentForm = () => {
+  const { data: session } = useSession();
+  const role = session?.user?.role as UserRole;
+
   return useMutation({
     mutationFn: async ({
       formId,
       answers = [],
+      finalize = false,
     }: {
       formId: string;
       answers?: Array<{
         mcqId: string;
         selectedAnswer: string;
       }>;
+      finalize?: boolean; // For dentists to finalize form
     }) => {
-      const response = await axiosInstance.post(
-        ENDPOINTS.consentLink.postPatientFormAnswers(formId),
-        { answers }
-      );
-      return response.data;
+      // For dentists - finalize form
+      if (role === "dentist" && finalize) {
+        const response = await axiosInstance.post(
+          ENDPOINTS.consentLink.postPatientFormAnswers(formId)
+        );
+        return response.data;
+      } else {
+        const response = await axiosInstance.post(
+          ENDPOINTS.consentLink.postPatientFormAnswers(formId),
+          { answers }
+        );
+        return response.data;
+      }
     },
     onError: (err) => {
       console.error("Error submitting form:", err);
     },
     onSuccess: (data) => {
-      console.log("Form submitted:", data);
+      console.log("Form submitted successfully:", data);
+    },
+  });
+};
+
+export const useDeleteConsentForm = () => {
+  return useMutation({
+    mutationFn: async ({ id }: { id: string }) => {
+      const response = await axiosInstance.delete(
+        ENDPOINTS.consentLink.deleteConsentForm(id)
+      );
+      return response.data.data;
+    },
+    onError: (err) => {
+      console.error("Service error in deleting consent form", err);
+    },
+    onSuccess: (data) => {
+      console.log("COnsent form deleted successfully", data);
     },
   });
 };

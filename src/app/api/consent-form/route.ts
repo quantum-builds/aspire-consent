@@ -9,10 +9,15 @@ const secret = process.env.NEXTAUTH_SECRET;
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
+    // Better token validation
     const token = searchParams.get("token");
-    const dentistId = searchParams.get("dentistId");
+    const hasValidToken = token && token !== "undefined" && token !== "null";
 
-    if (token) {
+    const sessionToken = await getToken({ req: req, secret });
+    const dentistId = sessionToken?.role === "dentist" ? sessionToken.id : null;
+
+    if (hasValidToken) {
+      console.log("token ", token);
       const consentLink = await prisma.consentFormLink.findUnique({
         where: { token },
         include: {
@@ -28,7 +33,6 @@ export async function GET(req: NextRequest) {
           },
         },
       });
-
       if (!consentLink) {
         return NextResponse.json(
           createResponse(false, "Link not found", null),
@@ -36,21 +40,21 @@ export async function GET(req: NextRequest) {
         );
       }
 
-      const now = new Date();
-      const isExpired = consentLink.expiresAt < now;
-      console.log("expire date is ", consentLink.expiresAt);
-      console.log("right now time is ", now);
-      const isActive = consentLink.isActive;
+      if (!dentistId) {
+        const now = new Date();
+        const isExpired = consentLink.expiresAt < now;
+        const isActive = consentLink.isActive;
 
-      if (!isActive || isExpired) {
-        return NextResponse.json(
-          createResponse(false, "This consent form is no longer available", {
-            status: consentLink.status,
-            isActive,
-            isExpired,
-          }),
-          { status: 410 }
-        );
+        if (!isActive || isExpired) {
+          return NextResponse.json(
+            createResponse(false, "This consent form is no longer available", {
+              status: consentLink.status,
+              isActive,
+              isExpired,
+            }),
+            { status: 410 }
+          );
+        }
       }
 
       const answersWithQuestions = consentLink.answers.map((answer) => ({
@@ -71,14 +75,20 @@ export async function GET(req: NextRequest) {
         }),
         { status: 200 }
       );
-    }
-
-    if (dentistId) {
+    } else if (dentistId) {
       const consentLinks = await prisma.consentFormLink.findMany({
         where: { dentistId },
         include: {
-          procedure: { select: { name: true } },
-          patient: { select: { fullName: true, email: true } },
+          procedure: { select: { id: true, name: true } },
+          dentist: { select: { id: true, email: true } },
+          patient: { select: { id: true, email: true, fullName: true } },
+          snapshotMCQs: true,
+          answers: {
+            include: {
+              mcqSnapshot: true,
+              originalMCQ: true,
+            },
+          },
           _count: {
             select: {
               answers: true,

@@ -6,7 +6,7 @@ export type DentistConsentForm = {
   expiresAt: Date;
 };
 
-export type PatientInputConsentForm = {
+export type TConsentForm = {
   id: string;
   token: string;
   procedure: { id: string; name: string };

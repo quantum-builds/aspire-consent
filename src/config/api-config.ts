@@ -30,6 +30,10 @@ export const ENDPOINTS = {
     getDentistProcedure: (procedureId?: string) =>
       `/api/dentist-procedure?procedureId=${procedureId}`,
   },
+  procedure: {
+    createProcedure: "/api/procedures",
+    deleteProcedure: (id: string) => `/api/procedures/${id}`,
+  },
   mcq: {
     getMCQ: (procedureName?: string) => {
       if (!procedureName) {
@@ -43,10 +47,11 @@ export const ENDPOINTS = {
   },
   consentLink: {
     createConsentFormLink: "/api/consent-form",
-    getConsentForm: (token: string, dentistId?: string) =>
+    getConsentForm: (token?: string, dentistId?: string) =>
       `/api/consent-form?token=${token}&dentistId=${dentistId}`,
     updatePatientFormAnswers: (id: string) => `/api/consent-form/${id}`,
     postPatientFormAnswers: (id: string) => `/api/consent-form/${id}`,
+    deleteConsentForm: (id: string) => `/api/consent-form/${id}`,
   },
   s3: {
     getSignedUrl: "/api/s3",

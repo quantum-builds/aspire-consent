@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createResponse } from "@/utils/createResponse";
 import prisma from "@/lib/db";
+import { getToken } from "next-auth/jwt";
 
 export async function GET() {
   try {
@@ -26,33 +27,63 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   try {
-    const procedures = await req.json();
+    // const procedures = await req.json();
 
-    const proceduresArray = Array.isArray(procedures)
-      ? procedures
-      : [procedures];
+    // const proceduresArray = Array.isArray(procedures)
+    //   ? procedures
+    //   : [procedures];
 
-    // Validate that each procedure has a name
-    const invalidProcedures = proceduresArray.filter(
-      (procedure) => !procedure.name || typeof procedure.name !== "string"
-    );
+    // // Validate that each procedure has a name
+    // const invalidProcedures = proceduresArray.filter(
+    //   (procedure) => !procedure.name || typeof procedure.name !== "string"
+    // );
 
-    if (invalidProcedures.length > 0) {
-      return NextResponse.json(
-        { message: "Each procedure must have a valid 'name' field" },
-        { status: 400 }
-      );
+    // if (invalidProcedures.length > 0) {
+    //   return NextResponse.json(
+    //     { message: "Each procedure must have a valid 'name' field" },
+    //     { status: 400 }
+    //   );
+    // }
+
+    // const createdProcedures = await prisma.procedure.createMany({
+    //   data: proceduresArray,
+    //   skipDuplicates: true,
+    // });
+
+    // return NextResponse.json(
+    //   {
+    //     message: "Procedure(s) created successfully",
+    //     practice: createdProcedures,
+    //   },
+    //   { status: 201 }
+    // );
+
+    const token = await getToken({ req });
+    const { name, description } = await req.json();
+
+    if (!name || !token || token?.role !== "dentist" || !token.id) {
+      return NextResponse.json({ message: "Invalid Entry" }, { status: 400 });
     }
+    const dentistId = token.id;
 
-    const createdProcedures = await prisma.procedure.createMany({
-      data: proceduresArray,
-      skipDuplicates: true,
+    const procedure = await prisma.procedure.create({
+      data: {
+        name,
+        description,
+        dentists: {
+          create: {
+            dentistId,
+          },
+        },
+      },
+      include: {
+        dentists: true,
+      },
     });
-
     return NextResponse.json(
       {
-        message: "Procedure(s) created successfully",
-        practice: createdProcedures,
+        message: "Procedure created successfully",
+        data: procedure,
       },
       { status: 201 }
     );

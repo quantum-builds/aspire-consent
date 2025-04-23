@@ -9,6 +9,7 @@ export async function middleware(req: NextRequest) {
     "/forgot-password",
     "/reset-password",
     "/unauthorize",
+    "/consent-form",
   ];
 
   const { pathname } = req.nextUrl;
@@ -35,22 +36,22 @@ export async function middleware(req: NextRequest) {
   );
   const isProtectedPath = !isPublicPath;
 
-  if (pathname.startsWith("/patient/consent-form")) {
-    if (!token) {
-      const callbackUrl = encodeURIComponent(
-        req.nextUrl.pathname + req.nextUrl.search
-      );
-      return NextResponse.redirect(
-        new URL(`/login?callbackUrl=${callbackUrl}`, req.url)
-      );
-    }
-  }
+  // if (pathname.startsWith("/patient/consent-form")) {
+  //   if (!token) {
+  //     const callbackUrl = encodeURIComponent(
+  //       req.nextUrl.pathname + req.nextUrl.search
+  //     );
+  //     return NextResponse.redirect(
+  //       new URL(`/login?callbackUrl=${callbackUrl}`, req.url)
+  //     );
+  //   }
+  // }
 
   if (isProtectedPath && !token) {
     const callbackUrl = encodeURIComponent(
       req.nextUrl.pathname + req.nextUrl.search
     );
-    if (req.nextUrl.pathname.startsWith("/patient/consent-form")) {
+    if (req.nextUrl.pathname.startsWith("/consent-form")) {
       return NextResponse.redirect(
         new URL(`/login?callbackUrl=${callbackUrl}`, req.url)
       );

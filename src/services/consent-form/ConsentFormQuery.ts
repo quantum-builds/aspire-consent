@@ -1,43 +1,89 @@
+"use server";
+
 import { axiosInstance, ENDPOINTS } from "@/config/api-config";
 import { Response } from "@/types/common";
-import { PatientInputConsentForm } from "@/types/consent-form";
+import { TConsentForm } from "@/types/consent-form";
 import axios from "axios";
 import { getAMedia } from "../s3/s3Query";
+import { cookies } from "next/headers";
 
-export async function getConsentForm(token: string, dentistId?: string) {
+export async function getConsentForm(token?: string, dentistId?: string) {
   try {
+    const cookieStore = cookies();
+    const cookieHeader = (await cookieStore)
+      .getAll()
+      .map((c) => `${c.name}=${c.value}`)
+      .join("; ");
+
     const response = await axiosInstance.get(
-      ENDPOINTS.consentLink.getConsentForm(token, dentistId)
+      ENDPOINTS.consentLink.getConsentForm(token, dentistId),
+      {
+        headers: {
+          Cookie: cookieHeader,
+        },
+      }
     );
 
     // Check if the form is inactive or expired
-    if (
-      response.data &&
-      !response.data.status &&
-      response.data.message === "This consent form is no longer available"
-    ) {
-      throw new Error("FORM_EXPIRED_OR_INACTIVE");
+
+    if (token) {
+      if (
+        response.data &&
+        !response.data.status &&
+        response.data.message === "This consent form is no longer available"
+      ) {
+        throw new Error("FORM_EXPIRED_OR_INACTIVE");
+      }
     }
+    if (!token) {
+      // console.log("hey there");
+      // const responseData: Response<TConsentForm[]> = response.data;
 
-    const responseData: Response<PatientInputConsentForm> = response.data;
-    const mcqs = responseData.data?.snapshotMCQs;
+      // // Process each form in the array
+      // const processedForms = await Promise.all(
+      //   responseData.data?.map(async (form) => {
+      //     if (Array.isArray(form.snapshotMCQs)) {
+      //       const uploads = await Promise.all(
+      //         form.snapshotMCQs.map(async (mcq) => {
+      //           const imageResponse = await getAMedia(mcq.videoUrl);
+      //           return imageResponse;
+      //         })
+      //       );
 
-    if (Array.isArray(mcqs)) {
-      const uploads = await Promise.all(
-        mcqs.map(async (mcq) => {
-          const imageResponse = await getAMedia(mcq.videoUrl);
-          return imageResponse;
-        })
-      );
+      //       form.snapshotMCQs.forEach((mcq, index: number) => {
+      //         mcq.videoName = mcq.videoUrl;
+      //         mcq.videoUrl = uploads[index];
+      //       });
+      //     }
+      //     return form;
+      //   })
+      // );
 
-      mcqs.forEach((mcq, index: number) => {
-        mcq.videoName = mcq.videoUrl;
-        mcq.videoUrl = uploads[index];
-      });
+      // console.log("process form ", processedForms);
+      // responseData.data = processedForms;
+      // return response.data;
+      return response.data;
+    } else {
+      const responseData: Response<TConsentForm> = response.data;
+      const mcqs = responseData.data?.snapshotMCQs;
+
+      if (Array.isArray(mcqs)) {
+        const uploads = await Promise.all(
+          mcqs.map(async (mcq) => {
+            const imageResponse = await getAMedia(mcq.videoUrl);
+            return imageResponse;
+          })
+        );
+
+        mcqs.forEach((mcq, index: number) => {
+          mcq.videoName = mcq.videoUrl;
+          mcq.videoUrl = uploads[index];
+        });
+      }
+
+      responseData.data.snapshotMCQs = mcqs;
+      return response.data;
     }
-
-    responseData.data.snapshotMCQs = mcqs;
-    return response.data;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
       return error.response.data;

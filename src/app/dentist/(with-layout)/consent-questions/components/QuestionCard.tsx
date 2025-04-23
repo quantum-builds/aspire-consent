@@ -264,6 +264,7 @@ export function QuestionCard({
                     onFileUpload={(files) => {
                       field.onChange(files ? files[0] : null);
                     }}
+                    alwaysShowDropzone={false}
                     showPreview={true}
                     icon="ri-upload-cloud-2-line"
                     maxFiles={1}

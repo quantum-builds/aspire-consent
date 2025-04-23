@@ -1,0 +1,32 @@
+import Link from "next/link";
+import { CheckIcon } from "lucide-react";
+
+export default function FormSuccess() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+      <div className="bg-white rounded-lg shadow-md max-w-md w-full p-8">
+        <div className="flex flex-col items-center justify-center space-y-6">
+          <div className="bg-purple-100 p-4 rounded-full">
+            <CheckIcon className="h-8 w-8 text-purple-600" />
+          </div>
+
+          <h1 className="text-2xl font-semibold text-center">
+            Form submitted successfully!
+          </h1>
+
+          <p className="text-center text-gray-600">
+            Thank you! This form is submitted successfully, we have received
+            your submission.
+          </p>
+
+          <Link
+            href="/patient/dashboard"
+            className="text-purple-600 hover:text-purple-800 transition-colors"
+          >
+            Go back
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -1,11 +1,13 @@
 import prisma from "@/lib/db";
 import { createResponse } from "@/utils/createResponse";
 import { getToken } from "next-auth/jwt";
+import { unstable_noStore } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 
 const secret = process.env.NEXTAUTH_SECRET;
 
 export async function GET(req: NextRequest) {
+  unstable_noStore();
   try {
     const token = await getToken({ req: req, secret });
     if (!token) {

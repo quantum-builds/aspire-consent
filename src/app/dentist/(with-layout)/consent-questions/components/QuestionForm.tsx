@@ -344,202 +344,205 @@ export default function QuestionForm({
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
-          <Card className="bg-white rounded-lg shadow p-6 mb-6">
-            <CardHeader className="px-0 pt-0">
+          <Card className="mb-6 border-none shadow-none">
+            <CardHeader className="px-0">
               <CardTitle className="text-xl font-semibold">
                 Questions for {consentName}
               </CardTitle>
             </CardHeader>
-            <CardContent className="px-0 pt-4 space-y-8">
-              {form.watch("questions")?.map((question, questionIndex) => (
-                <div
-                  key={questionIndex}
-                  className={questionIndex > 0 ? "border-t pt-6 mt-6" : ""}
-                >
-                  <div className="flex justify-between items-center mb-4">
-                    <h2 className="font-medium text-lg">
-                      Question {questionIndex + 1}
-                    </h2>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleRemoveQuestion(questionIndex)}
-                      className="text-red-500 hover:text-red-700"
-                      disabled={isSubmitting}
-                    >
-                      <Trash2 className="h-4 w-4 mr-1" />
-                      Remove
-                    </Button>
-                  </div>
-
-                  {/* Question Text */}
-                  <FormField
-                    control={form.control}
-                    name={`questions.${questionIndex}.questionText`}
-                    render={({ field }) => (
-                      <FormItem className="mb-4">
-                        <FormLabel className="font-medium">
-                          Question Text:
-                        </FormLabel>
-                        <FormControl>
-                          <Textarea
-                            placeholder="Enter your question here..."
-                            className="resize-none"
-                            {...field}
-                            disabled={isSubmitting}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  {/* Options */}
-                  <div className="space-y-4 mb-4">
-                    <div className="flex justify-between items-center">
-                      <FormLabel className="font-medium">Options:</FormLabel>
+            <CardContent className="px-0 pt-4 space-y-6">
+              <div className="grid grid-cols-2 gap-4 mb-6">
+                {form.watch("questions")?.map((question, questionIndex) => (
+                  <div
+                    key={questionIndex}
+                    className="rounded-lg border p-6 shadow-sm "
+                  >
+                    <div className="flex justify-between items-center mb-4">
+                      <h2 className="font-medium text-lg">
+                        Question {questionIndex + 1}
+                      </h2>
                       <Button
                         type="button"
-                        variant="outline"
+                        variant="ghost"
                         size="sm"
-                        onClick={() => handleAddOption(questionIndex)}
-                        className="flex items-center gap-1"
+                        onClick={() => handleRemoveQuestion(questionIndex)}
+                        className="text-red-500 hover:text-red-700"
                         disabled={isSubmitting}
                       >
-                        <Plus className="h-4 w-4" /> Add Option
+                        <Trash2 className="h-4 w-4 mr-1" />
+                        Remove
                       </Button>
                     </div>
 
-                    {form
-                      .watch(`questions.${questionIndex}.options`)
-                      ?.map((option, optionIndex) => (
-                        <div
-                          key={optionIndex}
-                          className="flex items-center gap-2"
+                    {/* Question Text */}
+                    <FormField
+                      control={form.control}
+                      name={`questions.${questionIndex}.questionText`}
+                      render={({ field }) => (
+                        <FormItem className="mb-4">
+                          <FormLabel className="font-medium">
+                            Question Text:
+                          </FormLabel>
+                          <FormControl>
+                            <Textarea
+                              placeholder="Enter your question here..."
+                              className="resize-none"
+                              {...field}
+                              disabled={isSubmitting}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    {/* Options */}
+                    <div className="space-y-4 mb-4">
+                      <div className="flex justify-between items-center">
+                        <FormLabel className="font-medium">Options:</FormLabel>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleAddOption(questionIndex)}
+                          className="flex items-center gap-1"
+                          disabled={isSubmitting}
                         >
-                          <div className="w-10 text-center">
-                            <span className="text-md text-gray-500">
-                              {option.label}.
-                            </span>
+                          <Plus className="h-4 w-4" /> Add Option
+                        </Button>
+                      </div>
+
+                      {form
+                        .watch(`questions.${questionIndex}.options`)
+                        ?.map((option, optionIndex) => (
+                          <div
+                            key={optionIndex}
+                            className="flex items-center gap-2"
+                          >
+                            <div className="w-10 text-center">
+                              <span className="text-md text-gray-500">
+                                {option.label}.
+                              </span>
+                            </div>
+                            <FormField
+                              control={form.control}
+                              name={`questions.${questionIndex}.options.${optionIndex}.text`}
+                              render={({ field }) => (
+                                <FormItem className="flex-1">
+                                  <FormControl>
+                                    <Input
+                                      placeholder={`Option ${option.label}`}
+                                      {...field}
+                                      disabled={isSubmitting}
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              onClick={() =>
+                                handleRemoveOption(questionIndex, optionIndex)
+                              }
+                              disabled={
+                                form.watch(`questions.${questionIndex}.options`)
+                                  ?.length <= 2 || isSubmitting
+                              }
+                              className="text-gray-400 hover:text-red-500"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
                           </div>
-                          <FormField
-                            control={form.control}
-                            name={`questions.${questionIndex}.options.${optionIndex}.text`}
-                            render={({ field }) => (
-                              <FormItem className="flex-1">
-                                <FormControl>
-                                  <Input
-                                    placeholder={`Option ${option.label}`}
-                                    {...field}
-                                    disabled={isSubmitting}
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon"
-                            onClick={() =>
-                              handleRemoveOption(questionIndex, optionIndex)
-                            }
-                            disabled={
-                              form.watch(`questions.${questionIndex}.options`)
-                                ?.length <= 2 || isSubmitting
-                            }
-                            className="text-gray-400 hover:text-red-500"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      ))}
-                  </div>
+                        ))}
+                    </div>
 
-                  {/* Correct Answer */}
-                  <FormField
-                    control={form.control}
-                    name={`questions.${questionIndex}.correctAnswer`}
-                    render={({ field }) => (
-                      <FormItem className="mb-4">
-                        <FormLabel className="font-medium">
-                          Correct Answer:
-                        </FormLabel>
-                        <FormControl>
-                          <RadioGroup
-                            onValueChange={field.onChange}
-                            value={field.value}
-                            className="flex flex-col space-y-1"
-                          >
-                            {form
-                              .watch(`questions.${questionIndex}.options`)
-                              ?.map((option, optionIndex) => (
-                                <div
-                                  key={optionIndex}
-                                  className="flex items-center space-x-2"
-                                >
-                                  <RadioGroupItem
-                                    value={option.label}
-                                    id={`answer-${questionIndex}-${option.label}`}
-                                    disabled={isSubmitting}
-                                  />
-                                  <FormLabel
-                                    htmlFor={`answer-${questionIndex}-${option.label}`}
-                                    className="font-normal"
+                    {/* Correct Answer */}
+                    <FormField
+                      control={form.control}
+                      name={`questions.${questionIndex}.correctAnswer`}
+                      render={({ field }) => (
+                        <FormItem className="mb-4">
+                          <FormLabel className="font-medium">
+                            Correct Answer:
+                          </FormLabel>
+                          <FormControl>
+                            <RadioGroup
+                              onValueChange={field.onChange}
+                              value={field.value}
+                              className="flex flex-col space-y-1"
+                            >
+                              {form
+                                .watch(`questions.${questionIndex}.options`)
+                                ?.map((option, optionIndex) => (
+                                  <div
+                                    key={optionIndex}
+                                    className="flex items-center space-x-2"
                                   >
-                                    {option.label}
-                                  </FormLabel>
-                                </div>
-                              ))}
-                          </RadioGroup>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                                    <RadioGroupItem
+                                      value={option.label}
+                                      id={`answer-${questionIndex}-${option.label}`}
+                                      disabled={isSubmitting}
+                                    />
+                                    <FormLabel
+                                      htmlFor={`answer-${questionIndex}-${option.label}`}
+                                      className="font-normal"
+                                    >
+                                      {option.label}
+                                    </FormLabel>
+                                  </div>
+                                ))}
+                            </RadioGroup>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-                  {/* Video Upload */}
-                  <Controller
-                    control={form.control}
-                    name={`questions.${questionIndex}.videoUrl`}
-                    render={({ field }) => (
-                      <FormItem className="w-full lg:w-1/2">
-                        <FormLabel className="font-medium">
-                          Question Video:
-                        </FormLabel>
-                        <FormControl>
-                          <FileUploader
-                            onFileUpload={(files) => {
-                              field.onChange(files ? files[0] : null);
-                            }}
-                            showPreview={true}
-                            icon="ri-upload-cloud-2-line"
-                            maxFiles={1}
-                            text="Upload video"
-                            extraText="Drag and drop a video or click to browse"
-                            disabled={isSubmitting}
-                            error={
-                              form.formState.errors.questions?.[questionIndex]
-                                ?.videoUrl?.message as string
-                            }
-                            allowedTypes={[
-                              "video/mp4",
-                              "video/webm",
-                              "video/ogg",
-                              "video/quicktime",
-                            ]}
-                            defaultPreview={data?.[questionIndex]?.videoUrl}
-                            defaultName={data?.[questionIndex]?.videoName}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              ))}
+                    {/* Video Upload */}
+                    <Controller
+                      control={form.control}
+                      name={`questions.${questionIndex}.videoUrl`}
+                      render={({ field }) => (
+                        <FormItem className="w-full lg:w-1/2">
+                          <FormLabel className="font-medium">
+                            Question Video:
+                          </FormLabel>
+                          <FormControl>
+                            <FileUploader
+                              onFileUpload={(files) => {
+                                field.onChange(files ? files[0] : null);
+                              }}
+                              alwaysShowDropzone={false}
+                              showPreview={true}
+                              icon="ri-upload-cloud-2-line"
+                              maxFiles={1}
+                              text="Upload video"
+                              extraText="Drag and drop a video or click to browse"
+                              disabled={isSubmitting}
+                              error={
+                                form.formState.errors.questions?.[questionIndex]
+                                  ?.videoUrl?.message as string
+                              }
+                              allowedTypes={[
+                                "video/mp4",
+                                "video/webm",
+                                "video/ogg",
+                                "video/quicktime",
+                              ]}
+                              defaultPreview={data?.[questionIndex]?.videoUrl}
+                              defaultName={data?.[questionIndex]?.videoName}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                ))}
+              </div>
 
               <div className="flex justify-between mt-6">
                 <Button

@@ -18,7 +18,7 @@ export default function QuestionFormSkeleton() {
             <Skeleton className="h-7 w-64" />
           </CardTitle>
         </CardHeader>
-        <CardContent className="px-0 pt-4 space-y-8">
+        <CardContent className="px-0 pt-4 space-y-8 grid grid-cols-2">
           {loadingQuestions.map((_, questionIndex) => (
             <div
               key={questionIndex}

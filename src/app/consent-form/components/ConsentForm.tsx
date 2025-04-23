@@ -1,4 +1,4 @@
-import { PatientInputConsentForm } from "@/types/consent-form";
+import { TConsentForm } from "@/types/consent-form";
 import { Response } from "@/types/common";
 import { getConsentForm } from "@/services/consent-form/ConsentFormQuery";
 import ConsentFormContent from "./ConsentFormContemt";
@@ -8,11 +8,9 @@ type ConsentFormProps = {
 };
 export default async function ConsentForm({ token }: ConsentFormProps) {
   let errorMessage = undefined;
-  let consentForm: PatientInputConsentForm | null = null;
+  let consentForm: TConsentForm | null = null;
 
-  const response: Response<PatientInputConsentForm> = await getConsentForm(
-    token
-  );
+  const response: Response<TConsentForm> = await getConsentForm(token);
 
   if (response.status) {
     consentForm = response.data;

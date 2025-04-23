@@ -5,10 +5,6 @@ const TREATMENT_DETAIL_CARD_DATA = [
   { name: "Root Canal", date: "12-04-25 ", time: "09:00-10:00" },
   { name: "Consultation", date: "12-04-25 ", time: "09:00-10:00" },
   { name: "Root Canal", date: "12-04-25 ", time: "09:00-10:00" },
-  { name: "Consultation", date: "12-04-25 ", time: "09:00-10:00" },
-  { name: "Root Canal", date: "12-04-25 ", time: "09:00-10:00" },
-  { name: "Consultation", date: "12-04-25 ", time: "09:00-10:00" },
-  { name: "Root Canal", date: "12-04-25 ", time: "09:00-10:00" },
 ];
 export default function AppointmentCard() {
   return (

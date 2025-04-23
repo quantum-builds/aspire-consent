@@ -4,19 +4,16 @@ import { useState, useEffect } from "react";
 import { Check, X, Play } from "lucide-react";
 import { z } from "zod";
 import { toast } from "react-hot-toast";
-import { PatientInputConsentForm } from "@/types/consent-form";
+import { TConsentForm } from "@/types/consent-form";
 import {
   useSaveDraftAnswers,
   useSubmitConsentForm,
 } from "@/services/consent-form/ConsentFomMutation";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import getPathAfterUploadsImages from "@/utils/getSplittedPath";
-import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { AspireConsentBlackLogo } from "@/asssets";
-// import { useSendEmail } from "@/services/email/emailMutation";
 
-// Schema validation
 const submitFormSchema = z.object({
   answers: z.record(z.string().min(1, "Answer is required")),
   consent: z.boolean().refine((val) => val, {
@@ -25,7 +22,7 @@ const submitFormSchema = z.object({
 });
 
 type ConsentFormContentProps = {
-  data: PatientInputConsentForm | null;
+  data: TConsentForm | null;
   formId: string;
 };
 
@@ -33,18 +30,9 @@ export default function ConsentFormContent({
   data,
   formId,
 }: ConsentFormContentProps) {
-  // State management
-  const searchParams = useSearchParams();
-  const email = searchParams.get("email");
+  console.log("data is ", data);
 
   const router = useRouter();
-  const { data: session } = useSession();
-  const token = session?.user;
-  useEffect(() => {
-    if (token?.email && email && token.email !== email) {
-      router.replace("/unauthorize");
-    }
-  }, [token?.email, email, router]);
 
   const [answers, setAnswers] = useState<Record<string, string | null>>({});
   const [answerStatus, setAnswerStatus] = useState<Record<string, boolean>>({});
@@ -59,9 +47,7 @@ export default function ConsentFormContent({
   const { mutate: saveDraft, isPending: isSavingDraft } = useSaveDraftAnswers();
   const { mutate: submitForm, isPending: isSubmitting } =
     useSubmitConsentForm();
-  // const { mutate: sendEmail, isPending: isEmailPending } = useSendEmail();
 
-  // Initialize answers with default values from data
   useEffect(() => {
     if (data?.snapshotMCQs) {
       const initialAnswers = data.snapshotMCQs.reduce((acc, mcq) => {
@@ -92,12 +78,10 @@ export default function ConsentFormContent({
     }
   }, [data]);
 
-  // Check if all answers are correct
   const allCorrect = Object.values(answerStatus).every(Boolean);
 
   const handleAnswerSelect = (mcqId: string, answer: string) => {
     setAnswers((prev) => ({ ...prev, [mcqId]: answer }));
-    // Remove the status for this question when selecting a new answer
     setAnswerStatus((prev) => {
       const newStatus = { ...prev };
       delete newStatus[mcqId];
@@ -127,7 +111,7 @@ export default function ConsentFormContent({
       {
         onSuccess: () => {
           toast.success("Draft saved successfully");
-          router.replace("/patient/dashboard");
+          router.replace("/form-save");
         },
         onError: () => toast.error("Failed to save draft"),
       }
@@ -169,7 +153,7 @@ export default function ConsentFormContent({
         {
           onSuccess: () => {
             toast.success("Form submitted successfully!");
-            router.replace("/patient/dashboard");
+            router.replace("/form-success");
             // sendEmail(
             //   {
             //     to: data?.dentist.email,

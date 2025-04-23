@@ -1,6 +1,6 @@
 import { Suspense } from "react";
-import ConsentForm from "@/app/patient/consent-form/components/ConsentForm";
-import ConsentFormContentSkeleton from "@/app/patient/consent-form/components/ConsentFormContentSkeleton";
+import ConsentForm from "@/app/consent-form/components/ConsentForm";
+import ConsentFormContentSkeleton from "@/app/consent-form/components/ConsentFormContentSkeleton";
 
 type Params = Promise<{ slug: string }>;
 export default async function Page({ params }: { params: Params }) {

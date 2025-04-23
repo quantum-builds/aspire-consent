@@ -35,18 +35,12 @@ export default async function ConsentQuestion({
       <Header showSearch={false} />
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center my-4">
         <div className="flex flex-col gap-2">
+          {/* <div className="flex items-center"></div> */}
           <p className="text-2xl font-bold mb-2">View Questions</p>
           <p className="text-[#0000004D] mb-5 text-lg">
             Review questions and give answers for this treatment.
           </p>
         </div>
-        {/* <Link
-          className="bg-[#698AFF] hover:bg-[#698AFF] text-white cursor-pointer py-2 px-4 text-sm flex items-center justify-center rounded-md"
-          href={"/dentist/new-consent-form"}
-        >
-          <Plus width={16} height={16} className="mr-1" />
-          New Consent
-        </Link> */}
       </div>
 
       <QuestionList
