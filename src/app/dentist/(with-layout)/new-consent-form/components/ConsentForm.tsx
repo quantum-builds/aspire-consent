@@ -245,7 +245,7 @@ export default function ConsentForm({
                       <div className="relative flex items-center">
                         <FormControl>
                           <Input
-                            type="date"
+                            type="datetime-local"
                             placeholder="Select date"
                             {...field}
                             min={new Date().toISOString().split("T")[0]} // Set minimum date to today

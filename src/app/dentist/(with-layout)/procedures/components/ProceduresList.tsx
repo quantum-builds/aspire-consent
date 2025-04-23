@@ -1,16 +1,31 @@
 "use client";
 
-import { Search, Trash } from "lucide-react";
+import {
+  Search,
+  Trash,
+  List,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { List, MoreHorizontal } from "lucide-react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { MoreHorizontal } from "lucide-react";
 import Link from "next/link";
 import { TDentistProcedure } from "@/types/dentist-procedure";
 import { useEffect, useState } from "react";
@@ -31,8 +46,11 @@ export default function ProcedureQuestionFormsList({
   errorMessage,
   isLoading = false,
 }: ProcedureQuestionFormListProps) {
-  const { mutate: deleteProcedure, isPending } = useDeleteProcedure();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const itemsPerPage = 10;
+  const { mutate: deleteProcedure, isPending } = useDeleteProcedure();
   const router = useRouter();
 
   const handleDelete = async (id: string) => {
@@ -40,8 +58,7 @@ export default function ProcedureQuestionFormsList({
     deleteProcedure(
       { id },
       {
-        onSuccess: (data) => {
-          console.log("data is ", data);
+        onSuccess: () => {
           setTimeout(() => {
             router.refresh();
           }, 100);
@@ -62,177 +79,234 @@ export default function ProcedureQuestionFormsList({
     }
   }, [errorMessage]);
 
-  // Table skeleton loader
-  const TableSkeleton = () => (
-    <tbody>
-      {[...Array(5)].map((_, index) => (
-        <tr key={index} className={index !== 4 ? "border-b" : ""}>
-          <td className="p-3">
-            <Skeleton className="h-6 w-48" />
-          </td>
-          <td className="p-3 text-right">
-            <div className="hidden md:flex space-x-2 justify-end">
-              <Skeleton className="h-8 w-32" />
-              <Skeleton className="h-8 w-24" />
-            </div>
-            <div className="md:hidden flex justify-end">
-              <Skeleton className="h-8 w-8 rounded-full" />
-            </div>
-          </td>
-        </tr>
-      ))}
-    </tbody>
+  // Filter data based on search term
+  const filteredData =
+    data?.filter((procedure) =>
+      procedure.procedure.name.toLowerCase().includes(searchTerm.toLowerCase())
+    ) || [];
+
+  // Calculate pagination
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedData = filteredData.slice(
+    startIndex,
+    startIndex + itemsPerPage
   );
 
-  return (
-    <div className="flex w-full">
-      <Card className="w-full mx-auto shadow-sm">
-        <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-2 space-y-3 sm:space-y-0">
-          <CardTitle className="text-lg sm:text-xl font-medium">
-            All Procedures
-          </CardTitle>
-          <div className="flex flex-row gap-3 w-1/2">
-            <ModalForm />
-            <div className="relative flex-1 sm:w-1/3">
-              <Search className="absolute left-2 top-4 h-4 w-4 text-muted-foreground" />
-              <Input placeholder="Search" className="pl-8 py-6" />
+  // Table skeleton loader
+  const TableSkeleton = () => (
+    <TableBody>
+      {[...Array(5)].map((_, index) => (
+        <TableRow key={index}>
+          <TableCell>
+            <Skeleton className="h-6 w-full" />
+          </TableCell>
+          <TableCell className="text-right">
+            <div className="flex justify-end gap-2">
+              <Skeleton className="h-8 w-24" />
+              <Skeleton className="h-8 w-24" />
             </div>
+          </TableCell>
+        </TableRow>
+      ))}
+    </TableBody>
+  );
+
+  if (errorMessage) {
+    return (
+      <div className="rounded-md border p-5">
+        <div className="flex items-center justify-center h-24">
+          <p className="text-center text-red-500">{errorMessage}</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!data && !isLoading) {
+    return (
+      <div className="rounded-md border p-5">
+        <div className="flex items-center justify-center h-24">
+          <p className="text-center text-red-500">
+            No procedure data available
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="rounded-md border p-5 flex flex-col gap-5">
+        <div className="flex items-center justify-between">
+          <ModalForm />
+          <div className="relative w-full max-w-lg">
+            <Search className="absolute left-2.5 top-4 h-4 w-4 text-gray-500" />
+            <Input
+              placeholder="Search procedures..."
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setCurrentPage(1);
+              }}
+              className="pl-9 text-md h-12"
+            />
           </div>
-        </CardHeader>
-        <CardContent className="overflow-x-auto">
-          <table className="w-full min-w-full">
-            <thead>
-              <tr>
-                <th className="text-left text-lg sm:text-xl p-3 font-medium">
-                  Name
-                </th>
-                <th className="text-right p-3"></th>
-              </tr>
-            </thead>
-            {isLoading ? (
-              <TableSkeleton />
-            ) : (
-              <tbody>
-                {data?.length > 0 ? (
-                  <>
-                    {data.map((form, index) => (
-                      <tr
-                        key={form.procedureId}
-                        className={index !== data.length - 1 ? "border-b" : ""}
-                      >
-                        <td className="p-3 text-gray-500 text-base sm:text-lg">
-                          {form.procedure.name}
-                        </td>
-                        <td className="p-3 text-right whitespace-nowrap">
-                          {/* Desktop view - show all buttons */}
-                          <div className="hidden md:flex space-x-2 justify-end">
-                            <Button variant="ghost" size="sm" className="h-8">
-                              <Link
-                                href={`/dentist/consent-questions/${form.procedure.name}`}
-                                className="flex gap-2 items-center"
-                              >
-                                <List width={20} height={20} className="mr-1" />
-                                View questions
-                              </Link>
+        </div>
+
+        <Table>
+          <TableHeader>
+            <TableRow className="text-lg">
+              <TableHead>Procedure Name</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+
+          {isLoading ? (
+            <TableSkeleton />
+          ) : (
+            <TableBody className="text-lg">
+              {paginatedData.length > 0 ? (
+                paginatedData.map((procedure) => (
+                  <TableRow key={procedure.procedureId}>
+                    <TableCell>{procedure.procedure.name}</TableCell>
+                    <TableCell className="text-right">
+                      <div className="hidden md:flex justify-end md:items-center gap-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8"
+                          asChild
+                        >
+                          <Link
+                            href={`/dentist/consent-questions/${procedure.procedure.name}`}
+                          >
+                            <List className="h-4 w-4 mr-2" />
+                            View Questions
+                          </Link>
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 text-red-500 hover:text-red-500 hover:bg-red-50"
+                          onClick={() => handleDelete(procedure.procedureId)}
+                          disabled={
+                            isPending && deletingId === procedure.procedureId
+                          }
+                        >
+                          {isPending && deletingId === procedure.procedureId ? (
+                            <span className="animate-spin">↻</span>
+                          ) : (
+                            <>
+                              <Trash className="h-4 w-4 mr-2" />
+                              Delete
+                            </>
+                          )}
+                        </Button>
+                      </div>
+
+                      <div className="md:hidden">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="sm">
+                              <MoreHorizontal className="h-4 w-4" />
                             </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-8 text-red-500 hover:text-red-500 hover:bg-red-50"
-                              onClick={() => handleDelete(form.procedureId)}
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem asChild>
+                              <Link
+                                href={`/dentist/consent-questions/${procedure.procedure.name}`}
+                              >
+                                <List className="h-4 w-4 mr-2" />
+                                View Questions
+                              </Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() =>
+                                handleDelete(procedure.procedureId)
+                              }
+                              className="text-red-500 focus:text-red-500"
                               disabled={
-                                isPending && deletingId === form.procedureId
+                                isPending &&
+                                deletingId === procedure.procedureId
                               }
                             >
-                              {isPending && deletingId === form.procedureId ? (
+                              {isPending &&
+                              deletingId === procedure.procedureId ? (
                                 <span className="flex items-center">
                                   <span className="animate-spin mr-2">↻</span>
                                   Deleting...
                                 </span>
                               ) : (
                                 <>
-                                  <Trash
-                                    width={20}
-                                    height={20}
-                                    className="mr-1"
-                                  />
+                                  <Trash className="h-4 w-4 mr-2" />
                                   Delete
                                 </>
                               )}
-                            </Button>
-                          </div>
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={2} className="h-24 text-center">
+                    No results found.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          )}
+        </Table>
+      </div>
 
-                          {/* Mobile view - show dropdown menu */}
-                          <div className="md:hidden">
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="h-8"
-                                >
-                                  <MoreHorizontal width={20} height={20} />
-                                </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end">
-                                <DropdownMenuItem className="cursor-pointer">
-                                  <Link
-                                    href={`/dentist/consent-questions/${form.procedure.name}`}
-                                    className="flex gap-2 items-center"
-                                  >
-                                    <List
-                                      width={16}
-                                      height={16}
-                                      className="mr-2"
-                                    />
-                                    View questions
-                                  </Link>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                  className="cursor-pointer text-red-500"
-                                  disabled={
-                                    isPending && deletingId === form.procedureId
-                                  }
-                                  onClick={() => handleDelete(form.procedureId)}
-                                >
-                                  {isPending &&
-                                  deletingId === form.procedureId ? (
-                                    <span className="flex items-center">
-                                      <span className="animate-spin mr-2">
-                                        ↻
-                                      </span>
-                                      Deleting...
-                                    </span>
-                                  ) : (
-                                    <>
-                                      <Trash
-                                        width={16}
-                                        height={16}
-                                        className="mr-2"
-                                      />
-                                      Delete
-                                    </>
-                                  )}
-                                </DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </>
-                ) : (
-                  <tr>
-                    <td colSpan={2} className="text-center p-4 text-red-500">
-                      No Procedure found for this dentist
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            )}
-          </table>
-        </CardContent>
-      </Card>
+      {filteredData.length > 0 && (
+        <div className="flex items-center justify-between">
+          <p className="text-sm text-gray-500">
+            Showing {startIndex + 1} to{" "}
+            {Math.min(startIndex + itemsPerPage, filteredData.length)} of{" "}
+            {filteredData.length} entries
+          </p>
+          <div className="flex items-center space-x-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(1)}
+              disabled={currentPage === 1}
+            >
+              <ChevronsLeft className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(currentPage - 1)}
+              disabled={currentPage === 1}
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <span className="text-sm">
+              Page {currentPage} of {totalPages || 1}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(currentPage + 1)}
+              disabled={currentPage === totalPages || totalPages === 0}
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(totalPages)}
+              disabled={currentPage === totalPages || totalPages === 0}
+            >
+              <ChevronsRight className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

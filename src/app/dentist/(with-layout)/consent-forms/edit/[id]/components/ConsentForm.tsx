@@ -137,8 +137,6 @@ export default function ConsentForm({ data, formId }: ConsentFormProps) {
     };
 
     const mcqUpdates = formData.snapshotMCQs.map((mcq) => {
-      // Handle video file - if it's a new File object, we'll upload it
-      // If it's a string (existing URL), we'll keep it as is
       const videoPath =
         typeof mcq.videoFile === "object" && mcq.videoFile instanceof File
           ? `uploads/aspire-consent/${mcq.videoFile.name}`
@@ -236,7 +234,6 @@ export default function ConsentForm({ data, formId }: ConsentFormProps) {
                       <Input
                         {...field}
                         className="border rounded px-2 py-1"
-                        // Only disabled for everyone (not editable)
                         disabled={true}
                       />
                     </FormControl>
@@ -257,7 +254,6 @@ export default function ConsentForm({ data, formId }: ConsentFormProps) {
                       <Input
                         {...field}
                         className="border rounded px-2 py-1"
-                        // Only disabled for everyone (not editable)
                         disabled={true}
                       />
                     </FormControl>
@@ -267,44 +263,10 @@ export default function ConsentForm({ data, formId }: ConsentFormProps) {
               />
             </div>
 
-            {/* Always show expiresAt and isActive fields, but make them read-only for non-dentists */}
-            {/* <div className="mt-4">
-              <FormField
-                name="expiresAt"
-                render={({ field }) => {
-                  const value =
-                    field.value instanceof Date
-                      ? field.value.toISOString().slice(0, 16)
-                      : "";
-                  return (
-                    <FormItem>
-                      <FormLabel className="font-medium">
-                        Expiration Date:
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          type="datetime-local"
-                          value={field.value}
-                          onChange={(e) => {
-                            field.onChange(
-                              e.target.value ? new Date(e.target.value) : null
-                            );
-                          }}
-                          className="border rounded px-2 py-1"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  );
-                }}
-              />
-            </div> */}
-
             <div className="mt-4">
               <FormField
                 name="expiresAt"
                 render={({ field }) => {
-                  // Convert the Date object to the format expected by datetime-local input
                   const formatDateForInput = (date: Date) => {
                     const pad = (num: number) =>
                       num.toString().padStart(2, "0");
@@ -365,8 +327,8 @@ export default function ConsentForm({ data, formId }: ConsentFormProps) {
             </div>
           </div>
 
-          <div className="p-4 ">
-            <div className="grid grid-col-2 gap-4 ">
+          <div className="p-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {formMethods.watch("snapshotMCQs")?.map((mcq, mcqIndex) => {
                 const videoUrl = watch(`snapshotMCQs.${mcqIndex}.videoUrl`);
                 const videoFile = watch(`snapshotMCQs.${mcqIndex}.videoFile`);
@@ -377,9 +339,8 @@ export default function ConsentForm({ data, formId }: ConsentFormProps) {
                 return (
                   <div
                     key={mcq.id || mcqIndex}
-                    className="p-4 border rounded-md relative"
+                    className="p-6 border rounded-lg shadow-sm bg-white relative" // Added 'relative' here
                   >
-                    {/* Question Remove Button - positioned top right */}
                     <Button
                       type="button"
                       variant="ghost"
@@ -395,14 +356,14 @@ export default function ConsentForm({ data, formId }: ConsentFormProps) {
                     <FormField
                       name={`snapshotMCQs.${mcqIndex}.questionText`}
                       render={({ field }) => (
-                        <FormItem className="mb-3 pr-24">
+                        <FormItem className="mb-4">
                           <FormLabel className="font-medium">
                             Question:
                           </FormLabel>
                           <FormControl>
                             <Input
                               {...field}
-                              className="w-full border rounded px-2 py-1 mt-1"
+                              className="w-full border rounded px-3 py-2 mt-1"
                             />
                           </FormControl>
                           <FormMessage />
@@ -410,61 +371,56 @@ export default function ConsentForm({ data, formId }: ConsentFormProps) {
                       )}
                     />
 
-                    <div className="space-y-2 mt-6">
+                    <div className="space-y-2 mt-4">
                       <FormLabel className="block text-gray-700 mb-1">
                         Options:
                       </FormLabel>
                       {watch(`snapshotMCQs.${mcqIndex}.options`)?.map(
                         (_option, optionIndex) => (
                           <div
-                            className="flex items-center justify-between"
+                            className="flex items-center gap-2"
                             key={`${mcq.id}-${optionIndex}`}
                           >
-                            <div className="flex items-center gap-2 w-full">
-                              <span className="text-gray-600">
-                                {String.fromCharCode(
-                                  97 + optionIndex
-                                ).toUpperCase()}
-                                .
-                              </span>
-                              <FormField
-                                name={`snapshotMCQs.${mcqIndex}.options.${optionIndex}`}
-                                render={({ field }) => (
-                                  <FormItem className="flex-1">
-                                    <FormControl>
-                                      <Input
-                                        {...field}
-                                        className="border rounded px-2 py-1 flex-1"
-                                      />
-                                    </FormControl>
-                                    <FormMessage />
-                                  </FormItem>
-                                )}
-                              />
-
-                              {/* Option Remove Button */}
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="sm"
-                                onClick={() =>
-                                  handleRemoveOption(mcqIndex, optionIndex)
-                                }
-                                className="text-red-500 hover:text-red-700 ml-2"
-                                disabled={
-                                  isSubmittingForm ||
-                                  watch(`snapshotMCQs.${mcqIndex}.options`)
-                                    .length <= 2
-                                }
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </div>
+                            <span className="text-gray-600 w-6">
+                              {String.fromCharCode(
+                                97 + optionIndex
+                              ).toUpperCase()}
+                              .
+                            </span>
+                            <FormField
+                              name={`snapshotMCQs.${mcqIndex}.options.${optionIndex}`}
+                              render={({ field }) => (
+                                <FormItem className="flex-1">
+                                  <FormControl>
+                                    <Input
+                                      {...field}
+                                      className="border rounded px-3 py-1 flex-1"
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={() =>
+                                handleRemoveOption(mcqIndex, optionIndex)
+                              }
+                              className="text-red-500 hover:text-red-700"
+                              disabled={
+                                isSubmittingForm ||
+                                watch(`snapshotMCQs.${mcqIndex}.options`)
+                                  .length <= 2
+                              }
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
                           </div>
                         )
                       )}
 
-                      {/* Add Option Button */}
                       <Button
                         type="button"
                         variant="outline"
@@ -477,8 +433,7 @@ export default function ConsentForm({ data, formId }: ConsentFormProps) {
                       </Button>
                     </div>
 
-                    {/* Correct Answer as RadioGroup */}
-                    <div className="mt-6">
+                    <div className="mt-4">
                       <FormField
                         name={`snapshotMCQs.${mcqIndex}.correctAnswer`}
                         render={({ field }) => (
@@ -524,7 +479,7 @@ export default function ConsentForm({ data, formId }: ConsentFormProps) {
                       <FormLabel className="font-medium">
                         Educational Video:
                       </FormLabel>
-                      <Controller
+                      {/* <Controller
                         name={`snapshotMCQs.${mcqIndex}.videoFile`}
                         control={control}
                         render={({ field }) => (
@@ -532,7 +487,6 @@ export default function ConsentForm({ data, formId }: ConsentFormProps) {
                             onFileUpload={(files) => {
                               if (files && files.length > 0) {
                                 field.onChange(files[0]);
-                                // Clear the old URL if we're uploading a new file
                                 setValue(
                                   `snapshotMCQs.${mcqIndex}.videoUrl`,
                                   ""
@@ -563,10 +517,53 @@ export default function ConsentForm({ data, formId }: ConsentFormProps) {
                             alwaysShowDropzone={false}
                           />
                         )}
+                      /> */}
+                      <Controller
+                        name={`snapshotMCQs.${mcqIndex}.videoFile`}
+                        control={control}
+                        render={({ field }) => (
+                          <FileUploader
+                            onFileUpload={(files) => {
+                              if (files && files.length > 0) {
+                                field.onChange(files[0]);
+                                setValue(
+                                  `snapshotMCQs.${mcqIndex}.videoUrl`,
+                                  ""
+                                );
+                              } else {
+                                field.onChange(null);
+                              }
+                            }}
+                            showPreview={true}
+                            maxFiles={1}
+                            text="Upload video"
+                            extraText="Drag and drop a video or click to browse"
+                            allowedTypes={[
+                              "video/mp4",
+                              "video/webm",
+                              "video/ogg",
+                              "video/quicktime",
+                            ]}
+                            defaultPreview={
+                              data?.snapshotMCQs?.[mcqIndex]?.videoUrl ||
+                              undefined
+                            }
+                            defaultName={
+                              data?.snapshotMCQs?.[mcqIndex]?.videoName ||
+                              undefined
+                            }
+                            disabled={isSubmittingForm}
+                            error={
+                              errors.snapshotMCQs?.[mcqIndex]?.videoFile
+                                ?.message as string
+                            }
+                            alwaysShowDropzone={false}
+                          />
+                        )}
                       />
                     </div>
 
-                    {hasVideo && !isNewVideo && (
+                    {/* {hasVideo && !isNewVideo && (
                       <div className="mt-4 pt-4 border-t border-gray-200">
                         <div className="flex justify-between items-center mb-2">
                           <h4 className="text-sm font-medium text-gray-700">
@@ -596,12 +593,44 @@ export default function ConsentForm({ data, formId }: ConsentFormProps) {
                           />
                         )}
                       </div>
+                    )} */}
+                    {hasVideo && !isNewVideo && (
+                      <div className="mt-4 pt-4 border-t border-gray-200">
+                        <div className="flex justify-between items-center mb-2">
+                          <h4 className="text-sm font-medium text-gray-700">
+                            Current Video:
+                          </h4>
+                          <button
+                            type="button"
+                            className="text-sm text-blue-500 hover:underline flex items-center gap-1"
+                            onClick={() =>
+                              setCurrentVideo({
+                                mcqId: mcq.id,
+                                autoplay: false,
+                              })
+                            }
+                          >
+                            <Play className="w-3 h-3" /> Watch video
+                          </button>
+                        </div>
+                        {currentVideo?.mcqId === mcq.id && videoUrl && (
+                          <iframe
+                            src={`${videoUrl}${
+                              currentVideo.autoplay ? "?autoplay=1" : ""
+                            }`}
+                            className="w-full aspect-video rounded"
+                            allowFullScreen
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          />
+                        )}
+                      </div>
                     )}
                   </div>
                 );
               })}
+            </div>
 
-              {/* Add Question Button */}
+            <div className="mt-6">
               <Button
                 type="button"
                 variant="outline"
@@ -617,7 +646,7 @@ export default function ConsentForm({ data, formId }: ConsentFormProps) {
                   setValue("snapshotMCQs", currentMCQs);
                 }}
                 disabled={isSubmittingForm}
-                className="w-full"
+                className="w-full md:w-auto"
               >
                 + Add New Question
               </Button>
@@ -643,22 +672,6 @@ export default function ConsentForm({ data, formId }: ConsentFormProps) {
                   "Save Changes"
                 )}
               </Button>
-
-              {/* <Button
-                type="button"
-                onClick={() => handleFormSubmit(formMethods.getValues())}
-                disabled={isSubmittingForm}
-                className="bg-green-600 hover:bg-green-700"
-              >
-                {isSubmittingForm ? (
-                  <span className="flex items-center gap-2">
-                    <span className="animate-spin">↻</span>
-                    Finalizing...
-                  </span>
-                ) : (
-                  "Finalize Form"
-                )}
-              </Button> */}
             </div>
           </div>
         </form>

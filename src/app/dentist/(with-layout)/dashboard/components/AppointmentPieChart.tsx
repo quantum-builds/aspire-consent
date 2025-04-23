@@ -71,14 +71,14 @@ export default function AppointmentPieChart() {
           </ResponsiveContainer>
         </div>
 
-        <div className="flex flex-wrap justify-center gap-x-8 gap-y-2 mt-2">
+        <div className="flex justify-center gap-x-8 gap-y-2 mt-2">
           {data.slice(0, 2).map((entry, index) => (
             <div key={index} className="flex items-center gap-2">
               <div
                 className="w-4 h-4"
                 style={{ backgroundColor: entry.color }}
               ></div>
-              <div className="flex flex-col">
+              <div className="flex items-center gap-1">
                 <span className="text-xl">{entry.name}</span>
                 <span className="text-lg">{entry.value}</span>
               </div>
