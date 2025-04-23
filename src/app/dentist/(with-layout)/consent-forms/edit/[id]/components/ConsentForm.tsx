@@ -630,29 +630,7 @@ export default function ConsentForm({ data, formId }: ConsentFormProps) {
               })}
             </div>
 
-            <div className="mt-6">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => {
-                  const currentMCQs = [...watch("snapshotMCQs")];
-                  currentMCQs.push({
-                    id: `new-question-${Date.now()}`,
-                    questionText: "",
-                    options: ["", ""],
-                    correctAnswer: "",
-                    videoUrl: "",
-                  });
-                  setValue("snapshotMCQs", currentMCQs);
-                }}
-                disabled={isSubmittingForm}
-                className="w-full md:w-auto"
-              >
-                + Add New Question
-              </Button>
-            </div>
-
-            <div className="mt-6 flex justify-end gap-4">
+            <div className="mt-6 flex items-center justify-between">
               <Button
                 type="button"
                 variant="outline"
@@ -662,16 +640,37 @@ export default function ConsentForm({ data, formId }: ConsentFormProps) {
                 Cancel
               </Button>
 
-              <Button type="submit" disabled={!isDirty || isSubmittingForm}>
-                {isSubmittingForm ? (
-                  <span className="flex items-center gap-2">
-                    <span className="animate-spin">↻</span>
-                    Saving...
-                  </span>
-                ) : (
-                  "Save Changes"
-                )}
-              </Button>
+              <div className="flex justify-end items-center gap-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    const currentMCQs = [...watch("snapshotMCQs")];
+                    currentMCQs.push({
+                      id: `new-question-${Date.now()}`,
+                      questionText: "",
+                      options: ["", ""],
+                      correctAnswer: "",
+                      videoUrl: "",
+                    });
+                    setValue("snapshotMCQs", currentMCQs);
+                  }}
+                  disabled={isSubmittingForm}
+                  className="w-full md:w-auto"
+                >
+                  + Add New Question
+                </Button>
+                <Button type="submit" disabled={!isDirty || isSubmittingForm}>
+                  {isSubmittingForm ? (
+                    <span className="flex items-center gap-2">
+                      <span className="animate-spin">↻</span>
+                      Saving...
+                    </span>
+                  ) : (
+                    "Save Changes"
+                  )}
+                </Button>
+              </div>
             </div>
           </div>
         </form>

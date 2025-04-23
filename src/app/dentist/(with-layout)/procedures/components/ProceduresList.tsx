@@ -31,7 +31,7 @@ import { TDentistProcedure } from "@/types/dentist-procedure";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useDeleteProcedure } from "@/services/procedure/ProcedureMutation";
-import ModalForm from "./AddProcedureModal";
+// import ModalForm from "./AddProcedureModal";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useRouter } from "next/navigation";
 
@@ -59,9 +59,7 @@ export default function ProcedureQuestionFormsList({
       { id },
       {
         onSuccess: () => {
-          setTimeout(() => {
-            router.refresh();
-          }, 100);
+          router.refresh();
           toast.success("Procedure deleted successfully");
           setDeletingId(null);
         },
@@ -137,8 +135,7 @@ export default function ProcedureQuestionFormsList({
   return (
     <div className="space-y-4">
       <div className="rounded-md border p-5 flex flex-col gap-5">
-        <div className="flex items-center justify-between">
-          <ModalForm />
+        <div className="flex justify-end">
           <div className="relative w-full max-w-lg">
             <Search className="absolute left-2.5 top-4 h-4 w-4 text-gray-500" />
             <Input

@@ -8,6 +8,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 import { ConsentFormMCQSnapshot, UserRole } from "@prisma/client";
 import { isCuid } from "cuid";
+import { revalidatePath } from "next/cache";
 
 export async function PATCH(req: NextRequest) {
   const token = req.nextUrl.pathname.split("/").pop();
@@ -24,7 +25,10 @@ export async function PATCH(req: NextRequest) {
 
     const form = await prisma.consentFormLink.findUnique({
       where: { token },
-      include: { snapshotMCQs: true },
+      include: {
+        snapshotMCQs: true,
+        answers: true,
+      },
     });
 
     if (!form) {
@@ -32,7 +36,25 @@ export async function PATCH(req: NextRequest) {
     }
 
     const now = new Date();
-    if (!form.isActive || form.expiresAt < now) {
+    // Check expiration first
+    if (form.expiresAt < now) {
+      // Update status to EXPIRED if not already
+      if (form.status !== "EXPIRED") {
+        await prisma.consentFormLink.update({
+          where: { id: form.id },
+          data: {
+            status: "EXPIRED",
+            isActive: false,
+          },
+        });
+      }
+      return NextResponse.json(
+        { error: "This form has expired" },
+        { status: 410 }
+      );
+    }
+
+    if (!form.isActive) {
       return NextResponse.json(
         { error: "This form is no longer available for updates" },
         { status: 410 }
@@ -127,20 +149,28 @@ export async function PATCH(req: NextRequest) {
         }),
       ]);
 
-      const totalQuestions = form.snapshotMCQs.length;
-      const answeredCount = await prisma.formAnswer.count({
+      // Get all answers (including non-draft ones)
+      const allAnswers = await prisma.formAnswer.findMany({
         where: {
           consentFormLinkId: form.id,
         },
       });
 
+      const totalQuestions = form.snapshotMCQs.length;
+      const answeredCount = allAnswers.length;
+      const correctAnswers = allAnswers.filter((a) => a.isCorrect).length;
+
       const progress = Math.round((answeredCount / totalQuestions) * 100);
+
+      // Only mark as COMPLETED if all answers are correct and all questions are answered
+      const isCompleted =
+        answeredCount === totalQuestions && correctAnswers === totalQuestions;
 
       await prisma.consentFormLink.update({
         where: { id: form.id },
         data: {
           progressPercentage: progress,
-          status: progress === 100 ? "COMPLETED" : "IN_PROGRESS",
+          status: isCompleted ? "COMPLETED" : "IN_PROGRESS",
           lastUpdated: new Date(),
         },
       });
@@ -148,7 +178,7 @@ export async function PATCH(req: NextRequest) {
       const response: FormResponse = {
         success: true,
         progress,
-        status: progress === 100 ? "COMPLETED" : "IN_PROGRESS",
+        status: isCompleted ? "COMPLETED" : "IN_PROGRESS",
         savedAt: new Date().toISOString(),
       };
 
@@ -178,7 +208,10 @@ export async function POST(req: NextRequest) {
 
     const form = await prisma.consentFormLink.findUnique({
       where: { token: id },
-      include: { snapshotMCQs: true },
+      include: {
+        snapshotMCQs: true,
+        answers: true,
+      },
     });
 
     if (!form) {
@@ -186,7 +219,25 @@ export async function POST(req: NextRequest) {
     }
 
     const now = new Date();
-    if (!form.isActive || form.expiresAt < now) {
+    // Check expiration first
+    if (form.expiresAt < now) {
+      // Update status to EXPIRED if not already
+      if (form.status !== "EXPIRED") {
+        await prisma.consentFormLink.update({
+          where: { id: form.id },
+          data: {
+            status: "EXPIRED",
+            isActive: false,
+          },
+        });
+      }
+      return NextResponse.json(
+        { error: "This form has expired" },
+        { status: 410 }
+      );
+    }
+
+    if (!form.isActive) {
       return NextResponse.json(
         { error: "This form is no longer available for submission" },
         { status: 410 }
@@ -224,7 +275,8 @@ export async function POST(req: NextRequest) {
         };
       });
 
-      await prisma.$transaction([
+      // Get all answers after submission
+      const transactionResults = await prisma.$transaction([
         ...(answers.length > 0
           ? [prisma.formAnswer.createMany({ data: formAnswersData })]
           : []),
@@ -235,31 +287,37 @@ export async function POST(req: NextRequest) {
           },
           data: { isDraft: false },
         }),
-        prisma.consentFormLink.update({
-          where: { id: form.id },
-          data: {
-            status: "COMPLETED",
-            isActive: false,
-            progressPercentage: 100,
-            completedAt: new Date(),
+        prisma.formAnswer.findMany({
+          where: {
+            consentFormLinkId: form.id,
           },
         }),
       ]);
 
-      const correctAnswers = await prisma.formAnswer.count({
-        where: {
-          consentFormLinkId: form.id,
-          isCorrect: true,
+      const allAnswers = transactionResults[transactionResults.length - 1] as {
+        isCorrect: boolean;
+      }[];
+      const totalQuestions = form.snapshotMCQs.length;
+      const correctAnswers = allAnswers.filter((a) => a.isCorrect).length;
+      const score = Math.round((correctAnswers / totalQuestions) * 100);
+
+      // Only mark as COMPLETED if all answers are correct
+      const isCompleted = correctAnswers === totalQuestions;
+
+      await prisma.consentFormLink.update({
+        where: { id: form.id },
+        data: {
+          status: isCompleted ? "COMPLETED" : "IN_PROGRESS",
+          isActive: !isCompleted, // Keep active if not fully correct
+          progressPercentage: 100,
+          completedAt: isCompleted ? new Date() : null,
         },
       });
 
-      const totalQuestions = form.snapshotMCQs.length;
-      const score = Math.round((correctAnswers / totalQuestions) * 100);
-
       const response: FormResponse = {
         success: true,
-        status: "COMPLETED",
-        completedAt: new Date().toISOString(),
+        status: isCompleted ? "COMPLETED" : "IN_PROGRESS",
+        completedAt: isCompleted ? new Date().toISOString() : undefined,
         score,
       };
 
@@ -273,7 +331,6 @@ export async function POST(req: NextRequest) {
     );
   }
 }
-
 export async function DELETE(req: NextRequest) {
   const id = req.nextUrl.pathname.split("/").pop();
   try {
@@ -287,6 +344,7 @@ export async function DELETE(req: NextRequest) {
       where: { id },
     });
 
+    revalidatePath("/dentist/consent-questions");
     return NextResponse.json(
       { message: "Consent Form deleted successfully" },
       { status: 200 }

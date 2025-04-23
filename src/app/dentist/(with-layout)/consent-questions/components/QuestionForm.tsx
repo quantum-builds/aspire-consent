@@ -337,7 +337,6 @@ export default function QuestionForm({
         <div className="flex bg-background/80 justify-center backdrop-blur-sm fixed inset-0 items-center z-50">
           <div className="flex flex-col gap-4 items-center">
             <Loader2 className="h-10 text-[#698AFF] w-10 animate-spin" />
-            <p className="text-lg font-medium">Performing Action...</p>
           </div>
         </div>
       )}
@@ -506,7 +505,7 @@ export default function QuestionForm({
                       control={form.control}
                       name={`questions.${questionIndex}.videoUrl`}
                       render={({ field }) => (
-                        <FormItem className="w-full lg:w-1/2">
+                        <FormItem className="w-full">
                           <FormLabel className="font-medium">
                             Question Video:
                           </FormLabel>
@@ -544,28 +543,28 @@ export default function QuestionForm({
                 ))}
               </div>
 
-              <div className="flex justify-between mt-6">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={handleAddQuestion}
-                  className="px-5 py-2"
-                  disabled={isSubmitting}
-                >
-                  <Plus className="h-4 w-4 mr-2" /> Add Another Question
-                </Button>
-                <div className="space-x-2">
-                  {onCancel && (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={onCancel}
-                      className="px-5 py-2"
-                      disabled={isSubmitting}
-                    >
-                      Cancel
-                    </Button>
-                  )}
+              <div className="flex justify-between items-center mt-6">
+                {onCancel && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={onCancel}
+                    className="px-5 py-2"
+                    disabled={isSubmitting}
+                  >
+                    Cancel
+                  </Button>
+                )}
+                <div className="space-x-2 flex items-center ">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={handleAddQuestion}
+                    className="px-5 py-2"
+                    disabled={isSubmitting}
+                  >
+                    <Plus className="h-4 w-4 mr-2" /> Add Another Question
+                  </Button>
                   <Button
                     type="submit"
                     className="px-5 py-2 bg-[#698AFF] hover:bg-[#5470E0] text-white"

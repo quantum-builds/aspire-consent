@@ -28,6 +28,7 @@ import { RichTextEditor } from "@/components/RichTextEditor";
 import { useCreateProcedure } from "@/services/procedure/ProcedureMutation";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { Plus } from "lucide-react";
 
 // Define the form schema with Zod
 const formSchema = z.object({
@@ -79,9 +80,10 @@ export default function ModalForm() {
         <DialogTrigger asChild>
           <Button
             style={{ backgroundColor: "#698AFF" }}
-            className="hover:bg-[#5470e6] text-white h-12 text-md"
+            className="bg-[#698AFF] hover:bg-[#698AFF] text-white cursor-pointer py-7 text-xl px-4 flex items-center justify-center rounded-md"
           >
-            Open Form
+            <Plus width={20} height={20} className="mr-1" />
+            New Procedure
           </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px] bg-white text-black">

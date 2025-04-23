@@ -64,9 +64,9 @@ model MCQ {
   options         String[]
   videoUrl        String
   procedureId     String
-  procedure       Procedure  @relation(fields: [procedureId], references: [id])
+  procedure       Procedure  @relation(fields: [procedureId], references: [id],onDelete: Cascade)
   dentistId       String   
-  dentist         User       @relation(fields: [dentistId], references: [id])
+  dentist         User       @relation(fields: [dentistId], references: [id],onDelete: Cascade)
   answers         FormAnswer[] @relation("OriginalMCQAnswers")
   
   @@unique([procedureId, dentistId, id])

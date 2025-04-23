@@ -3,22 +3,27 @@ import prisma from "@/lib/db";
 import { generateOTP } from "@/utils/generateOtp";
 import { NextRequest, NextResponse } from "next/server";
 
+interface EmailRequest {
+  to: string;
+  subject: string;
+  text: string;
+  html?: string;
+}
+
+interface EmailData {
+  from: string;
+  to: string;
+  subject: string;
+  text: string;
+  html?: string;
+}
+
 export async function POST(req: NextRequest) {
-  const { to, subject, text } = await req.json();
+  const { to, subject, text, html }: EmailRequest = await req.json();
 
   if (!to || !subject || !text) {
     return NextResponse.json(
       { message: "to, subject and text are required" },
-      { status: 400 }
-    );
-  }
-  const user = await prisma.user.findUnique({
-    where: { email: to },
-  });
-
-  if (!user) {
-    return NextResponse.json(
-      { message: "User with this email does not exist" },
       { status: 400 }
     );
   }
@@ -33,29 +38,51 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const otp = generateOTP();
-
-  console.log("otp is ", otp);
-  await prisma.user.update({
-    where: { email: to },
-    data: { otp },
-  });
-
   try {
-    console.log("api key is ", process.env.SENDGRID_API_KEY);
-    const email = await sendgrid.send({
-      from: process.env.EMAIL_FROM!,
+    const emailData: EmailData = {
+      from: process.env.EMAIL_FROM,
       to,
       subject,
-      text: `${text}\n${otp}`,
-    });
-    console.log("email is ", email);
+      text,
+    };
+
+    // Add HTML content if provided
+    if (html) {
+      emailData.html = html;
+    }
+
+    const isOTPEmail = subject.toLowerCase().includes("otp");
+    if (isOTPEmail) {
+      const user = await prisma.user.findUnique({
+        where: { email: to },
+      });
+
+      if (!user) {
+        return NextResponse.json(
+          { message: "User with this email does not exist" },
+          { status: 400 }
+        );
+      }
+
+      const otp = generateOTP();
+      await prisma.user.update({
+        where: { email: to },
+        data: { otp },
+      });
+
+      emailData.text = `${text}\n${otp}`;
+      if (emailData.html) {
+        emailData.html = `${html}<p>Your OTP: <strong>${otp}</strong></p>`;
+      }
+    }
+
+    await sendgrid.send(emailData);
     return NextResponse.json(
       { message: "Email sent successfully!" },
       { status: 200 }
     );
   } catch (error) {
-    console.log("Error in sending email ", error);
+    console.error("Error in sending email ", error);
     return NextResponse.json(
       { message: "Internal server error" },
       { status: 500 }

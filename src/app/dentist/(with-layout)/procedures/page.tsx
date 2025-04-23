@@ -1,10 +1,9 @@
 import Header from "@/components/Header";
 import ProcedureQuestionFormsList from "@/app/dentist/(with-layout)/procedures/components/ProceduresList";
-import { Plus } from "lucide-react";
-import Link from "next/link";
 import { getDentistProcedure } from "@/services/dentist-procedure/DentistProcedureQuery";
 import { Response } from "@/types/common";
 import { TDentistProcedure } from "@/types/dentist-procedure";
+import ModalForm from "@/app/dentist/(with-layout)/procedures/components/AddProcedureModal";
 
 export default async function Page() {
   let errorMessage = undefined;
@@ -28,13 +27,7 @@ export default async function Page() {
           </p>
         </div>
 
-        <Link
-          className="bg-[#698AFF] hover:bg-[#698AFF] text-white cursor-pointer py-4 text-xl px-3 flex items-center justify-center rounded-md "
-          href={"/dentist/new-consent-form"}
-        >
-          <Plus width={20} height={20} className="mr-1" />
-          New Consent
-        </Link>
+        <ModalForm />
       </div>
       <ProcedureQuestionFormsList
         data={consentForms}

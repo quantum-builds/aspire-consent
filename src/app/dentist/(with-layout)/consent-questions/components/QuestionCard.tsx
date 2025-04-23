@@ -257,7 +257,7 @@ export function QuestionCard({
             control={control}
             name="video"
             render={({ field }) => (
-              <FormItem className="w-full lg:w-1/2">
+              <FormItem className="w-full">
                 <FormLabel className="font-medium">Question Video:</FormLabel>
                 <FormControl>
                   <FileUploader

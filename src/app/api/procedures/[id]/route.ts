@@ -1,6 +1,7 @@
 import prisma from "@/lib/db";
 import { createResponse } from "@/utils/createResponse";
 import { isCuid } from "cuid";
+import { revalidatePath } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
@@ -84,7 +85,7 @@ export async function DELETE(req: NextRequest) {
     await prisma.procedure.delete({
       where: { id },
     });
-
+    revalidatePath("/dentist/procedures");
     return NextResponse.json(
       { message: "Procedure deleted successfully" },
       { status: 200 }

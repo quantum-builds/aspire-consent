@@ -23,12 +23,11 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // Check if current path is public
   const isPublicPath = publicPaths.some(
     (path) => pathname === path || pathname.startsWith(`${path}/`)
   );
 
-  // Prevent authenticated users from accessing auth pages
+  console.log("is Public path", isPublicPath);
   if (
     token &&
     (pathname.startsWith("/login") || pathname.startsWith("/signup"))
@@ -38,12 +37,11 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL(destination, req.url));
   }
 
-  // If it's a public path, allow access regardless of token
   if (isPublicPath) {
+    console.log("in if");
     return NextResponse.next();
   }
 
-  // Protected path handling
   if (!token) {
     const callbackUrl = encodeURIComponent(
       req.nextUrl.pathname + req.nextUrl.search

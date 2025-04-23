@@ -29,6 +29,7 @@ import { ExtendedTUser } from "@/types/user";
 import { useCreateConsentFormLink } from "@/services/consent-form/ConsentFomMutation";
 import { useSendEmail } from "@/services/email/emailMutation";
 import axios from "axios";
+import { stripHtml } from "string-strip-html";
 
 // Define the form schema with Zod
 const formSchema = z.object({
@@ -79,44 +80,58 @@ export default function ConsentForm({
     mode: "onSubmit", // Validate on form submission
   });
 
-  // Form submission handler
   function onSubmit(data: FormValues) {
-    console.log("data is ", data);
-    // Use the actual IDs from the form data
     createConsentLink(
       {
-        patientId: data.patient, // This now contains the actual patient ID
-        procedureId: data.treatment, // This now contains the actual procedure ID
+        patientId: data.patient,
+        procedureId: data.treatment,
         expiresAt: data.treatmentDate,
       },
       {
-        onSuccess: (data: {
-          dentistEmail: string;
-          patientEmail: string;
-          token: string;
-        }) => {
-          sendEmail(
-            {
-              to: data.patientEmail,
-              subject: "Consent Form to Fill",
-              text: `This is the consent for you send by ${data.dentistEmail} \n ${process.env.NEXT_PUBLIC_BASE_URL}patient/consent-form/${data.token}?email=${data.patientEmail}`,
+        onSuccess: (responseData) => {
+          const emailContent = {
+            to: responseData.patientEmail,
+            subject: "Consent Form to Fill",
+            text: `This is the consent form sent by ${
+              responseData.dentistEmail
+            }.\n\n${
+              data.customNote
+                ? `Additional Note:\n${stripHtml(data.customNote).result}\n\n`
+                : ""
+            }Please fill out the consent form at the following link:\n${
+              process.env.NEXT_PUBLIC_BASE_URL
+            }consent-form/${responseData.token}?email=${
+              responseData.patientEmail
+            }`,
+            html: `<p>This is the consent form sent by ${
+              responseData.dentistEmail
+            }.</p>
+                ${data.customNote ? `<div>${data.customNote}</div>` : ""}
+                <p>Please fill out the consent form at the following link:</p>
+                <a href="${process.env.NEXT_PUBLIC_BASE_URL}consent-form/${
+              responseData.token
+            }?email=${responseData.patientEmail}">
+                ${process.env.NEXT_PUBLIC_BASE_URL}consent-form/${
+              responseData.token
+            }?email=${responseData.patientEmail}
+                </a>`,
+          };
+
+          sendEmail(emailContent, {
+            onSuccess: () => {
+              toast.success("Consent Link sent to the provided email");
+              form.reset();
             },
-            {
-              onSuccess: () => {
-                toast.success("Consent Link send on provided email");
-                form.reset();
-              },
-              onError: (err) => {
-                if (axios.isAxiosError(err) && err.response) {
-                  const message =
-                    err.response.data?.message || "Something went wrong";
-                  toast.error(message);
-                } else {
-                  toast.error("Network error. Please check your connection.");
-                }
-              },
-            }
-          );
+            onError: (err) => {
+              if (axios.isAxiosError(err) && err.response) {
+                const message =
+                  err.response.data?.message || "Something went wrong";
+                toast.error(message);
+              } else {
+                toast.error("Network error. Please check your connection.");
+              }
+            },
+          });
         },
         onError: (error) => {
           console.error("Error in generating Link:", error);
@@ -298,7 +313,7 @@ export default function ConsentForm({
             </CardContent>
           </Card>
 
-          <div className="flex justify-between">
+          <div className="flex justify-end gap-6">
             <button
               type="button"
               onClick={() => {

@@ -7,15 +7,18 @@ export const useSendEmail = () => {
       to,
       subject,
       text,
+      html,
     }: {
       to: string;
       subject: string;
       text: string;
+      html?: string;
     }) => {
       const response = await axiosInstance.post(ENDPOINTS.email.sendEmail, {
         to,
         subject,
         text,
+        html,
       });
       return response.data;
     },

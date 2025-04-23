@@ -397,12 +397,10 @@ const FileUploader: React.FC<FileUploaderProps> = ({
                 {!disabled && (
                   <button
                     type="button"
-                    onClick={() => {
-                      removeFile(file);
-                    }}
-                    className="text-gray-400 hover:text-red-500"
+                    onClick={() => removeFile(file)}
+                    className="text-gray-400 hover:text-red-500 text-4xl"
                   >
-                    ✖
+                    ×
                   </button>
                 )}
               </div>

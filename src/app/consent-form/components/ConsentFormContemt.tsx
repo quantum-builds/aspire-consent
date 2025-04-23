@@ -1,5 +1,4 @@
 "use client";
-
 import { useState, useEffect } from "react";
 import { Check, X, Play } from "lucide-react";
 import { z } from "zod";
@@ -30,10 +29,7 @@ export default function ConsentFormContent({
   data,
   formId,
 }: ConsentFormContentProps) {
-  console.log("data is ", data);
-
   const router = useRouter();
-
   const [answers, setAnswers] = useState<Record<string, string | null>>({});
   const [answerStatus, setAnswerStatus] = useState<Record<string, boolean>>({});
   const [consent, setConsent] = useState(false);
@@ -57,7 +53,6 @@ export default function ConsentFormContent({
         acc[mcq.id] = existingAnswer?.selectedAnswer || null;
         return acc;
       }, {} as Record<string, string | null>);
-
       setAnswers(initialAnswers);
 
       const initialStatus = data.snapshotMCQs.reduce((acc, mcq) => {
@@ -69,7 +64,6 @@ export default function ConsentFormContent({
           : false;
         return acc;
       }, {} as Record<string, boolean>);
-
       setAnswerStatus(initialStatus);
 
       const hasAnswers = data.answers && data.answers.length > 0;
@@ -81,24 +75,14 @@ export default function ConsentFormContent({
   const allCorrect = Object.values(answerStatus).every(Boolean);
 
   const handleAnswerSelect = (mcqId: string, answer: string) => {
-    setAnswers((prev) => ({ ...prev, [mcqId]: answer }));
-    setAnswerStatus((prev) => {
-      const newStatus = { ...prev };
-      delete newStatus[mcqId];
-      return newStatus;
-    });
-  };
-
-  const checkAnswer = (mcqId: string) => {
     const mcq = data?.snapshotMCQs.find((q) => q.id === mcqId);
-    if (!mcq || answers[mcqId] === null) return;
-
-    const isCorrect = answers[mcqId] === mcq.correctAnswer;
+    if (!mcq) return;
+    const isCorrect = answer === mcq.correctAnswer;
+    setAnswers((prev) => ({ ...prev, [mcqId]: answer }));
     setAnswerStatus((prev) => ({ ...prev, [mcqId]: isCorrect }));
   };
 
   const handleSaveDraft = () => {
-    // Only save answers that have values
     const draftAnswers = Object.entries(answers)
       .filter(([, answer]) => answer !== null)
       .map(([mcqId, selectedAnswer]) => ({
@@ -120,26 +104,19 @@ export default function ConsentFormContent({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
     try {
-      // Validate form data for submission
       const formData = submitFormSchema.parse({
         answers: Object.fromEntries(
-          Object.entries(answers).map(([key, value]) => [
-            key,
-            value || "", // Convert null to empty string for validation
-          ])
+          Object.entries(answers).map(([key, value]) => [key, value || ""])
         ),
         consent,
       });
 
-      // Validate all answers are correct
       if (!allCorrect) {
         toast.error("Please correct all wrong answers before submitting");
         return;
       }
 
-      // Convert answers to array format expected by the API
       const formAnswers = Object.entries(formData.answers).map(
         ([mcqId, selectedAnswer]) => ({
           mcqId,
@@ -147,42 +124,18 @@ export default function ConsentFormContent({
         })
       );
 
-      // Submit form
       submitForm(
         { formId, answers: formAnswers },
         {
           onSuccess: () => {
             toast.success("Form submitted successfully!");
             router.replace("/form-success");
-            // sendEmail(
-            //   {
-            //     to: data?.dentist.email,
-            //     subject: "Consent Form to Fill",
-            //     text: `This is the consent for you send by ${data.dentistEmail} \n ${process.env.NEXT_PUBLIC_BASE_URL}patient/consent-form/${data.token}?email=${data.patientEmail}`,
-            //   },
-            //   {
-            //     onSuccess: () => {
-            //       toast.success("Consent Link send on provided email");
-            //       form.reset();
-            //     },
-            //     onError: (err) => {
-            //       if (axios.isAxiosError(err) && err.response) {
-            //         const message =
-            //           err.response.data?.message || "Something went wrong";
-            //         toast.error(message);
-            //       } else {
-            //         toast.error("Network error. Please check your connection.");
-            //       }
-            //     },
-            //   }
-            // );
           },
           onError: () => toast.error("Failed to submit form"),
         }
       );
     } catch (error) {
       if (error instanceof z.ZodError) {
-        // Handle validation errors
         const firstError = error.errors[0];
         toast.error(firstError.message);
       } else {
@@ -202,15 +155,15 @@ export default function ConsentFormContent({
         src={AspireConsentBlackLogo || "/placeholder.svg"}
         alt="Aspire Logo"
         width={140}
-        className="object-contain "
+        className="object-contain"
         priority
       />
       <div className="py-10 px-10 bg-[#698AFF4D] rounded-lg shadow-sm border border-gray-200 text-lg">
-        Hi {data.patient.fullName}, You’ve scheduled a
-        <span className="font-semibold">{data.procedure.name}</span>! Please
+        Hi {data.patient.fullName}, You&apos;ve scheduled a
+        <span className="font-semibold"> {data.procedure.name}</span>! Please
         take a moment to complete this short quiz to help you better understand
-        the procedure and what to expect. If you’re unsure about any answer,
-        feel free to watch the provided video.
+        the procedure and what to expect. If you&apos;re unsure about any
+        answer, feel free to watch the provided video.
       </div>
       <div className="p-4 bg-white rounded-lg shadow-sm border border-gray-200">
         <form onSubmit={handleSubmit}>
@@ -221,18 +174,17 @@ export default function ConsentFormContent({
                 className={`p-4 border rounded-md ${
                   activeQuestion === mcq.id
                     ? "border-blue-500 ring-1 ring-blue-500"
-                    : answerStatus[mcq.id]
-                    ? "border-green-200 bg-green-50"
-                    : answers[mcq.id] !== null && !answerStatus[mcq.id]
-                    ? "border-red-200 bg-red-50"
-                    : "border-gray-200"
+                    : answers[mcq.id]
+                    ? answerStatus[mcq.id]
+                      ? "border-green-200 bg-green-50"
+                      : "border-red-200 bg-red-50"
+                    : "border-gray-200 bg-white"
                 }`}
                 onClick={() => setActiveQuestion(mcq.id)}
               >
                 <p className="font-medium text-gray-700 mb-3">
                   Q: {mcq.questionText}
                 </p>
-
                 <div className="space-y-2">
                   {mcq.options.map((option, index) => (
                     <div
@@ -248,12 +200,10 @@ export default function ConsentFormContent({
                       <div
                         className={`w-5 h-5 border rounded flex items-center justify-center cursor-pointer ${
                           answers[mcq.id] === option
-                            ? answerStatus[mcq.id] !== undefined
-                              ? answerStatus[mcq.id]
-                                ? "bg-green-100 border-green-400"
-                                : "bg-red-100 border-red-400"
-                              : "bg-blue-50 border-blue-300"
-                            : "border-gray-300"
+                            ? answerStatus[mcq.id]
+                              ? "bg-green-100 border-green-400"
+                              : "bg-red-100 border-red-400"
+                            : "border-gray-300 bg-white"
                         }`}
                         onClick={(e) => {
                           e.stopPropagation();
@@ -261,7 +211,6 @@ export default function ConsentFormContent({
                         }}
                       >
                         {answers[mcq.id] === option &&
-                          answerStatus[mcq.id] !== undefined &&
                           (answerStatus[mcq.id] ? (
                             <Check className="w-4 h-4 text-green-600" />
                           ) : (
@@ -271,10 +220,9 @@ export default function ConsentFormContent({
                     </div>
                   ))}
                 </div>
-
                 <div className="flex justify-between mt-4">
                   <div className="text-sm">
-                    {answerStatus[mcq.id] !== undefined && answers[mcq.id] && (
+                    {answers[mcq.id] && (
                       <span
                         className={
                           answerStatus[mcq.id]
@@ -286,7 +234,6 @@ export default function ConsentFormContent({
                       </span>
                     )}
                   </div>
-
                   <div className="flex items-center gap-2">
                     {currentVideo?.mcqId === mcq.id ? (
                       <button
@@ -311,26 +258,12 @@ export default function ConsentFormContent({
                         <Play className="w-3 h-3" /> Watch video
                       </button>
                     )}
-
-                    {answers[mcq.id] && answerStatus[mcq.id] === undefined && (
-                      <button
-                        type="button"
-                        className="text-sm bg-blue-500 text-white px-2 py-1 rounded"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          checkAnswer(mcq.id);
-                        }}
-                      >
-                        Check
-                      </button>
-                    )}
                   </div>
                 </div>
-
                 {currentVideo?.mcqId === mcq.id && (
                   <div className="mt-4 pt-4 border-t border-gray-200">
                     <h4 className="text-sm font-medium text-gray-700 mb-2">
-                      Educational Video:
+                      Educational Video:{" "}
                       {getPathAfterUploadsImages(
                         mcq.videoName ||
                           "/uploads/aspire-consent/placeholder.mp4"
@@ -348,7 +281,6 @@ export default function ConsentFormContent({
                 )}
               </div>
             ))}
-
             <div className="mt-6 flex items-start gap-2">
               <div
                 className={`mt-0.5 w-5 h-5 border rounded flex-shrink-0 flex items-center justify-center cursor-pointer ${
@@ -366,8 +298,7 @@ export default function ConsentFormContent({
                 treatment.
               </label>
             </div>
-
-            <div className="flex justify-between gap-2 mt-6">
+            <div className="flex justify-end gap-4 mt-6">
               <button
                 type="button"
                 className="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-50 disabled:opacity-50"
@@ -376,30 +307,13 @@ export default function ConsentFormContent({
               >
                 {isSavingDraft ? "Saving..." : "Save Progress"}
               </button>
-              <div className="flex gap-2">
-                {!allCorrect && (
-                  <button
-                    type="button"
-                    className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-                    onClick={() => {
-                      Object.keys(answers).forEach((mcqId) => {
-                        if (!answerStatus[mcqId] && answers[mcqId]) {
-                          checkAnswer(mcqId);
-                        }
-                      });
-                    }}
-                  >
-                    Check Answers
-                  </button>
-                )}
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
-                  disabled={!allCorrect || !consent || isSubmitting}
-                >
-                  {isSubmitting ? "Submitting..." : "Submit"}
-                </button>
-              </div>
+              <button
+                type="submit"
+                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={!allCorrect || !consent || isSubmitting}
+              >
+                {isSubmitting ? "Submitting..." : "Submit"}
+              </button>
             </div>
           </div>
         </form>
