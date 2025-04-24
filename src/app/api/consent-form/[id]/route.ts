@@ -158,19 +158,19 @@ export async function PATCH(req: NextRequest) {
 
       const totalQuestions = form.snapshotMCQs.length;
       const answeredCount = allAnswers.length;
-      const correctAnswers = allAnswers.filter((a) => a.isCorrect).length;
+      // const correctAnswers = allAnswers.filter((a) => a.isCorrect).length;
 
       const progress = Math.round((answeredCount / totalQuestions) * 100);
 
       // Only mark as COMPLETED if all answers are correct and all questions are answered
-      const isCompleted =
-        answeredCount === totalQuestions && correctAnswers === totalQuestions;
+      // const isCompleted =
+      //   answeredCount === totalQuestions && correctAnswers === totalQuestions;
 
       await prisma.consentFormLink.update({
         where: { id: form.id },
         data: {
           progressPercentage: progress,
-          status: isCompleted ? "COMPLETED" : "IN_PROGRESS",
+          status: "IN_PROGRESS",
           lastUpdated: new Date(),
         },
       });
@@ -178,7 +178,7 @@ export async function PATCH(req: NextRequest) {
       const response: FormResponse = {
         success: true,
         progress,
-        status: isCompleted ? "COMPLETED" : "IN_PROGRESS",
+        status: "IN_PROGRESS",
         savedAt: new Date().toISOString(),
       };
 
@@ -301,23 +301,23 @@ export async function POST(req: NextRequest) {
       const correctAnswers = allAnswers.filter((a) => a.isCorrect).length;
       const score = Math.round((correctAnswers / totalQuestions) * 100);
 
-      // Only mark as COMPLETED if all answers are correct
-      const isCompleted = correctAnswers === totalQuestions;
+      // // Only mark as COMPLETED if all answers are correct
+      // const isCompleted = correctAnswers === totalQuestions;
 
       await prisma.consentFormLink.update({
         where: { id: form.id },
         data: {
-          status: isCompleted ? "COMPLETED" : "IN_PROGRESS",
-          isActive: !isCompleted, // Keep active if not fully correct
+          status: "COMPLETED",
+          isActive: false, // Keep active if not fully correct
           progressPercentage: 100,
-          completedAt: isCompleted ? new Date() : null,
+          completedAt: new Date(),
         },
       });
 
       const response: FormResponse = {
         success: true,
-        status: isCompleted ? "COMPLETED" : "IN_PROGRESS",
-        completedAt: isCompleted ? new Date().toISOString() : undefined,
+        status: "COMPLETED",
+        completedAt: new Date().toISOString(),
         score,
       };
 

@@ -61,8 +61,8 @@ interface QuestionFormProps {
   onDelete: (id: string) => Promise<void>;
   isPending?: boolean;
   onCancel?: () => void;
-  procedureId: string | null;
-  consentName: string;
+  procedureId: string;
+  procedureName: string | null;
 }
 
 export default function QuestionForm({
@@ -72,7 +72,7 @@ export default function QuestionForm({
   isPending = false,
   onCancel,
   procedureId,
-  consentName,
+  procedureName,
 }: QuestionFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formProgress, setFormProgress] = useState(0);
@@ -346,7 +346,7 @@ export default function QuestionForm({
           <Card className="mb-6 border-none shadow-none">
             <CardHeader className="px-0">
               <CardTitle className="text-xl font-semibold">
-                Questions for {consentName}
+                Questions for {procedureName}
               </CardTitle>
             </CardHeader>
             <CardContent className="px-0 pt-4 space-y-6">

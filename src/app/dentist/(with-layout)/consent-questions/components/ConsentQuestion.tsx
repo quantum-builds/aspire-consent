@@ -5,25 +5,24 @@ import { Response } from "@/types/common";
 import { getMCQs } from "@/services/mcq/MCQQuery";
 
 type ConsentQuestionProps = {
-  consentName: string;
+  procedureId: string;
 };
 export default async function ConsentQuestion({
-  consentName,
+  procedureId,
 }: ConsentQuestionProps) {
   let errorMessage = undefined;
   let mcqs: ExtendedTMCQ[] = [];
-  let procedureId: string | null = null;
-
-  console.log("consent name is ", consentName);
+  let procedureName: string | null = null;
+  console.log("procedure id is ", procedureId);
 
   const response: Response<ExtendedTMCQ[] | string> = await getMCQs(
-    consentName
+    procedureId
   );
   if (response.status && Array.isArray(response.data)) {
     mcqs = response.data;
-    procedureId = mcqs[0].procedureId;
+    procedureName = mcqs[0].procedureName;
   } else if (typeof response.data === "string") {
-    procedureId = response.data;
+    procedureName = response.data;
     errorMessage = response.message;
   } else {
     errorMessage = response.message;
@@ -46,7 +45,7 @@ export default async function ConsentQuestion({
       <QuestionList
         data={mcqs}
         procedureId={procedureId}
-        consentName={consentName}
+        consentName={procedureName}
       />
     </div>
   );

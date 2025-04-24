@@ -35,11 +35,11 @@ export const ENDPOINTS = {
     deleteProcedure: (id: string) => `/api/procedures/${id}`,
   },
   mcq: {
-    getMCQ: (procedureName?: string) => {
-      if (!procedureName) {
+    getMCQ: (procedureId?: string) => {
+      if (!procedureId) {
         return "/api/mcq";
       }
-      return `/api/mcq?procedureName=${encodeURIComponent(procedureName)}`;
+      return `/api/mcq?procedureId=${encodeURIComponent(procedureId)}`;
     },
     createMCQ: "/api/mcq",
     patchMCQ: (id: string) => `/api/mcq/${id}`,

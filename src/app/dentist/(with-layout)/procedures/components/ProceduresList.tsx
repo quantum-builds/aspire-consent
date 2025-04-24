@@ -175,7 +175,7 @@ export default function ProcedureQuestionFormsList({
                           asChild
                         >
                           <Link
-                            href={`/dentist/consent-questions/${procedure.procedure.name}`}
+                            href={`/dentist/consent-questions/${procedure.procedure.id}`}
                           >
                             <List className="h-4 w-4 mr-2" />
                             View Questions
@@ -211,7 +211,7 @@ export default function ProcedureQuestionFormsList({
                           <DropdownMenuContent align="end">
                             <DropdownMenuItem asChild>
                               <Link
-                                href={`/dentist/consent-questions/${procedure.procedure.name}`}
+                                href={`/dentist/consent-questions/${procedure.procedure.id}`}
                               >
                                 <List className="h-4 w-4 mr-2" />
                                 View Questions
@@ -248,7 +248,10 @@ export default function ProcedureQuestionFormsList({
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={2} className="h-24 text-center">
+                  <TableCell
+                    colSpan={2}
+                    className="h-24 text-center text-red-500"
+                  >
                     No results found.
                   </TableCell>
                 </TableRow>

@@ -12,8 +12,8 @@ import { useRouter } from "next/navigation";
 
 type QuestionListProps = {
   data: ExtendedTMCQ[];
-  procedureId: string | null;
-  consentName: string;
+  procedureId: string;
+  consentName: string | null;
 };
 
 export default function QuestionList({
@@ -168,7 +168,7 @@ export default function QuestionList({
         }
         onCancel={closeForm}
         procedureId={procedureId}
-        consentName={consentName}
+        procedureName={consentName}
       />
     </div>
   );

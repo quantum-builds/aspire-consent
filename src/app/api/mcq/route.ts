@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
     const token = await getToken({ req: req, secret });
     const dentistId = token?.id;
 
-    console.log("1")
+    console.log("1");
     if (!token || !dentistId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -57,7 +57,6 @@ export async function POST(req: NextRequest) {
       { message: "MCQs created successfully", created },
       { status: 201 }
     );
-
   } catch (error) {
     console.log("7");
 
@@ -79,22 +78,19 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const procedureName = searchParams.get("procedureName");
-    console.log("in mcq get ", procedureName);
+    const procedureId = searchParams.get("procedureId");
+    console.log("in mcq get ", procedureId);
 
-    console.log("procedure name is ", procedureName);
-    if (!procedureName) {
+    console.log("procedure id is ", procedureId);
+    if (!procedureId) {
       return NextResponse.json(
         createResponse(false, "Procedure name must be valid", null),
         { status: 400 }
       );
     }
 
-    const procedure = await prisma.procedure.findUnique({
-      where: { name: procedureName },
-    });
     const mcqs = await prisma.mCQ.findMany({
-      where: { procedureId: procedure?.id, dentistId: dentistId },
+      where: { procedureId: procedureId, dentistId: dentistId },
       include: {
         procedure: true,
       },
@@ -103,7 +99,7 @@ export async function GET(req: NextRequest) {
     console.log("mcq length is ", mcqs.length);
     if (mcqs.length === 0) {
       return NextResponse.json(
-        createResponse(false, "No MCQ found", procedure?.id),
+        createResponse(false, "No MCQ found", mcqs[0].procedure.name),
         { status: 400 }
       );
     }

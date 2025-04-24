@@ -5,10 +5,10 @@ import QuestionFormSkeleton from "@/app/dentist/(with-layout)/consent-questions/
 type Params = Promise<{ slug: string }>;
 export default async function Page({ params }: { params: Params }) {
   const { slug } = await params;
-  const consentName = decodeURIComponent(slug);
+  const procedureId = decodeURIComponent(slug);
   return (
     <Suspense fallback={<QuestionFormSkeleton />}>
-      <ConsentQuestion consentName={consentName} />
+      <ConsentQuestion procedureId={procedureId} />
     </Suspense>
   );
 }

@@ -301,7 +301,10 @@ export default function DataTable({
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={5} className="h-24 text-center">
+                  <TableCell
+                    colSpan={5}
+                    className="h-24 text-center text-red-500"
+                  >
                     No results found.
                   </TableCell>
                 </TableRow>

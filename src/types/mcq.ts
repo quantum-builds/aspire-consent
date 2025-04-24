@@ -15,6 +15,7 @@ export type TMCQ = {
 export type ExtendedTMCQ = {
   id: string;
   questionText: string;
+  procedureName: string;
   correctAnswer: string;
   options: string[];
   videoUrl: string;

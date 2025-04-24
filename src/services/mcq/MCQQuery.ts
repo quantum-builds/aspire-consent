@@ -5,9 +5,9 @@ import axios from "axios";
 import { cookies } from "next/headers";
 import { getAMedia } from "../s3/s3Query";
 
-export async function getMCQs(procedureName?: string) {
+export async function getMCQs(procedureId?: string) {
   try {
-    console.log("in quesry name is ", procedureName);
+    console.log("in quesry name is ", procedureId);
     const cookieStore = cookies();
     const cookieHeader = (await cookieStore)
       .getAll()
@@ -15,7 +15,7 @@ export async function getMCQs(procedureName?: string) {
       .join("; ");
 
     const response = await axiosInstance.get(
-      ENDPOINTS.mcq.getMCQ(procedureName),
+      ENDPOINTS.mcq.getMCQ(procedureId),
       {
         headers: {
           Cookie: cookieHeader,
