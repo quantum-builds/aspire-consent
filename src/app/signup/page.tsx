@@ -94,7 +94,7 @@ export default function SignupForm() {
       {
         onSuccess: () => {
           toast.success("Patient registered successfully");
-          router.replace("/login");
+          router.replace("/login?role=patient");
         },
         onError: (err) => {
           if (axios.isAxiosError(err) && err.response) {
@@ -119,7 +119,7 @@ export default function SignupForm() {
       {
         onSuccess: () => {
           toast.success("Dentist registered successfully");
-          router.replace("/login");
+          router.replace("/login?role=dentist");
         },
         onError: (err) => {
           if (axios.isAxiosError(err) && err.response) {

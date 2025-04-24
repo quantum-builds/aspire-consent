@@ -77,40 +77,55 @@ export default function QuestionForm({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formProgress, setFormProgress] = useState(0);
 
-  const initialQuestions = data
-    ? data.map((q) => {
-        const options = q.options.map((opt, i) => ({
-          label: String.fromCharCode(65 + i), // A, B, C, etc.
-          text: opt,
-        }));
+  const initialQuestions =
+    data && data.length > 0
+      ? data.map((q) => {
+          const options = q.options.map((opt, i) => ({
+            label: String.fromCharCode(65 + i),
+            text: opt,
+          }));
 
-        // Find the label that matches the correct answer text
-        const correctOption = options.find(
-          (opt) => opt.text === q.correctAnswer
-        );
-        const correctAnswerLabel = correctOption?.label || "";
+          const correctOption = options.find(
+            (opt) => opt.text === q.correctAnswer
+          );
+          const correctAnswerLabel = correctOption?.label || "";
 
-        return {
-          id: q.id || undefined,
-          procedureId: q.procedureId,
-          questionText: q.questionText,
-          options,
-          correctAnswer: correctAnswerLabel, // Store the label, not the text
-          videoUrl: undefined,
-        };
-      })
-    : [
-        {
-          questionText: "",
-          procedureId: procedureId || "",
-          options: [
-            { label: "A", text: "" },
-            { label: "B", text: "" },
-          ],
-          correctAnswer: "",
-          videoUrl: undefined,
-        },
-      ];
+          return {
+            id: q.id || undefined,
+            procedureId: q.procedureId,
+            questionText: q.questionText,
+            options,
+            correctAnswer: correctAnswerLabel,
+            videoUrl: undefined,
+          };
+        })
+      : [
+          {
+            questionText: "",
+            procedureId: procedureId || "",
+            options: [
+              { label: "A", text: "" },
+              { label: "B", text: "" },
+            ],
+            correctAnswer: "",
+            videoUrl: undefined,
+          },
+        ];
+
+  // Ensure we always have at least one question
+  if (initialQuestions.length === 0) {
+    initialQuestions.push({
+      id: undefined,
+      questionText: "",
+      procedureId: procedureId || "",
+      options: [
+        { label: "A", text: "" },
+        { label: "B", text: "" },
+      ],
+      correctAnswer: "",
+      videoUrl: undefined,
+    });
+  }
 
   const form = useForm<QuestionsFormValues>({
     resolver: zodResolver(questionsFormSchema),
@@ -173,6 +188,12 @@ export default function QuestionForm({
   const handleRemoveQuestion = async (index: number) => {
     const currentQuestions = form.getValues("questions") || [];
 
+    // Don't allow removing if it's the last question and there's no data
+    if (currentQuestions.length === 1 && (!data || data.length === 0)) {
+      toast.error("At least one question is required");
+      return;
+    }
+
     const questionToRemove = currentQuestions[index];
 
     try {
@@ -183,15 +204,32 @@ export default function QuestionForm({
       }
 
       const updatedQuestions = currentQuestions.filter((_, i) => i !== index);
-      form.setValue("questions", updatedQuestions);
+
+      // If we're deleting the last question and there was existing data,
+      // add a new empty question
+      if (updatedQuestions.length === 0 && data && data.length > 0) {
+        form.setValue("questions", [
+          {
+            questionText: "",
+            procedureId: procedureId || "",
+            options: [
+              { label: "A", text: "" },
+              { label: "B", text: "" },
+            ],
+            correctAnswer: "",
+            videoUrl: null as unknown as File,
+          },
+        ]);
+      } else {
+        form.setValue("questions", updatedQuestions);
+      }
     } catch (error) {
       console.error("Error removing question:", error);
       toast.error("Failed to remove question");
     } finally {
-      setIsSubmitting(false); // Make sure to reset the submitting state
+      setIsSubmitting(false);
     }
   };
-
   const handleAddOption = (questionIndex: number) => {
     const currentOptions =
       form.getValues(`questions.${questionIndex}.options`) || [];
@@ -268,6 +306,15 @@ export default function QuestionForm({
       return;
     }
 
+    const validQuestions = formData.questions.filter(
+      (q) => q.questionText.trim() !== ""
+    );
+
+    if (validQuestions.length === 0) {
+      toast.error("Please add at least one valid question");
+      return;
+    }
+
     try {
       setIsSubmitting(true);
 
@@ -275,7 +322,7 @@ export default function QuestionForm({
       const dirtyFields = form.formState.dirtyFields.questions || [];
 
       // Transform the form data to match TMCQForm[]
-      const transformedData = formData.questions.map((question, index) => {
+      const transformedData = validQuestions.map((question, index) => {
         // Find the correct option by matching the label
         const correctOption = question.options.find(
           (opt) => opt.label === question.correctAnswer
@@ -394,8 +441,6 @@ export default function QuestionForm({
                         </FormItem>
                       )}
                     />
-
-                    {/* Options */}
                     <div className="space-y-4 mb-4">
                       <div className="flex justify-between items-center">
                         <FormLabel className="font-medium">Options:</FormLabel>
@@ -411,94 +456,76 @@ export default function QuestionForm({
                         </Button>
                       </div>
 
-                      {form
-                        .watch(`questions.${questionIndex}.options`)
-                        ?.map((option, optionIndex) => (
-                          <div
-                            key={optionIndex}
-                            className="flex items-center gap-2"
-                          >
-                            <div className="w-10 text-center">
-                              <span className="text-md text-gray-500">
-                                {option.label}.
-                              </span>
-                            </div>
-                            <FormField
-                              control={form.control}
-                              name={`questions.${questionIndex}.options.${optionIndex}.text`}
-                              render={({ field }) => (
-                                <FormItem className="flex-1">
-                                  <FormControl>
-                                    <Input
-                                      placeholder={`Option ${option.label}`}
-                                      {...field}
-                                      disabled={isSubmitting}
-                                    />
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="icon"
-                              onClick={() =>
-                                handleRemoveOption(questionIndex, optionIndex)
-                              }
-                              disabled={
-                                form.watch(`questions.${questionIndex}.options`)
-                                  ?.length <= 2 || isSubmitting
-                              }
-                              className="text-gray-400 hover:text-red-500"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        ))}
-                    </div>
-
-                    {/* Correct Answer */}
-                    <FormField
-                      control={form.control}
-                      name={`questions.${questionIndex}.correctAnswer`}
-                      render={({ field }) => (
-                        <FormItem className="mb-4">
-                          <FormLabel className="font-medium">
-                            Correct Answer:
-                          </FormLabel>
-                          <FormControl>
+                      <FormField
+                        control={form.control}
+                        name={`questions.${questionIndex}.correctAnswer`}
+                        render={({ field }) => (
+                          <FormItem>
                             <RadioGroup
-                              onValueChange={field.onChange}
                               value={field.value}
-                              className="flex flex-col space-y-1"
+                              onValueChange={field.onChange}
+                              className="space-y-2"
                             >
                               {form
                                 .watch(`questions.${questionIndex}.options`)
                                 ?.map((option, optionIndex) => (
                                   <div
                                     key={optionIndex}
-                                    className="flex items-center space-x-2"
+                                    className="flex items-center gap-2"
                                   >
                                     <RadioGroupItem
                                       value={option.label}
                                       id={`answer-${questionIndex}-${option.label}`}
                                       disabled={isSubmitting}
                                     />
-                                    <FormLabel
-                                      htmlFor={`answer-${questionIndex}-${option.label}`}
-                                      className="font-normal"
+                                    <div className="w-10">
+                                      <span className="text-md text-gray-500">
+                                        {option.label}.
+                                      </span>
+                                    </div>
+                                    <FormField
+                                      control={form.control}
+                                      name={`questions.${questionIndex}.options.${optionIndex}.text`}
+                                      render={({ field: optionField }) => (
+                                        <FormItem className="flex-1">
+                                          <FormControl>
+                                            <Input
+                                              placeholder={`Option ${option.label}`}
+                                              {...optionField}
+                                              disabled={isSubmitting}
+                                            />
+                                          </FormControl>
+                                          <FormMessage />
+                                        </FormItem>
+                                      )}
+                                    />
+                                    <Button
+                                      type="button"
+                                      variant="ghost"
+                                      size="icon"
+                                      onClick={() =>
+                                        handleRemoveOption(
+                                          questionIndex,
+                                          optionIndex
+                                        )
+                                      }
+                                      disabled={
+                                        form.watch(
+                                          `questions.${questionIndex}.options`
+                                        )?.length <= 2 || isSubmitting
+                                      }
+                                      className="text-gray-400 hover:text-red-500"
                                     >
-                                      {option.label}
-                                    </FormLabel>
+                                      <Trash2 className="h-4 w-4" />
+                                    </Button>
                                   </div>
                                 ))}
                             </RadioGroup>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
 
                     {/* Video Upload */}
                     <Controller

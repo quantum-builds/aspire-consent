@@ -1,6 +1,7 @@
 import { getConsentForm } from "@/services/consent-form/ConsentFormQuery";
 import { notFound } from "next/navigation";
 import ConsentForm from "@/app/dentist/(with-layout)/consent-forms/edit/[id]/components/ConsentForm";
+import Header from "@/components/Header";
 
 type Params = Promise<{ id: string }>;
 export default async function ViewConsentFormPage({
@@ -15,5 +16,10 @@ export default async function ViewConsentFormPage({
     return notFound();
   }
 
-  return <ConsentForm data={response.data} formId={id} />;
+  return (
+    <div>
+      <Header showSearch={false} />
+      <ConsentForm data={response.data} formId={id} />;
+    </div>
+  );
 }

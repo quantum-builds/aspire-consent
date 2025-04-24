@@ -154,7 +154,7 @@ export default function QuestionList({
   };
 
   const closeForm = () => {
-    router.replace("/dentist/dashboard");
+    router.back();
   };
 
   return (

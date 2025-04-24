@@ -30,6 +30,7 @@ import { useCreateConsentFormLink } from "@/services/consent-form/ConsentFomMuta
 import { useSendEmail } from "@/services/email/emailMutation";
 import axios from "axios";
 import { stripHtml } from "string-strip-html";
+import { useState } from "react";
 
 // Define the form schema with Zod
 const formSchema = z.object({
@@ -67,6 +68,7 @@ export default function ConsentForm({
   const { mutate: createConsentLink, isPending: isLinkPending } =
     useCreateConsentFormLink();
   const { mutate: sendEmail, isPending: isEmailPending } = useSendEmail();
+  const [editorKey, setEditorKey] = useState(0);
 
   // Initialize the form with react-hook-form and zod resolver
   const form = useForm<FormValues>({
@@ -106,15 +108,18 @@ export default function ConsentForm({
             html: `<p>This is the consent form sent by ${
               responseData.dentistEmail
             }.</p>
-                ${data.customNote ? `<div>${data.customNote}</div>` : ""}
-                <p>Please fill out the consent form at the following link:</p>
-                <a href="${process.env.NEXT_PUBLIC_BASE_URL}consent-form/${
+      ${
+        data.customNote
+          ? `<div><strong>Additional Note:</strong><p>${data.customNote}</p></div>`
+          : ""
+      }
+      <p>Please click the link below to fill out the consent form:</p>
+      <p><a href="${process.env.NEXT_PUBLIC_BASE_URL}consent-form/${
               responseData.token
-            }?email=${responseData.patientEmail}">
-                ${process.env.NEXT_PUBLIC_BASE_URL}consent-form/${
-              responseData.token
-            }?email=${responseData.patientEmail}
-                </a>`,
+            }?email=${responseData.patientEmail}" 
+            style="color: #4f46e5; text-decoration: underline; font-weight: bold;">
+            Click here to fill the consent form
+          </a></p>`,
           };
 
           sendEmail(emailContent, {
@@ -253,12 +258,12 @@ export default function ConsentForm({
                 name="treatmentDate"
                 render={({ field }) => (
                   <FormItem className="flex flex-col md:flex-row justify-between items-start">
-                    <FormLabel className="text-xl font-bold flex-1">
+                    <FormLabel className="text-xl font-bold">
                       Date of Treatment
                     </FormLabel>
-                    <div className="flex flex-col gap-3 flex-1">
-                      <div className="relative flex items-center">
-                        <FormControl>
+                    <div className="flex flex-col gap-3  w-full md:w-2/3">
+                      <div className="relative flex items-center w-full">
+                        <FormControl className="w-full">
                           <Input
                             type="datetime-local"
                             placeholder="Select date"
@@ -268,14 +273,13 @@ export default function ConsentForm({
                           />
                         </FormControl>
                       </div>
-                      <FormDescription className="text-md">
+                      <FormDescription className="text-md w-full">
                         Specify the date of treatment to ensure the consent is
                         completed by patient beforehand. Only future dates can
                         be selected.
                       </FormDescription>
                       <FormMessage className="text-red-500" />
                     </div>
-                    <div className="flex-1"></div>
                   </FormItem>
                 )}
               />
@@ -298,6 +302,7 @@ export default function ConsentForm({
                       <div className="flex flex-col w-full md:w-2/3 gap-4">
                         <FormControl>
                           <RichTextEditor
+                            key={editorKey}
                             value={field.value || ""}
                             onChange={field.onChange}
                             placeholder="<p>Enter your custom note here..</p>"
@@ -318,6 +323,7 @@ export default function ConsentForm({
               type="button"
               onClick={() => {
                 form.reset();
+                setEditorKey((prev) => prev + 1);
               }}
               className="cursor-pointer text-md hover:underline text-[#698AFF]"
             >
@@ -330,7 +336,7 @@ export default function ConsentForm({
             >
               {isLinkPending || isEmailPending
                 ? "Processing..."
-                : "Save & send by email"}
+                : "Save & Send by Email"}
             </Button>
           </div>
         </form>

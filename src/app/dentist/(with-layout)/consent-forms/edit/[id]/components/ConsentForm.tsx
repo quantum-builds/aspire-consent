@@ -1,10 +1,8 @@
 "use client";
 
 import { TConsentForm } from "@/types/consent-form";
-import { MoveLeft, Play, Trash2 } from "lucide-react";
+import { Play, Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
-import Image from "next/image";
-import { AspireConsentBlackLogo } from "@/asssets";
 import { useForm, Controller, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -81,15 +79,24 @@ export default function ConsentForm({ data, formId }: ConsentFormProps) {
       procedure: { name: data?.procedure?.name || "" },
       expiresAt: data?.expiresAt ? new Date(data.expiresAt) : new Date(),
       isActive: data?.isActive ?? true,
-      snapshotMCQs:
-        data?.snapshotMCQs?.map((mcq) => ({
-          id: mcq.id,
-          questionText: mcq.questionText,
-          options: mcq.options || [],
-          correctAnswer: mcq.correctAnswer,
-          videoUrl: mcq.videoName,
-          videoFile: mcq.videoUrl || undefined,
-        })) || [],
+      snapshotMCQs: data?.snapshotMCQs?.length
+        ? data.snapshotMCQs.map((mcq) => ({
+            id: mcq.id,
+            questionText: mcq.questionText,
+            options: mcq.options || ["", ""], // Ensure at least two empty options
+            correctAnswer: mcq.correctAnswer,
+            videoUrl: mcq.videoName,
+            videoFile: mcq.videoUrl || undefined,
+          }))
+        : [
+            {
+              id: `new-question-${Date.now()}`,
+              questionText: "",
+              options: ["", ""], // Two empty options by default
+              correctAnswer: "",
+              videoUrl: "",
+            },
+          ],
     },
   });
 
@@ -117,20 +124,38 @@ export default function ConsentForm({ data, formId }: ConsentFormProps) {
         },
         expiresAt: data.expiresAt ? new Date(data.expiresAt) : new Date(),
         isActive: data.isActive === undefined ? true : data.isActive,
-        snapshotMCQs:
-          data.snapshotMCQs?.map((mcq) => ({
-            id: mcq.id,
-            questionText: mcq.questionText,
-            options: mcq.options || [],
-            correctAnswer: mcq.correctAnswer,
-            videoUrl: mcq.videoName,
-            videoFile: mcq.videoUrl || undefined,
-          })) || [],
+        snapshotMCQs: data.snapshotMCQs?.length
+          ? data.snapshotMCQs.map((mcq) => ({
+              id: mcq.id,
+              questionText: mcq.questionText,
+              options: mcq.options || ["", ""],
+              correctAnswer: mcq.correctAnswer,
+              videoUrl: mcq.videoName,
+              videoFile: mcq.videoUrl || undefined,
+            }))
+          : [
+              {
+                id: `new-question-${Date.now()}`,
+                questionText: "",
+                options: ["", ""],
+                correctAnswer: "",
+                videoUrl: "",
+              },
+            ],
       });
     }
   }, [data, reset]);
 
   const handleSaveDraft = (formData: FormValues) => {
+    const hasValidQuestions = formData.snapshotMCQs.some(
+      (mcq) => mcq.questionText.trim() !== ""
+    );
+
+    if (!hasValidQuestions) {
+      toast.error("Please add at least one valid question");
+      return;
+    }
+
     const formUpdates = {
       expiresAt: formData.expiresAt,
       isActive: formData.isActive,
@@ -165,6 +190,12 @@ export default function ConsentForm({ data, formId }: ConsentFormProps) {
 
   const handleRemoveQuestion = (questionIndex: number) => {
     const currentMCQs = [...watch("snapshotMCQs")];
+
+    if (currentMCQs.length === 1) {
+      toast.error("At least one question is required");
+      return;
+    }
+
     currentMCQs.splice(questionIndex, 1);
     setValue("snapshotMCQs", currentMCQs, { shouldDirty: true });
   };
@@ -201,20 +232,11 @@ export default function ConsentForm({ data, formId }: ConsentFormProps) {
 
   return (
     <div className="flex flex-col gap-10 max-w-6xl mx-auto">
-      <div className="flex flex-row gap-6 items-center">
-        <MoveLeft
-          size={30}
-          className="cursor-pointer"
-          onClick={() => router.back()}
-        />
-        <Image
-          src={AspireConsentBlackLogo || "/placeholder.svg"}
-          alt="Aspire Logo"
-          width={140}
-          className="object-contain"
-          priority
-        />
-      </div>
+      {/* <MoveLeft
+        size={20}
+        className="cursor-pointer"
+        onClick={() => router.back()}
+      /> */}
 
       <FormProvider {...formMethods}>
         <form
@@ -329,6 +351,11 @@ export default function ConsentForm({ data, formId }: ConsentFormProps) {
 
           <div className="p-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* {formMethods.watch("snapshotMCQs")?.length > 0 ? (
+                <div>length is greater then 0</div>
+              ) : (
+                <div>Nothing here</div>
+              )} */}
               {formMethods.watch("snapshotMCQs")?.map((mcq, mcqIndex) => {
                 const videoUrl = watch(`snapshotMCQs.${mcqIndex}.videoUrl`);
                 const videoFile = watch(`snapshotMCQs.${mcqIndex}.videoFile`);
@@ -371,7 +398,7 @@ export default function ConsentForm({ data, formId }: ConsentFormProps) {
                       )}
                     />
 
-                    <div className="space-y-2 mt-4">
+                    {/* <div className="space-y-2 mt-4">
                       <FormLabel className="block text-gray-700 mb-1">
                         Options:
                       </FormLabel>
@@ -436,7 +463,7 @@ export default function ConsentForm({ data, formId }: ConsentFormProps) {
                     <div className="mt-4">
                       <FormField
                         name={`snapshotMCQs.${mcqIndex}.correctAnswer`}
-                        render={({ field }) => (
+                        render={({ field, fieldState }) => (
                           <FormItem className="mb-4">
                             <FormLabel className="font-medium">
                               Correct Answer:
@@ -469,7 +496,105 @@ export default function ConsentForm({ data, formId }: ConsentFormProps) {
                                 )}
                               </RadioGroup>
                             </FormControl>
-                            <FormMessage />
+                            {fieldState.error && (
+                              <p className="text-sm font-medium text-destructive">
+                                {fieldState.error.message}
+                              </p>
+                            )}
+                          </FormItem>
+                        )}
+                      />
+                    </div> */}
+
+                    <div className="space-y-4 mb-4">
+                      <div className="flex justify-between items-center">
+                        <FormLabel className="font-medium">Options:</FormLabel>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleAddOption(mcqIndex)}
+                          className="flex items-center gap-1"
+                          disabled={isSubmittingForm}
+                        >
+                          <Plus className="h-4 w-4" /> Add Option
+                        </Button>
+                      </div>
+
+                      <FormField
+                        name={`snapshotMCQs.${mcqIndex}.correctAnswer`}
+                        render={({ field, fieldState }) => (
+                          <FormItem>
+                            <RadioGroup
+                              value={field.value}
+                              onValueChange={field.onChange}
+                              className="space-y-2"
+                            >
+                              {watch(`snapshotMCQs.${mcqIndex}.options`)?.map(
+                                (option, optionIndex) => (
+                                  <div
+                                    key={optionIndex}
+                                    className="flex items-center gap-2"
+                                  >
+                                    <RadioGroupItem
+                                      value={option}
+                                      id={`answer-${mcqIndex}-${optionIndex}`}
+                                      disabled={isSubmittingForm}
+                                    />
+                                    <div className="w-6">
+                                      <span className="text-md text-gray-500">
+                                        {String.fromCharCode(
+                                          97 + optionIndex
+                                        ).toUpperCase()}
+                                        .
+                                      </span>
+                                    </div>
+                                    <FormField
+                                      name={`snapshotMCQs.${mcqIndex}.options.${optionIndex}`}
+                                      render={({ field: optionField }) => (
+                                        <FormItem className="flex-1">
+                                          <FormControl>
+                                            <Input
+                                              placeholder={`Option ${String.fromCharCode(
+                                                97 + optionIndex
+                                              ).toUpperCase()}`}
+                                              {...optionField}
+                                              className="border rounded px-3 py-1"
+                                              disabled={isSubmittingForm}
+                                            />
+                                          </FormControl>
+                                          <FormMessage />
+                                        </FormItem>
+                                      )}
+                                    />
+                                    <Button
+                                      type="button"
+                                      variant="ghost"
+                                      size="icon"
+                                      onClick={() =>
+                                        handleRemoveOption(
+                                          mcqIndex,
+                                          optionIndex
+                                        )
+                                      }
+                                      disabled={
+                                        watch(
+                                          `snapshotMCQs.${mcqIndex}.options`
+                                        ).length <= 2 || isSubmittingForm
+                                      }
+                                      className="text-gray-400 hover:text-red-500"
+                                    >
+                                      <Trash2 className="h-4 w-4" />
+                                    </Button>
+                                  </div>
+                                )
+                              )}
+                            </RadioGroup>
+                            {fieldState.error && (
+                              <p className="text-sm font-medium text-destructive">
+                                {fieldState.error.message}
+                              </p>
+                            )}
                           </FormItem>
                         )}
                       />
@@ -563,37 +688,6 @@ export default function ConsentForm({ data, formId }: ConsentFormProps) {
                       />
                     </div>
 
-                    {/* {hasVideo && !isNewVideo && (
-                      <div className="mt-4 pt-4 border-t border-gray-200">
-                        <div className="flex justify-between items-center mb-2">
-                          <h4 className="text-sm font-medium text-gray-700">
-                            Current Video:
-                          </h4>
-                          <button
-                            type="button"
-                            className="text-sm text-blue-500 hover:underline flex items-center gap-1"
-                            onClick={() =>
-                              setCurrentVideo({
-                                mcqId: mcq.id,
-                                autoplay: false,
-                              })
-                            }
-                          >
-                            <Play className="w-3 h-3" /> Watch video
-                          </button>
-                        </div>
-                        {currentVideo?.mcqId === mcq.id && (
-                          <iframe
-                            src={`${videoUrl}${
-                              currentVideo.autoplay ? "?autoplay=1" : ""
-                            }`}
-                            className="w-full aspect-video rounded"
-                            allowFullScreen
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                          />
-                        )}
-                      </div>
-                    )} */}
                     {hasVideo && !isNewVideo && (
                       <div className="mt-4 pt-4 border-t border-gray-200">
                         <div className="flex justify-between items-center mb-2">
@@ -653,7 +747,9 @@ export default function ConsentForm({ data, formId }: ConsentFormProps) {
                       correctAnswer: "",
                       videoUrl: "",
                     });
-                    setValue("snapshotMCQs", currentMCQs);
+                    setValue("snapshotMCQs", currentMCQs, {
+                      shouldDirty: true,
+                    });
                   }}
                   disabled={isSubmittingForm}
                   className="w-full md:w-auto"

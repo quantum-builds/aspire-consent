@@ -6,7 +6,7 @@ export default function QuestionFormSkeleton() {
   const loadingQuestions = Array.from({ length: 2 }, (_, i) => i);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 mt-32">
       {/* Progress Bar Skeleton */}
       <div className="bg-gray-100 h-2 rounded-full w-full mb-6">
         <div className="bg-gray-200 h-2 rounded-full w-1/3 animate-pulse" />
@@ -18,11 +18,11 @@ export default function QuestionFormSkeleton() {
             <Skeleton className="h-7 w-64" />
           </CardTitle>
         </CardHeader>
-        <CardContent className="px-0 pt-4 space-y-8 grid grid-cols-2 gap-8">
+        <CardContent className="px-0 pt-4 space-y-6 grid grid-cols-2 gap-4">
           {loadingQuestions.map((_, questionIndex) => (
             <div
               key={questionIndex}
-              className={questionIndex > 0 ? "border-t pt-6 mt-6" : ""}
+              className="rounded-lg border p-6 shadow-sm" // Added consistent styling for all cards
             >
               <div className="flex justify-between items-center mb-4">
                 <Skeleton className="h-6 w-32" />
@@ -56,25 +56,18 @@ export default function QuestionFormSkeleton() {
                 ))}
               </div>
 
-              {/* Correct Answer Skeleton */}
-              <div className="mb-4 space-y-3">
-                <Skeleton className="h-5 w-32" />
-                <div className="space-y-2">
-                  {Array.from({ length: 3 }, (_, i) => (
-                    <div key={i} className="flex items-center space-x-2">
-                      <Skeleton className="h-4 w-4 rounded-full" />
-                      <Skeleton className="h-5 w-5" />
-                    </div>
-                  ))}
-                </div>
+              {/* Video Upload Skeleton */}
+              <div className="space-y-2">
+                <Skeleton className="h-5 w-20" />
+                <Skeleton className="h-32 w-full" />
               </div>
             </div>
           ))}
 
-          <div className="flex justify-between mt-6">
+          <div className="col-span-2 flex justify-between mt-6">
             <Skeleton className="h-10 w-40" />
             <div className="space-x-2">
-              <Skeleton className="h-10 w-24 inline-block" />
+              <Skeleton className="h-10 w-40 inline-block" />
               <Skeleton className="h-10 w-36 inline-block" />
             </div>
           </div>

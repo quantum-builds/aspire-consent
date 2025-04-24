@@ -3,7 +3,7 @@ import Image from "next/image";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Mail, Lock, Loader2, Eye, EyeOff } from "lucide-react";
@@ -92,15 +92,21 @@ export default function LoginForm() {
     }
   }
 
+  useEffect(() => {
+    if (role === "dentist" || role === "patient") {
+      form.setValue("role", role);
+    }
+  }, [role, form]);
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-md space-y-8 bg-white p-8 rounded-lg shadow-sm">
         <div className="flex flex-col items-center justify-center text-center">
-          <div className="relative h-12 w-32 mb-2 mx-auto">
+          <div className="h-12 w-32 mb-2 mx-auto">
             <Image
               src={AspireConsentBlackLogo || "/placeholder.svg"}
               alt="Aspire Logo"
-              fill
+              width={150}
               className="object-contain"
               priority
             />
