@@ -93,7 +93,7 @@ model ConsentFormLink {
   patientId String 
   patient      User      @relation("PatientConsentLinks", fields: [patientId], references: [id],onDelete: Cascade)
   procedureId  String
-  procedure    Procedure  @relation(fields: [procedureId], references: [id])
+  procedure    Procedure  @relation(fields: [procedureId], references: [id] ,onDelete: Cascade)
   snapshotMCQs ConsentFormMCQSnapshot[]
   expiresAt    DateTime
   // snapshotMCQs MCQ[] @relation("ConsentLinkMCQs")  

@@ -28,7 +28,7 @@ import {
 import { MoreHorizontal } from "lucide-react";
 import Link from "next/link";
 import { TDentistProcedure } from "@/types/dentist-procedure";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import toast from "react-hot-toast";
 import { useDeleteProcedure } from "@/services/procedure/ProcedureMutation";
 // import ModalForm from "./AddProcedureModal";
@@ -71,11 +71,13 @@ export default function ProcedureQuestionFormsList({
     );
   };
 
-  useEffect(() => {
-    if (errorMessage) {
-      toast.error(errorMessage, { id: "fetch-dentist-procedure-error" });
-    }
-  }, [errorMessage]);
+  console.log(errorMessage);
+
+  // useEffect(() => {
+  //   if (errorMessage) {
+  //     toast.error(errorMessage, { id: "fetch-dentist-procedure-error" });
+  //   }
+  // }, [errorMessage]);
 
   // Filter data based on search term
   const filteredData =

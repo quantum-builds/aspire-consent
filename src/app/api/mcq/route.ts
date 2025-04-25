@@ -84,7 +84,7 @@ export async function GET(req: NextRequest) {
     console.log("procedure id is ", procedureId);
     if (!procedureId) {
       return NextResponse.json(
-        createResponse(false, "Procedure name must be valid", null),
+        createResponse(false, "Procedure id must be valid", null),
         { status: 400 }
       );
     }
@@ -98,8 +98,17 @@ export async function GET(req: NextRequest) {
 
     console.log("mcq length is ", mcqs.length);
     if (mcqs.length === 0) {
+      const procedure = await prisma.procedure.findUnique({
+        where: { id: procedureId },
+      });
+      if (!procedure) {
+        return NextResponse.json(
+          createResponse(false, "Procedure with this id does not exists", null),
+          { status: 400 }
+        );
+      }
       return NextResponse.json(
-        createResponse(false, "No MCQ found", mcqs[0].procedure.name),
+        createResponse(false, "No MCQ found", procedure.name),
         { status: 400 }
       );
     }

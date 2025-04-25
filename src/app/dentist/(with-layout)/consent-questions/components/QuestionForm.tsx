@@ -203,7 +203,11 @@ export default function QuestionForm({
         await onDelete(questionToRemove.id);
       }
 
+      // Then remove the question
       const updatedQuestions = currentQuestions.filter((_, i) => i !== index);
+
+      // Update form with the new questions array
+      form.setValue("questions", updatedQuestions);
 
       // If we're deleting the last question and there was existing data,
       // add a new empty question
@@ -230,6 +234,7 @@ export default function QuestionForm({
       setIsSubmitting(false);
     }
   };
+
   const handleAddOption = (questionIndex: number) => {
     const currentOptions =
       form.getValues(`questions.${questionIndex}.options`) || [];
@@ -390,7 +395,7 @@ export default function QuestionForm({
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
-          <Card className="mb-6 border-none shadow-none">
+          <Card className="mb-6 border-none shadow-none w-11/12 mx-auto">
             <CardHeader className="px-0">
               <CardTitle className="text-xl font-semibold">
                 Questions for {procedureName}
@@ -400,7 +405,7 @@ export default function QuestionForm({
               <div className="grid grid-cols-2 gap-4 mb-6">
                 {form.watch("questions")?.map((question, questionIndex) => (
                   <div
-                    key={questionIndex}
+                    key={question.id || `new-${questionIndex}`}
                     className="rounded-lg border p-6 shadow-sm "
                   >
                     <div className="flex justify-between items-center mb-4">
@@ -426,9 +431,7 @@ export default function QuestionForm({
                       name={`questions.${questionIndex}.questionText`}
                       render={({ field }) => (
                         <FormItem className="mb-4">
-                          <FormLabel className="font-medium">
-                            Question Text:
-                          </FormLabel>
+                          <FormLabel className="font-medium">Text:</FormLabel>
                           <FormControl>
                             <Textarea
                               placeholder="Enter your question here..."
@@ -533,9 +536,7 @@ export default function QuestionForm({
                       name={`questions.${questionIndex}.videoUrl`}
                       render={({ field }) => (
                         <FormItem className="w-full">
-                          <FormLabel className="font-medium">
-                            Question Video:
-                          </FormLabel>
+                          <FormLabel className="font-medium">Video:</FormLabel>
                           <FormControl>
                             <FileUploader
                               onFileUpload={(files) => {

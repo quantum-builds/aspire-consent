@@ -3,6 +3,7 @@ import QuestionList from "@/app/dentist/(with-layout)/consent-questions/componen
 import { ExtendedTMCQ } from "@/types/mcq";
 import { Response } from "@/types/common";
 import { getMCQs } from "@/services/mcq/MCQQuery";
+import ConsentTitle from "./ConsentTitle";
 
 type ConsentQuestionProps = {
   procedureId: string;
@@ -34,8 +35,7 @@ export default async function ConsentQuestion({
       <Header showSearch={false} />
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center my-4">
         <div className="flex flex-col gap-2">
-          {/* <div className="flex items-center"></div> */}
-          <p className="text-2xl font-bold mb-2">View Questions</p>
+          <ConsentTitle />
           <p className="text-[#0000004D] mb-5 text-lg">
             Review questions and give answers for this treatment.
           </p>

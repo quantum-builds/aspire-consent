@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import SideBar from "@/components/SideBar";
 import SmallScreenSideBar from "@/components/SmallScreenSideBar";
-import { ConsentFormIcon, DashboardIcon, PatientIcon } from "@/asssets";
+import { ConsentFormIcon, DashboardIcon } from "@/asssets";
 
 export const metadata: Metadata = {
   title: "Aspire Consent",
@@ -20,7 +20,7 @@ const SIDE_BAR_DATA = [
     logo: ConsentFormIcon,
     link: "/dentist/procedures",
   },
-  { text: "Patients", logo: PatientIcon, link: "/dentist/patients" },
+  // { text: "Patients", logo: PatientIcon, link: "/dentist/patients" },
   // { text: "Settings", logo: SettingIcon, link: "/settings" },
 ];
 

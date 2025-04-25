@@ -30,13 +30,10 @@ export async function GET(req: NextRequest) {
     console.log("procedure id ", procedureId);
 
     if (dentistId && !procedureId) {
-      console.log("in 1 if");
       include = { procedure: true };
     } else if (procedureId && !dentistId) {
-      console.log("in 2 if");
       include = { dentist: true };
     } else if (!dentistId && !procedureId) {
-      console.log("in 3 if");
       include = { dentist: true, procedure: true };
     }
 
