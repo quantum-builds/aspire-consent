@@ -10,6 +10,8 @@ export async function middleware(req: NextRequest) {
     "/reset-password",
     "/unauthorize",
     "/consent-form",
+    "/form-save",
+    "/form-success",
   ];
 
   const { pathname } = req.nextUrl;

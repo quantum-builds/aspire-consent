@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { CheckIcon } from "lucide-react";
 
 export default function FormSave() {
@@ -15,15 +14,9 @@ export default function FormSave() {
           </h1>
 
           <p className="text-center text-gray-600">
-            Thank you! This form is saved successfully
+            Form saved successfully. You can use this link to return and
+            complete it later.
           </p>
-
-          <Link
-            href="/patient/dashboard"
-            className="text-purple-600 hover:text-purple-800 transition-colors"
-          >
-            Go back
-          </Link>
         </div>
       </div>
     </div>

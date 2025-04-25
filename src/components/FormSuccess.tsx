@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { CheckIcon } from "lucide-react";
 
 export default function FormSuccess() {
@@ -18,13 +17,6 @@ export default function FormSuccess() {
             Thank you! This form is submitted successfully, we have received
             your submission.
           </p>
-
-          <Link
-            href="/patient/dashboard"
-            className="text-purple-600 hover:text-purple-800 transition-colors"
-          >
-            Go back
-          </Link>
         </div>
       </div>
     </div>
