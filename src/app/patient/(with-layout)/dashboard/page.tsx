@@ -80,7 +80,7 @@ export default function Page() {
           />
         </div>
         <div className="col-span-1 lg:col-span-2">
-          <PatientBarChart />
+          <PatientBarChart data={null} />
         </div>
         <div className="hidden lg:flex  lg:col-span-1">
           <ConsentEducation videos={VIDEO_DATA} />

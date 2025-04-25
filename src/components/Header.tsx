@@ -17,7 +17,7 @@ export default function Header({ showSearch = true }: HeaderProps) {
 
       <div className="flex items-center gap-7">
         <div className="relative p-2">
-          <Bell width={30} height={30} className="cursor-pointer" />
+          <Bell width={40} height={40} className="cursor-pointer" />
           <p className="bg-red-500 absolute top-0 right-2 px-1 rounded-lg text-white text-xs">
             2
           </p>

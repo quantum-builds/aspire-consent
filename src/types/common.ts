@@ -10,3 +10,22 @@ export interface DecodedToken {
   userId: string; // Custom claim
   role: string; // Custom claim
 }
+
+export type TCountStats = {
+  consentLinks: {
+    count: number;
+    weeklyChange: number;
+  };
+  patients: {
+    count: number;
+    weeklyChange: number;
+  };
+  dentists: {
+    count: number;
+    weeklyChange: number;
+  };
+  procedures: {
+    count: number;
+    weeklyChange: number;
+  };
+};

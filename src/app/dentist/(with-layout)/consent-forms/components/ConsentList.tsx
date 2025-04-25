@@ -146,19 +146,18 @@ export default function DataTable({
     });
   };
 
-  // Status badge color mapping
-  const getStatusColor = (status: string) => {
+  const getStatusClasses = (status: string) => {
     switch (status.toLowerCase()) {
       case "completed":
-        return "#e100ff";
+        return "bg-green-100 text-green-800";
       case "pending":
-        return "#7b68ee";
+        return "bg-blue-100 text-blue-800";
       case "in_progress":
-        return "#f59e0b";
+        return "bg-yellow-100 text-yellow-800";
       case "expired":
-        return "#fee2e2";
+        return "bg-red-100 text-red-800";
       default:
-        return "#ccc";
+        return "bg-gray-100 text-gray-800";
     }
   };
 
@@ -186,7 +185,7 @@ export default function DataTable({
               <TableHead>Procedure Name</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Expiry Date</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead className="">Actions</TableHead>
             </TableRow>
           </TableHeader>
 
@@ -200,17 +199,28 @@ export default function DataTable({
                     <TableCell className="">{record.patient.email}</TableCell>
                     <TableCell>{record.procedure.name}</TableCell>
                     <TableCell className="flex gap-1 items-center my-auto">
-                      <div
-                        className="w-3 h-3 rounded-full"
-                        style={{
-                          backgroundColor: getStatusColor(record.status),
-                        }}
-                      ></div>
-                      <span>{record.status}</span>
+                      <div className="w-3 h-3 rounded-full">
+                        <span
+                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusClasses(
+                            record.status
+                          )}`}
+                        >
+                          <span
+                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusClasses(
+                              record.status
+                            )}`}
+                          >
+                            {record.status
+                              .replace("_", " ")
+                              .toLowerCase()
+                              .replace(/^./, (char) => char.toUpperCase())}
+                          </span>
+                        </span>
+                      </div>
                     </TableCell>
                     <TableCell>{formatDate(record.expiresAt)}</TableCell>
                     <TableCell className="text-right">
-                      <div className="hidden md:flex justify-end md:items-center gap-2">
+                      <div className="hidden md:flex justify-start md:items-center gap-2">
                         <Button
                           variant="ghost"
                           size="icon"
@@ -259,7 +269,7 @@ export default function DataTable({
                               <MoreHorizontal className="h-4 w-4" />
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
+                          <DropdownMenuContent align="start">
                             <DropdownMenuItem asChild>
                               <Link
                                 href={`/dentist/consent-forms/view/${record.token}`}

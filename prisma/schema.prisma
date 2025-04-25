@@ -21,12 +21,17 @@ model User {
   practices           DentistToPractice[]
   procedures DentistToProcedure[]
   MCQs        MCQ[]
+
+  PatientAppointment Appointment[] @relation("PatientAppointments")
+  DentistAppointment Appointment[] @relation("DentistAppointments")
 }
 model Practice {
   id           String        @id @default(cuid())
   name         String
   address      String
   users        DentistToPractice[]
+
+  Appointment Appointment[]
 }
 
 model DentistToPractice{
@@ -43,9 +48,12 @@ model Procedure {
   name        String    
   description String?
   MCQs        MCQ[]
+  createdAt DateTime @default(now())
 
   consentLinks ConsentFormLink[]
   dentists DentistToProcedure[]
+
+  Appointment Appointment[]
 }
 
 model DentistToProcedure {
@@ -105,6 +113,8 @@ model ConsentFormLink {
   lastUpdated  DateTime     @default(now()) 
   isDraft          Boolean        @default(true) 
   completedAt      DateTime? 
+
+  Appointment Appointment[]
 }
 
 model FormAnswer {
@@ -121,6 +131,38 @@ model FormAnswer {
   questionText    String        
   questionOptions String[] 
   isDraft         Boolean        @default(true)      
+}
+
+model Appointment {
+  id             String       @id @default(cuid())
+  patientId      String
+  patient        User         @relation("PatientAppointments", fields: [patientId], references: [id], onDelete: Cascade)
+
+  dentistId      String
+  dentist        User         @relation("DentistAppointments", fields: [dentistId], references: [id], onDelete: Cascade)
+
+  procedureId    String
+  procedure      Procedure    @relation(fields: [procedureId], references: [id], onDelete: Cascade)
+
+  practiceId     String
+  practice       Practice     @relation(fields: [practiceId], references: [id], onDelete: Cascade)
+
+  consentFormId  String?
+  consentForm    ConsentFormLink? @relation(fields: [consentFormId], references: [id], onDelete: SetNull)
+
+  scheduledAt    DateTime
+  status         AppointmentStatus @default(SCHEDULED)
+  notes          String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+}
+
+enum AppointmentStatus {
+  SCHEDULED
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+  RESCHEDULED
 }
 
 enum UserRole {

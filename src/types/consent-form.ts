@@ -24,6 +24,17 @@ export type TConsentForm = {
   progress: number;
 };
 
+export type TConsentFormData = {
+  id: string;
+  patientEmail: string;
+  procedureName: string;
+  token: string;
+  status: "PENDING" | "IN_PROGRESS" | "COMPLETED" | "EXPIRED";
+  createdAt: string;
+  expiresAt: string;
+  completedAt?: string;
+  progressPercentage: number;
+};
 export type ConsentFormMCQSnapshot = {
   id: string;
   questionText: string;

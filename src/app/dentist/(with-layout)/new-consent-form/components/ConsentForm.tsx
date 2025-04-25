@@ -105,21 +105,37 @@ export default function ConsentForm({
             }consent-form/${responseData.token}?email=${
               responseData.patientEmail
             }`,
-            html: `<p>This is the consent form sent by ${
-              responseData.dentistEmail
-            }.</p>
-      ${
-        data.customNote
-          ? `<div><strong>Additional Note:</strong><p>${data.customNote}</p></div>`
-          : ""
-      }
-      <p>Please click the link below to fill out the consent form:</p>
-      <p><a href="${process.env.NEXT_PUBLIC_BASE_URL}consent-form/${
+            html: `
+  <div style="font-family: Arial, sans-serif; color: #333;">
+    <h2 style="color: #4f46e5;">Consent Form Required</h2>
+    <p>This is the consent form sent by <strong>${
+      responseData.dentistEmail
+    }</strong>.</p>
+
+    ${
+      data.customNote
+        ? `<div style="margin: 20px 0; padding: 15px; background-color: #f4f4f4; border-left: 4px solid #4f46e5;">
+              <strong>Note from your dentist:</strong><br/>
+              ${data.customNote}
+           </div>`
+        : ""
+    }
+
+   
+
+    <p>Please click the button below to fill out the consent form:</p>
+    <a href="${process.env.NEXT_PUBLIC_BASE_URL}consent-form/${
               responseData.token
-            }?email=${responseData.patientEmail}" 
-            style="color: #4f46e5; text-decoration: underline; font-weight: bold;">
-            Click here to fill the consent form
-          </a></p>`,
+            }"
+       style="display: inline-block; margin-top: 20px; padding: 12px 24px; background-color: #4f46e5; color: #fff; text-decoration: none; font-weight: bold; border-radius: 6px;">
+      Fill Out Consent Form
+    </a>
+
+    <p style="margin-top: 40px; font-size: 12px; color: #777;">If you have questions, contact your dental provider at ${
+      responseData.dentistEmail
+    }.</p>
+  </div>
+`,
           };
 
           sendEmail(emailContent, {

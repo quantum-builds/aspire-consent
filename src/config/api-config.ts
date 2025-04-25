@@ -53,6 +53,29 @@ export const ENDPOINTS = {
     postPatientFormAnswers: (id: string) => `/api/consent-form/${id}`,
     deleteConsentForm: (id: string) => `/api/consent-form/${id}`,
   },
+  appointment: {
+    createAppointment: "/api/appointment",
+    getAllAppointments: (dentistId?: string, patientId?: string) =>
+      `/api/appointment?dentistId=${dentistId}&patientId=${patientId}`,
+    getAnAppointment: (id: string) => `/api/appointment/${id}`,
+    patchAnAppointment: (id: string) => `/api/appointment/${id}`,
+    deleteAnAppointment: (id: string) => `/api/appointment/${id}`,
+  },
+  consentFormByProcedure: {
+    getConsentFormByProcedure: "/api/consentform-procedure",
+  },
+  cosentFormByStatus: {
+    getConsentFormByStatus: "/api/consentform-status",
+  },
+  dentistConsentForms: {
+    getDentistConsentForms: "/api/dentist-consentform",
+  },
+  dentistDashboardConsentTable: {
+    getdashboardConsentTable: "/api/dentist-dashboard-consenttable",
+  },
+  dashboardStats: {
+    getDashboardStats: "/api/dashboard-stats",
+  },
   s3: {
     getSignedUrl: "/api/s3",
   },
@@ -60,11 +83,3 @@ export const ENDPOINTS = {
     getMedia: "/api/uploads",
   },
 };
-
-// {
-//       const params = new URLSearchParams();
-//       if (procedureName) params.append("procedureName", procedureName);
-//       console.log(params);
-//       console.log(`/api/mcq?${params.toString()}`);
-//       return `/api/mcq?${params.toString()}`;
-//     },
