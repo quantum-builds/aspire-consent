@@ -3,6 +3,7 @@ import prisma from "@/lib/db";
 import { createResponse } from "@/utils/createResponse";
 import { generateToken } from "@/lib/token";
 import { getToken } from "next-auth/jwt";
+import { revalidatePath } from "next/cache";
 
 const secret = process.env.NEXTAUTH_SECRET;
 
@@ -185,6 +186,8 @@ export async function POST(req: NextRequest) {
       },
     });
 
+    revalidatePath("/dentist/dashboard");
+    revalidatePath("/dentist/consent-forms");
     return NextResponse.json(
       {
         message: "Consent link created successfully",

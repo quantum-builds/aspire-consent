@@ -31,8 +31,8 @@ import { useSendEmail } from "@/services/email/emailMutation";
 import axios from "axios";
 import { stripHtml } from "string-strip-html";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
-// Define the form schema with Zod
 const formSchema = z.object({
   patient: z
     .string({
@@ -69,6 +69,7 @@ export default function ConsentForm({
     useCreateConsentFormLink();
   const { mutate: sendEmail, isPending: isEmailPending } = useSendEmail();
   const [editorKey, setEditorKey] = useState(0);
+  const router = useRouter();
 
   // Initialize the form with react-hook-form and zod resolver
   const form = useForm<FormValues>({
@@ -142,6 +143,9 @@ export default function ConsentForm({
             onSuccess: () => {
               toast.success("Consent Link sent to the provided email");
               form.reset();
+              setTimeout(() => {
+                router.refresh();
+              }, 100);
             },
             onError: (err) => {
               if (axios.isAxiosError(err) && err.response) {
