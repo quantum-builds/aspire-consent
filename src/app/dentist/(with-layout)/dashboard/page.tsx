@@ -1,37 +1,11 @@
 import Header from "@/components/Header";
-import PatientBarChart from "./components/PatientBarChart";
-import RadialProgressChart from "./components/RadialProgressChart";
 import { Plus } from "lucide-react";
 import Link from "next/link";
-import {
-  TConsentFormStatus,
-  TConsentFormTimeCountsResponse,
-} from "@/types/dentist-consentForm";
-import {
-  getConsentFormByStatus,
-  getConsentTableData,
-  getDentistConsentForms,
-} from "@/services/dentist-consentform/DentistConsentFormQuery";
-import { Response, TCountStats } from "@/types/common";
-import { TConsentFormData } from "@/types/consent-form";
-import ConsentDataTable from "./components/ConsentDataTables";
-import { getDashboardStats } from "@/services/dashboardStats/DashboardStatsQuery";
-import DashboardCards from "./components/DashboardCard";
-
-// let consentFormByProcedure: TConsentFormsByProcedures | null = null;
-let consentFormByStatus: TConsentFormStatus | null = null;
-let consentFormByDentist: TConsentFormTimeCountsResponse | null = null;
-let consentTable: TConsentFormData[] = [];
-let dashboardStats: TCountStats | null = null;
-// let errorMessageConsentFormByProcedure: string | null = null;
-let errorMessageConsentFormByStatus: string | null = null;
-let errorMessageConsentFormTimeCountsResponse: string | null = null;
-let errMessageConsentTable: string | null = null;
-let errMessageDashboardStats: string | null = null;
 import { cookies } from "next/headers";
-
-// const responseConsentFormByProcedure: Response<TConsentFormsByProcedures> =
-//   await getConsentByProcedure();
+import RadialProgressCHartCard from "./components/RadialProgressChartCard";
+import DashboardCardComponent from "./components/DashBoardCardComponent";
+import PatientBarChartCard from "./components/PatientBarChartCard";
+import ConsentDataTableComponent from "./components/ConsentDataTableComponent";
 
 export default async function Dashboard() {
   const cookieStore = cookies();
@@ -40,41 +14,6 @@ export default async function Dashboard() {
     .map((c) => `${c.name}=${c.value}`)
     .join("; ");
 
-  const responseConsentFormByStatus: Response<TConsentFormStatus> =
-    await getConsentFormByStatus(cookieHeader);
-  const responseConsentFormTimeCountsResponse: Response<TConsentFormTimeCountsResponse> =
-    await getDentistConsentForms(cookieHeader);
-  const responseConsentTable: Response<TConsentFormData[]> =
-    await getConsentTableData(cookieHeader);
-  const responseDashboardStats: Response<TCountStats> =
-    await getDashboardStats();
-
-  // if (responseConsentFormByProcedure.status) {
-  //   consentFormByProcedure = responseConsentFormByProcedure.data;
-  // } else {
-  //   errorMessageConsentFormByProcedure = responseConsentFormByProcedure.message;
-  // }
-  if (responseConsentFormByStatus.status) {
-    consentFormByStatus = responseConsentFormByStatus.data;
-  } else {
-    errorMessageConsentFormByStatus = responseConsentFormByStatus.message;
-  }
-  if (responseConsentFormTimeCountsResponse.status) {
-    consentFormByDentist = responseConsentFormTimeCountsResponse.data;
-  } else {
-    errorMessageConsentFormTimeCountsResponse =
-      responseConsentFormTimeCountsResponse.message;
-  }
-  if (responseConsentTable.status) {
-    consentTable = responseConsentTable.data;
-  } else {
-    errMessageConsentTable = responseConsentTable.message;
-  }
-  if (responseDashboardStats.status) {
-    dashboardStats = responseDashboardStats.data;
-  } else {
-    errMessageDashboardStats = responseConsentFormByStatus.message;
-  }
   return (
     <>
       <Header />
@@ -94,63 +33,18 @@ export default async function Dashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-3 gap-y-5">
         <div className="col-span-1 lg:col-span-3">
-          <DashboardCards
-            data={dashboardStats}
-            errorMessage={errMessageDashboardStats}
-          />
+          <DashboardCardComponent />
         </div>
         <div className="col-span-1 lg:col-span-2">
-          <PatientBarChart
-            data={consentFormByDentist}
-            errMessage={errorMessageConsentFormTimeCountsResponse}
-          />
+          <PatientBarChartCard cookieHeader={cookieHeader} />
         </div>
-        {/* <div className="hidden lg:flex  lg:col-span-1">
-          <ProcedurePieChart
-            data={consentFormByProcedure}
-            errorMessage={errorMessageConsentFormByProcedure}
-          />
-        </div> */}
         <div className="col-span-1">
-          <RadialProgressChart
-            data={consentFormByStatus}
-            errorMessage={errorMessageConsentFormByStatus}
-          />
+          <RadialProgressCHartCard cookieHeader={cookieHeader} />
         </div>
 
-        {/* <div className="lg:hidden grid md:grid-cols-2 grid-cols-1 gap-3">
-          <div className="span-col-1">
-            <ProcedurePieChart
-              data={consentFormByProcedure}
-              errorMessage={errorMessageConsentFormByProcedure}
-            />
-          </div>
-          <div className="span-col-1">
-            <RadialProgressChart
-              data={consentFormByStatus}
-              errorMessage={errorMessageConsentFormByStatus}
-            />
-          </div>
-        </div> */}
-        {/* <div className="hidden lg:grid grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 col-span-3 gap-3">
-          <div className="col-span-1">
-            <RadialProgressChart
-              data={consentFormByStatus}
-              errorMessage={errorMessageConsentFormByStatus}
-            />
-          </div>
-          <div className="col-span-1 xl:col-span-2 2xl:col-span-3">
-            <AppointmentCard />
-          </div>
-        </div> */}
-        {/* <div className="flex lg:hidden">
-          <AppointmentCard />
-        </div> */}
         <div className="col-span-full">
-          <ConsentDataTable
-            data={consentTable}
-            errorMessage={errMessageConsentTable}
-          />
+         
+          <ConsentDataTableComponent cookieHeader={cookieHeader} />
         </div>
       </div>
     </>

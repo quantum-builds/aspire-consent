@@ -86,9 +86,6 @@ export const useCreateConsentFormLink = () => {
 //   });
 // };
 
-import { useSession } from "next-auth/react";
-import { UserRole } from "@prisma/client";
-
 export const useSaveDraftAnswers = () => {
   return useMutation({
     mutationFn: async ({
@@ -123,6 +120,7 @@ export const useSaveDraftAnswers = () => {
         const response = await axiosInstance.patch(
           ENDPOINTS.consentLink.updatePatientFormAnswers(formId),
           {
+            role: role,
             expiresAt: formUpdates?.expiresAt,
             isActive: formUpdates?.isActive,
             snapshotMCQs: mcqUpdates,
@@ -132,7 +130,7 @@ export const useSaveDraftAnswers = () => {
       } else {
         const response = await axiosInstance.patch(
           ENDPOINTS.consentLink.updatePatientFormAnswers(formId),
-          { answers }
+          { role, answers }
         );
         return response.data;
       }
@@ -149,15 +147,17 @@ export const useSaveDraftAnswers = () => {
 };
 
 export const useSubmitConsentForm = () => {
-  const { data: session } = useSession();
-  const role = session?.user?.role as UserRole;
+  // const { data: session } = useSession();
+  // const role = session?.user?.role as UserRole;
 
   return useMutation({
     mutationFn: async ({
+      role,
       formId,
       answers = [],
       finalize = false,
     }: {
+      role: string;
       formId: string;
       answers?: Array<{
         mcqId: string;
@@ -168,13 +168,14 @@ export const useSubmitConsentForm = () => {
       // For dentists - finalize form
       if (role === "dentist" && finalize) {
         const response = await axiosInstance.post(
-          ENDPOINTS.consentLink.postPatientFormAnswers(formId)
+          ENDPOINTS.consentLink.postPatientFormAnswers(formId),
+          { role: role }
         );
         return response.data;
       } else {
         const response = await axiosInstance.post(
           ENDPOINTS.consentLink.postPatientFormAnswers(formId),
-          { answers }
+          { role, answers }
         );
         return response.data;
       }

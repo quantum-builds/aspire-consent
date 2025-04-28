@@ -94,12 +94,13 @@ export default function ProfilePiceDropDown() {
             <Button
               variant="outline"
               onClick={() => setLogoutDialogOpen(false)}
+              className="cursor-pointer"
             >
               Cancel
             </Button>
             <Button
               onClick={handleLogout}
-              className="bg-[#698AFF] hover:bg-[#698AFF]  text-white"
+              className="bg-[#698AFF] hover:bg-[#698AFF]  text-white cursor-pointer"
             >
               {/* <Image
                 src={LogoutIcon}

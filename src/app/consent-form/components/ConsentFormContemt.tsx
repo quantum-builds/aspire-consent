@@ -91,7 +91,7 @@ export default function ConsentFormContent({
       }));
 
     saveDraft(
-      { formId, answers: draftAnswers },
+      { role: "patient", formId, answers: draftAnswers },
       {
         onSuccess: () => {
           toast.success("Draft saved successfully");
@@ -125,7 +125,7 @@ export default function ConsentFormContent({
       );
 
       submitForm(
-        { formId, answers: formAnswers },
+        { role: "patient", formId, answers: formAnswers },
         {
           onSuccess: () => {
             toast.success("Form submitted successfully!");

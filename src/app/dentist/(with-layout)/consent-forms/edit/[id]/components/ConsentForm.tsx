@@ -1,8 +1,8 @@
 "use client";
 
 import { TConsentForm } from "@/types/consent-form";
-import { Play, Plus, Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Plus, Trash2 } from "lucide-react";
+import { useEffect } from "react";
 import { useForm, Controller, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -67,10 +67,6 @@ interface ConsentFormProps {
 
 export default function ConsentForm({ data, formId }: ConsentFormProps) {
   const router = useRouter();
-  const [currentVideo, setCurrentVideo] = useState<{
-    mcqId: string;
-    autoplay: boolean;
-  } | null>(null);
 
   const formMethods = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -357,12 +353,6 @@ export default function ConsentForm({ data, formId }: ConsentFormProps) {
                 <div>Nothing here</div>
               )} */}
               {formMethods.watch("snapshotMCQs")?.map((mcq, mcqIndex) => {
-                const videoUrl = watch(`snapshotMCQs.${mcqIndex}.videoUrl`);
-                const videoFile = watch(`snapshotMCQs.${mcqIndex}.videoFile`);
-
-                const hasVideo = Boolean(videoFile || videoUrl);
-                const isNewVideo = videoFile instanceof File;
-
                 return (
                   <div
                     key={mcq.id || mcqIndex}
@@ -688,7 +678,7 @@ export default function ConsentForm({ data, formId }: ConsentFormProps) {
                       />
                     </div>
 
-                    {hasVideo && !isNewVideo && (
+                    {/* {hasVideo && !isNewVideo && (
                       <div className="mt-4 pt-4 border-t border-gray-200">
                         <div className="flex justify-between items-center mb-2">
                           <h4 className="text-sm font-medium text-gray-700">
@@ -718,7 +708,7 @@ export default function ConsentForm({ data, formId }: ConsentFormProps) {
                           />
                         )}
                       </div>
-                    )}
+                    )} */}
                   </div>
                 );
               })}

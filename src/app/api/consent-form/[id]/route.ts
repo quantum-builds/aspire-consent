@@ -5,8 +5,7 @@ import {
   FormResponse,
 } from "@/types/consent-form";
 import { NextRequest, NextResponse } from "next/server";
-import { getToken } from "next-auth/jwt";
-import { ConsentFormMCQSnapshot, UserRole } from "@prisma/client";
+import { ConsentFormMCQSnapshot } from "@prisma/client";
 import { isCuid } from "cuid";
 import { revalidatePath } from "next/cache";
 
@@ -20,8 +19,8 @@ export async function PATCH(req: NextRequest) {
       );
     }
 
-    const sessionToken = await getToken({ req });
-    const userRole = sessionToken?.role as UserRole;
+    //   const sessionToken = await getToken({ req });
+    //   const userRole = sessionToken?.role as UserRole;
 
     const form = await prisma.consentFormLink.findUnique({
       where: { token },
@@ -61,11 +60,13 @@ export async function PATCH(req: NextRequest) {
       );
     }
 
-    const body = await req.json();
-
-    if (userRole === "dentist") {
+    const requestBody = await req.json();
+    const { role, ...body } = requestBody;
+    console.log("user role is", role);
+    if (role === "dentist") {
       // Dentist can update form metadata and MCQs
       const { expiresAt, isActive, snapshotMCQs } = body as {
+        role: string;
         expiresAt?: string;
         isActive?: boolean;
         snapshotMCQs?: ConsentFormMCQSnapshot[];
@@ -119,7 +120,7 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ success: true, data });
     } else {
       // Patient can only update answers
-      const { answers } = body as { answers: AnswerInput[] };
+      const { answers } = body as { role: string; answers: AnswerInput[] };
 
       const formAnswersData: FormAnswerCreateInput[] = answers.map((a) => {
         const mcq = form.snapshotMCQs.find((m) => m.id === a.mcqId);
@@ -203,8 +204,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const sessionToken = await getToken({ req });
-    const userRole = sessionToken?.role as UserRole;
+    // const sessionToken = await getToken({ req });
+    // const userRole = sessionToken?.role as UserRole;
 
     const form = await prisma.consentFormLink.findUnique({
       where: { token: id },
@@ -244,7 +245,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (userRole === "dentist") {
+    const requestBody = await req.json();
+    const { role, ...body } = requestBody;
+    console.log("user role is", role);
+    if (role === "dentist") {
       // Dentist can finalize the form (mark as completed)
       await prisma.consentFormLink.update({
         where: { id: form.id },
@@ -258,10 +262,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: true });
     } else {
       // Patient submits their answers
-      const { answers = [] } = (await req.json()) as {
+      // const { answers = [] } = (await req.json()) as {
+      //   answers?: AnswerInput[];
+      // };
+      const { answers = [] } = body.answers as {
         answers?: AnswerInput[];
       };
-
       const formAnswersData: FormAnswerCreateInput[] = answers.map((a) => {
         const mcq = form.snapshotMCQs.find((m) => m.id === a.mcqId);
         return {
