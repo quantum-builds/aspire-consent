@@ -273,10 +273,6 @@ const FileUploader: React.FC<FileUploaderProps> = ({
     (!defaultName && selectedFiles.length === 0) ||
     (isInitialized && selectedFiles.length === 0);
 
-  useEffect(() => {
-    console.log("selected files are ", selectedFiles);
-  }, [selectedFiles]);
-
   return (
     <>
       {showDropzone && (

@@ -62,7 +62,6 @@ export async function PATCH(req: NextRequest) {
 
     const requestBody = await req.json();
     const { role, ...body } = requestBody;
-    console.log("user role is", role);
     if (role === "dentist") {
       // Dentist can update form metadata and MCQs
       const { expiresAt, isActive, snapshotMCQs } = body as {
@@ -247,7 +246,6 @@ export async function POST(req: NextRequest) {
 
     const requestBody = await req.json();
     const { role, ...body } = requestBody;
-    console.log("user role is", role);
     if (role === "dentist") {
       // Dentist can finalize the form (mark as completed)
       await prisma.consentFormLink.update({

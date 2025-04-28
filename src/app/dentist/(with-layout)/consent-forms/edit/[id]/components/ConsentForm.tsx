@@ -285,14 +285,31 @@ export default function ConsentForm({ data, formId }: ConsentFormProps) {
               <FormField
                 name="expiresAt"
                 render={({ field }) => {
+                  // Helper function to format Date for datetime-local input
                   const formatDateForInput = (date: Date) => {
+                    if (!(date instanceof Date) || isNaN(date.getTime()))
+                      return "";
+
                     const pad = (num: number) =>
                       num.toString().padStart(2, "0");
-                    return `${date.getFullYear()}-${pad(
-                      date.getMonth() + 1
-                    )}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(
-                      date.getMinutes()
-                    )}`;
+                    const localDate = new Date(
+                      date.getTime() - date.getTimezoneOffset() * 60000
+                    );
+
+                    return `${localDate.getFullYear()}-${pad(
+                      localDate.getMonth() + 1
+                    )}-${pad(localDate.getDate())}T${pad(
+                      localDate.getHours()
+                    )}:${pad(localDate.getMinutes())}`;
+                  };
+
+                  // Get current datetime in local timezone for min attribute
+                  const getCurrentLocalDatetime = () => {
+                    const now = new Date();
+                    const localNow = new Date(
+                      now.getTime() - now.getTimezoneOffset() * 60000
+                    );
+                    return localNow.toISOString().slice(0, 16);
                   };
 
                   const value =
@@ -309,12 +326,25 @@ export default function ConsentForm({ data, formId }: ConsentFormProps) {
                         <Input
                           type="datetime-local"
                           value={value}
+                          min={getCurrentLocalDatetime()}
                           onChange={(e) => {
-                            field.onChange(
-                              e.target.value ? new Date(e.target.value) : null
+                            const newValue = e.target.value;
+                            if (!newValue) {
+                              field.onChange(null);
+                              return;
+                            }
+
+                            // Convert to Date object in local timezone
+                            const localDate = new Date(newValue);
+                            const offset =
+                              localDate.getTimezoneOffset() * 60000;
+                            const adjustedDate = new Date(
+                              localDate.getTime() + offset
                             );
+
+                            field.onChange(adjustedDate);
                           }}
-                          className="border rounded px-2 py-1"
+                          className="border rounded px-3 py-2 w-full"
                         />
                       </FormControl>
                       <FormMessage />
@@ -591,9 +621,7 @@ export default function ConsentForm({ data, formId }: ConsentFormProps) {
                     </div>
 
                     <div className="mt-4">
-                      <FormLabel className="font-medium">
-                        Video:
-                      </FormLabel>
+                      <FormLabel className="font-medium">Video:</FormLabel>
                       {/* <Controller
                         name={`snapshotMCQs.${mcqIndex}.videoFile`}
                         control={control}

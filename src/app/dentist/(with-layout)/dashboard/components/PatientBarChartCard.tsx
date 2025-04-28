@@ -19,6 +19,7 @@ export default async function PatientBarChartCard({
     errorMessageConsentFormTimeCountsResponse =
       responseConsentFormTimeCountsResponse.message;
   }
+  // console.log("chart data is ", consentFormByDentist);
   return (
     <PatientBarChart
       data={consentFormByDentist}

@@ -25,7 +25,6 @@ const authOptions: AuthOptions = {
           where: { email: credentials.email },
         });
 
-        console.log("User is ", user);
         if (!user || !user.password || user.role !== credentials.role) {
           throw new Error("Invalid email, password or role");
         }
@@ -34,7 +33,6 @@ const authOptions: AuthOptions = {
           credentials.password,
           user.password
         );
-        console.log("is valid password ", isValidPassword);
 
         if (!isValidPassword) {
           throw new Error("Invalid email, password or role");

@@ -35,14 +35,12 @@ export default function PatientBarChart({
 
     switch (type) {
       case BarChartTypes.WEEKLY:
-        // Use last 7 days data
         return data.last7Days.data.map((item) => ({
-          date: format(parseISO(item.date), "EEE"), // Format date to day abbreviation (Mon, Tue, etc.)
+          date: format(parseISO(item.date), "EEE"),
           patients: Number(item.count),
         }));
 
       case BarChartTypes.MONTHLY:
-        // Use last 30 days data grouped by weeks
         return data.last30Days.data.map((item) => ({
           date: `${format(parseISO(item.start_date), "MMM dd")}-${format(
             parseISO(item.end_date),
@@ -52,9 +50,8 @@ export default function PatientBarChart({
         }));
 
       case BarChartTypes.YEARLY:
-        // Use last 12 months data
         return data.last12Months.data.map((item) => ({
-          date: item.monthName.substring(0, 3), // First 3 letters of month name
+          date: item.monthName.substring(0, 3),
           patients: Number(item.count),
         }));
 
@@ -63,10 +60,46 @@ export default function PatientBarChart({
     }
   }, [data, type]);
 
-  // Calculate maximum y-axis value
-  const maxPatients =
-    chartData.length > 0 ? Math.max(...chartData.map((d) => d.patients)) : 10;
-  const yAxisMax = Math.ceil((maxPatients + 10) / 10) * 10;
+  // Calculate Y-axis bounds based on chart type and data
+  const getYAxisDomain = () => {
+    if (chartData.length === 0) return [0, 10];
+
+    const maxValue = Math.max(...chartData.map((d) => d.patients));
+
+    // Different padding strategies for different chart types
+    switch (type) {
+      case BarChartTypes.WEEKLY:
+        // For weekly data, add 10% padding or minimum 1
+        const weeklyPadding = Math.max(1, Math.ceil(maxValue * 0.1));
+        return [0, maxValue + weeklyPadding];
+
+      case BarChartTypes.MONTHLY:
+        // For monthly data, add 15% padding or minimum 2
+        const monthlyPadding = Math.max(2, Math.ceil(maxValue * 0.15));
+        return [0, maxValue + monthlyPadding];
+
+      case BarChartTypes.YEARLY:
+        // For yearly data, add 20% padding or minimum 3
+        const yearlyPadding = Math.max(3, Math.ceil(maxValue * 0.2));
+        return [0, maxValue + yearlyPadding];
+
+      default:
+        return [0, maxValue + 10];
+    }
+  };
+
+  const [yAxisMin, yAxisMax] = getYAxisDomain();
+
+  // Calculate Y-axis ticks based on the max value
+  const getYAxisTicks = () => {
+    const step = Math.ceil(yAxisMax / 5); // Aim for about 5 ticks
+    return Array.from(
+      { length: Math.floor(yAxisMax / step) + 1 },
+      (_, i) => i * step
+    );
+  };
+
+  const yTicks = getYAxisTicks();
 
   // Fallback display when no data is available
   if (!data) {
@@ -155,11 +188,8 @@ export default function PatientBarChart({
                 stroke="#00000080"
               />
               <YAxis
-                domain={[0, yAxisMax]}
-                ticks={Array.from(
-                  { length: yAxisMax / 10 + 1 },
-                  (_, i) => i * 10
-                ).filter((tick) => tick <= yAxisMax)}
+                domain={[yAxisMin, yAxisMax]}
+                ticks={yTicks}
                 axisLine={false}
                 tickLine={false}
                 tickMargin={10}

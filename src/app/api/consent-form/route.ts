@@ -18,7 +18,6 @@ export async function GET(req: NextRequest) {
     const dentistId = sessionToken?.role === "dentist" ? sessionToken.id : null;
 
     if (hasValidToken) {
-      console.log("token ", token);
       const consentLink = await prisma.consentFormLink.findUnique({
         where: { token },
         include: {

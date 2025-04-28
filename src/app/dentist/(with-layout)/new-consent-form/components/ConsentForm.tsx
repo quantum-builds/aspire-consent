@@ -281,22 +281,33 @@ export default function ConsentForm({
                     <FormLabel className="text-xl font-bold">
                       Date of Treatment
                     </FormLabel>
-                    <div className="flex flex-col gap-3  w-full md:w-2/3">
+                    <div className="flex flex-col gap-3 w-full md:w-2/3">
                       <div className="relative flex items-center w-full">
                         <FormControl className="w-full">
                           <Input
                             type="datetime-local"
-                            placeholder="Select date"
+                            placeholder="Select date and time"
                             {...field}
-                            min={new Date().toISOString().split("T")[0]} // Set minimum date to today
+                            min={new Date().toISOString().slice(0, 16)} // Sets min to current datetime
                             className="pl-4 h-14 text-md md:text-xl"
+                            onChange={(e) => {
+                              // Additional validation to ensure date is not in the past
+                              const selectedDate = new Date(e.target.value);
+                              const now = new Date();
+                              if (selectedDate < now) {
+                                // Reset to current datetime if past date is selected
+                                field.onChange(now.toISOString().slice(0, 16));
+                              } else {
+                                field.onChange(e.target.value);
+                              }
+                            }}
                           />
                         </FormControl>
                       </div>
                       <FormDescription className="text-md w-full">
-                        Specify the date of treatment to ensure the consent is
-                        completed by patient beforehand. Only future dates can
-                        be selected.
+                        Specify the date and time of treatment to ensure the
+                        consent is completed by patient beforehand. Only future
+                        dates/times can be selected.
                       </FormDescription>
                       <FormMessage className="text-red-500" />
                     </div>

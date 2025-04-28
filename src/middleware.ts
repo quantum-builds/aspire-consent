@@ -29,7 +29,6 @@ export async function middleware(req: NextRequest) {
     (path) => pathname === path || pathname.startsWith(`${path}/`)
   );
 
-  console.log("is Public path", isPublicPath);
   if (
     token &&
     (pathname.startsWith("/login") || pathname.startsWith("/signup"))
@@ -40,7 +39,6 @@ export async function middleware(req: NextRequest) {
   }
 
   if (isPublicPath) {
-    console.log("in if");
     return NextResponse.next();
   }
 

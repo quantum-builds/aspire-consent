@@ -26,8 +26,6 @@ export async function GET(req: NextRequest) {
     if (procedureId) whereClause.procedureId = procedureId;
 
     let include: { dentist?: boolean; procedure?: boolean } = {};
-    console.log("dentist id ", dentistId);
-    console.log("procedure id ", procedureId);
 
     if (dentistId && !procedureId) {
       include = { procedure: true };
@@ -37,8 +35,6 @@ export async function GET(req: NextRequest) {
       include = { dentist: true, procedure: true };
     }
 
-    console.log("where clause is ", whereClause);
-    console.log("include is ", include);
     const dp = await prisma.dentistToProcedure.findMany({
       where: whereClause,
       include,

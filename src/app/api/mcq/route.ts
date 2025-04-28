@@ -10,11 +10,9 @@ export async function POST(req: NextRequest) {
     const token = await getToken({ req: req, secret });
     const dentistId = token?.id;
 
-    console.log("1");
     if (!token || !dentistId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    console.log("2");
 
     const body = await req.json();
     const mcqs = Array.isArray(body) ? body : [body];
@@ -23,7 +21,6 @@ export async function POST(req: NextRequest) {
       ...mcq,
       dentistId, // Add dentistId to each MCQ
     }));
-    console.log("3");
 
     const invalidMcqs = validatedMcqs.filter(
       (mcq) =>
@@ -37,29 +34,23 @@ export async function POST(req: NextRequest) {
         !mcq.dentistId // Ensure dentistId is present
     );
 
-    console.log("4");
-
     if (invalidMcqs.length > 0) {
       return NextResponse.json(
         { message: "Each MCQ must have all required fields properly filled." },
         { status: 400 }
       );
     }
-    console.log("5");
 
     const created = await prisma.mCQ.createMany({
       data: validatedMcqs,
       skipDuplicates: true,
     });
-    console.log("6");
 
     return NextResponse.json(
       { message: "MCQs created successfully", created },
       { status: 201 }
     );
   } catch (error) {
-    console.log("7");
-
     console.error("Error creating MCQs:", error);
     return NextResponse.json(
       { message: "Internal Server Error" },
@@ -79,9 +70,7 @@ export async function GET(req: NextRequest) {
     }
 
     const procedureId = searchParams.get("procedureId");
-    console.log("in mcq get ", procedureId);
 
-    console.log("procedure id is ", procedureId);
     if (!procedureId) {
       return NextResponse.json(
         createResponse(false, "Procedure id must be valid", null),

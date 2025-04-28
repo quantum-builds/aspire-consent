@@ -121,10 +121,6 @@ export default function PracticeForm({
     setIsLoading(false);
     toast.success("Dentist and practice linked successfully");
     router.replace("/login");
-    // let updatedUserData:Partial<TUser>={}
-    // if(dirtyFields.image)updatedUserData.profilePicUrl.
-    console.log("Form submitted:", data);
-    // Here you would typically send the data to your backend
   };
 
   useEffect(() => {
