@@ -74,7 +74,7 @@ export async function getConsentForm(token?: string, dentistId?: string) {
             return imageResponse;
           })
         );
-
+        console.log("uploads in consent form is ", uploads);
         mcqs.forEach((mcq, index: number) => {
           mcq.videoName = mcq.videoUrl;
           mcq.videoUrl = uploads[index];

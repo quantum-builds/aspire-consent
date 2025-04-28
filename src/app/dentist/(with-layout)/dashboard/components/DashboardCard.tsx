@@ -2,20 +2,7 @@
 
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  MoreHorizontal,
-  Users,
-  FileText,
-  Stethoscope,
-  Activity,
-} from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
+import { Users, FileText, Stethoscope, Activity } from "lucide-react";
 import { LineChart, Line, ResponsiveContainer } from "recharts";
 import { TCountStats } from "@/types/common";
 
@@ -52,18 +39,6 @@ const StatCard = ({
           </div>
           <CardTitle className="text-sm font-medium">{title}</CardTitle>
         </div>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem>View details</DropdownMenuItem>
-            <DropdownMenuItem>Export data</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
       </CardHeader>
       <CardContent>
         <div className="text-2xl font-bold">{value}</div>
@@ -108,10 +83,28 @@ export default function DashboardCards({
   isLoading = false,
 }: DashboardCardsProps) {
   // Generate chart data based on current counts
-  const generateChartData = (currentValue: number) => {
-    return Array.from({ length: 7 }, (_, i) => ({
-      value: Math.max(0, currentValue - (6 - i) * (currentValue / 10)),
-    }));
+  const generateChartData = (currentValue: number, weeklyChange: number) => {
+    // Calculate a base value from last week
+    const lastWeekValue =
+      weeklyChange !== 0
+        ? currentValue / (1 + Math.abs(weeklyChange) / 100)
+        : currentValue * 0.8; // Default to 20% less if no change
+
+    // Generate 7 data points with some random variation
+    return Array.from({ length: 7 }, (_, i) => {
+      // Calculate a base progression from last week to current value
+      const baseValue =
+        lastWeekValue + (currentValue - lastWeekValue) * (i / 6);
+
+      // Add some random variation (10-20% of the difference)
+      const variation =
+        (currentValue - lastWeekValue) * (0.1 + Math.random() * 0.1);
+      const variedValue = baseValue + (i < 3 ? -variation : variation);
+
+      return {
+        value: Math.max(0, Math.round(variedValue)),
+      };
+    });
   };
 
   if (isLoading) {
@@ -174,10 +167,12 @@ export default function DashboardCards({
           isPositive: data.consentLinks.weeklyChange >= 0,
         }}
         icon={<FileText className="h-4 w-4" style={{ color: "#3b82f6" }} />}
-        chartData={generateChartData(data.consentLinks.count)}
+        chartData={generateChartData(
+          data.consentLinks.count,
+          data.consentLinks.weeklyChange
+        )}
         color="#3b82f6"
       />
-
       <StatCard
         title="Patients"
         value={data.patients.count}
@@ -187,10 +182,12 @@ export default function DashboardCards({
           isPositive: data.patients.weeklyChange >= 0,
         }}
         icon={<Users className="h-4 w-4" style={{ color: "#10b981" }} />}
-        chartData={generateChartData(data.patients.count)}
+        chartData={generateChartData(
+          data.patients.count,
+          data.patients.weeklyChange
+        )}
         color="#10b981"
       />
-
       <StatCard
         title="Dentists"
         value={data.dentists.count}
@@ -200,10 +197,12 @@ export default function DashboardCards({
           isPositive: data.dentists.weeklyChange >= 0,
         }}
         icon={<Stethoscope className="h-4 w-4" style={{ color: "#8b5cf6" }} />}
-        chartData={generateChartData(data.dentists.count)}
+        chartData={generateChartData(
+          data.dentists.count,
+          data.dentists.weeklyChange
+        )}
         color="#8b5cf6"
       />
-
       <StatCard
         title="Procedures"
         value={data.procedures.count}
@@ -213,7 +212,10 @@ export default function DashboardCards({
           isPositive: data.procedures.weeklyChange >= 0,
         }}
         icon={<Activity className="h-4 w-4" style={{ color: "#f59e0b" }} />}
-        chartData={generateChartData(data.procedures.count)}
+        chartData={generateChartData(
+          data.procedures.count,
+          data.procedures.weeklyChange
+        )}
         color="#f59e0b"
       />
     </div>

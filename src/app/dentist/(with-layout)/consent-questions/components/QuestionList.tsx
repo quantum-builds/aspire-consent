@@ -22,7 +22,6 @@ export default function QuestionList({
   consentName,
 }: QuestionListProps) {
   const router = useRouter();
-  console.log("procedure id is", procedureId);
 
   const { mutateAsync: uploadFile, isPending: isFilePending } = useUploadFile();
   const { mutate: createMCQ, isPending: isCreatePending } = useCreateMCQ();
@@ -59,10 +58,11 @@ export default function QuestionList({
           newMCQs.map(async (mcq) => {
             let videoUrl = "";
             if (mcq.videoUrl) {
-              const uploadResponse = await uploadFile({
+              console.log("video file is ", mcq.videoUrl);
+              await uploadFile({
                 selectedFile: mcq.videoUrl,
               });
-              videoUrl = `uploads/aspire-consent/${uploadResponse.name}`;
+              videoUrl = `uploads/aspire-consent/${mcq.videoUrl.name}`;
             }
 
             return {
@@ -78,8 +78,8 @@ export default function QuestionList({
         createMCQ(
           { data: processedNewMCQs },
           {
-            onSuccess: (data) => {
-              console.log("data is ", data);
+            onSuccess: () => {
+              // console.log("data is ", data);
               toast.success("MCQ created successfully");
             },
             onError: (error) => {
@@ -110,10 +110,13 @@ export default function QuestionList({
             }
 
             if (dirtyFields.videoUrl && mcq.videoUrl) {
-              const uploadResponse = await uploadFile({
+              console.log("dirty file is ", dirtyFields.videoUrl);
+              console.log("mcq dfile is ", mcq.videoUrl);
+              await uploadFile({
                 selectedFile: mcq.videoUrl,
               });
-              updateData.videoUrl = `uploads/aspire-consent/${uploadResponse.name}`;
+
+              updateData.videoUrl = `uploads/aspire-consent/${mcq.videoUrl.name}`;
             } else if (dirtyFields.videoUrl && !mcq.videoUrl) {
               updateData.videoUrl = "";
             }
@@ -142,8 +145,8 @@ export default function QuestionList({
     deleteMCQ(
       { id },
       {
-        onSuccess: (data) => {
-          console.log("data is ", data);
+        onSuccess: () => {
+          // console.log("data is ", data);
           toast.success("MCQ deleted successfully");
         },
         onError: (error) => {

@@ -33,6 +33,7 @@ export async function getMCQs(procedureId?: string) {
           return imageResponse;
         })
       );
+      console.log("uploads in mcq is ", uploads);
 
       mcqs.forEach((mcq, index: number) => {
         mcq.videoName = mcq.videoUrl;

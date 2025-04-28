@@ -29,3 +29,17 @@ export type TCountStats = {
     weeklyChange: number;
   };
 };
+
+export type TPdfData = {
+  patient: string;
+  procedure: string;
+  date: Date;
+  qa: {
+    question: string;
+    answer: string;
+  }[];
+  timestamps: {
+    event: string;
+    time: Date;
+  }[];
+};

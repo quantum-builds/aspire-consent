@@ -1,28 +1,17 @@
 import s3 from "@/config/s3-config";
-import { GetObjectCommand, ListObjectsV2Command } from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { ListObjectsV2Command } from "@aws-sdk/client-s3";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
   const searchParams = req.nextUrl.searchParams;
-
   try {
     const fileNames: string[] = searchParams.getAll("fileName");
-
     if (fileNames.length > 0) {
-      // Batch generate signed URLs
-      // console.log("Generating batch signed URLs...");
-      const mediaUrls = await Promise.all(
-        fileNames.map(async (fileName: string) => {
-          const command = new GetObjectCommand({
-            Bucket: process.env.AWS_BUCKET_NAME!,
-            Key: fileName,
-          });
-
-          const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
-          return { url, fileName };
-        })
-      );
+      // For specific file requests, we'll return their public URLs
+      const mediaUrls = fileNames.map((fileName: string) => {
+        const publicUrl = `https://${process.env.NEXT_PUBLIC_AWS_BUCKET_NAME}.s3.${process.env.NEXT_PUBLIC_AWS_REGION}.amazonaws.com/${fileName}`;
+        return { url: publicUrl, fileName };
+      });
 
       return NextResponse.json(
         { success: true, media: mediaUrls },
@@ -31,12 +20,11 @@ export async function GET(req: NextRequest) {
     } else {
       // List all media files
       const command = new ListObjectsV2Command({
-        Bucket: process.env.AWS_BUCKET_NAME!,
+        Bucket: process.env.NEXT_PUBLIC_AWS_BUCKET_NAME!,
         Prefix: "uploads/aspire-consent", // Ensure this matches your file upload path
       });
 
       const { Contents } = await s3.send(command);
-
       if (!Contents || Contents.length === 0) {
         console.log("No media files found.");
         return NextResponse.json({ success: true, media: [] }, { status: 200 });
@@ -59,30 +47,21 @@ export async function GET(req: NextRequest) {
         )
       );
 
-      // Generate signed URLs
-      console.log("Fetching signed URLs for media files...");
-      const mediaUrls = await Promise.all(
-        mediaFiles.map(async (file) => {
-          const signedUrl = await getSignedUrl(
-            s3,
-            new GetObjectCommand({
-              Bucket: process.env.AWS_BUCKET_NAME!,
-              Key: file.Key!,
-            }),
-            { expiresIn: 3600 }
-          );
+      // Generate public URLs
+      console.log("Generating public URLs for media files...");
+      const mediaUrls = mediaFiles.map((file) => {
+        const publicUrl = `https://${process.env.NEXT_PUBLIC_AWS_BUCKET_NAME}.s3.${process.env.NEXT_PUBLIC_AWS_REGION}.amazonaws.com/${file.Key}`;
 
-          return {
-            fileName: file.Key,
-            url: signedUrl,
-            type: videoExtensions.some((ext) =>
-              file.Key?.toLowerCase().endsWith(ext)
-            )
-              ? "video"
-              : "image",
-          };
-        })
-      );
+        return {
+          fileName: file.Key,
+          url: publicUrl,
+          type: videoExtensions.some((ext) =>
+            file.Key?.toLowerCase().endsWith(ext)
+          )
+            ? "video"
+            : "image",
+        };
+      });
 
       console.log("Media file URLs generated.");
       return NextResponse.json(

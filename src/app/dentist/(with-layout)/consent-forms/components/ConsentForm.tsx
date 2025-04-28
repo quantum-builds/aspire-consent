@@ -4,6 +4,7 @@ import { TConsentForm } from "@/types/consent-form";
 import { Play } from "lucide-react";
 import { useState } from "react";
 import getPathAfterUploadsImages from "@/utils/getSplittedPath";
+import DownloadPdfButton from "@/components/DownloadPdfButton";
 
 export default function ConsentForm({ data }: { data: TConsentForm | null }) {
   const [currentVideo, setCurrentVideo] = useState<{
@@ -208,6 +209,32 @@ export default function ConsentForm({ data }: { data: TConsentForm | null }) {
           </div>
         )}
       </div>
+
+      {data.status === "COMPLETED" && (
+        <div>
+          <DownloadPdfButton
+            data={{
+              patient: data.patient.fullName,
+              procedure: data.procedure.name,
+              date: data.completedAt || new Date(), // Fallback to current date if not completed
+              qa: data.snapshotMCQs.map((mcq) => ({
+                question: mcq.questionText,
+                answer: mcq.correctAnswer,
+              })),
+              timestamps: [
+                { event: "Form created", time: data.createdAt },
+                { event: "Last updated", time: data.lastUpdated },
+                ...(data.completedAt
+                  ? [{ event: "Form completed", time: data.completedAt }]
+                  : []),
+              ],
+            }}
+            fileName={`${data.patient.fullName}-consent-form.pdf`}
+          >
+            Download Consent Form
+          </DownloadPdfButton>
+        </div>
+      )}
     </div>
   );
 }

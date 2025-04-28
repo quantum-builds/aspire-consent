@@ -61,6 +61,7 @@ type ConstsentFormProps = {
   patientErrorMessage?: string;
 };
 
+//https://${process.env.NEXT_PUBLIC_AWS_BUCKET_NAME}.s3.${process.env.NEXT_PUBLIC_AWS_REGION}.amazonaws.com/uploads/aspire-consent/aspire-consent-black-logo.svg
 export default function ConsentForm({
   procedures,
   patients,
@@ -92,71 +93,196 @@ export default function ConsentForm({
       },
       {
         onSuccess: (responseData) => {
-          const emailContent = {
-            to: responseData.patientEmail,
-            subject: "Consent Form to Fill",
-            text: `This is the consent form sent by ${
-              responseData.dentistEmail
-            }.\n\n${
-              data.customNote
-                ? `Additional Note:\n${stripHtml(data.customNote).result}\n\n`
-                : ""
-            }Please fill out the consent form at the following link:\n${
-              process.env.NEXT_PUBLIC_BASE_URL
-            }consent-form/${responseData.token}?email=${
-              responseData.patientEmail
-            }`,
-            html: `
-  <div style="font-family: Arial, sans-serif; color: #333;">
-    <h2 style="color: #4f46e5;">Consent Form Required</h2>
-    <p>This is the consent form sent by <strong>${
-      responseData.dentistEmail
-    }</strong>.</p>
+          console.log("patient email is ", responseData);
+          const selectedProcedure = procedures.find(
+            (proc) => proc.procedure.id === data.treatment
+          );
 
-    ${
-      data.customNote
-        ? `<div style="margin: 20px 0; padding: 15px; background-color: #f4f4f4; border-left: 4px solid #4f46e5;">
-              <strong>Note from your dentist:</strong><br/>
-              ${data.customNote}
-           </div>`
-        : ""
-    }
+          // Get the procedure name or fallback to "Dental Procedure"
+          const procedureName =
+            selectedProcedure?.procedure.name || "Dental Procedure";
 
-   
-
-    <p>Please click the button below to fill out the consent form:</p>
+          // Create your HTML template
+          const htmlTemplate = `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consent Form Required</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo {
+            max-width: 200px;
+            height: auto;
+            margin-bottom: 20px;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+        .note {
+            background-color: #eef2ff;
+            border-left: 4px solid #4f46e5;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 4px 4px 0;
+        }
+        .button {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: #4f46e5;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+        .footer {
+            font-size: 12px;
+            color: #777777;
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eeeeee;
+        }
+        .details {
+            margin: 20px 0;
+        }
+        .detail-row {
+            display: flex;
+            margin-bottom: 8px;
+        }
+        .detail-label {
+            font-weight: bold;
+            width: 120px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <!-- Use the direct public S3 URL for your logo -->
+        <img src="https://${process.env.NEXT_PUBLIC_AWS_BUCKET_NAME}.s3.${
+            process.env.NEXT_PUBLIC_AWS_REGION
+          }.amazonaws.com/uploads/aspire-consent/aspire-consent-black-logo.svg" 
+             alt="Dental Clinic Logo" 
+             class="logo">
+        <h1 style="color: #4f46e5; margin-bottom: 10px;">Consent Form Required</h1>
+    </div>
+    <div class="content">
+        <p>Dear ${responseData.patientName || "Patient"},</p>
+        
+        <p>Your dental provider <strong>${
+          responseData.dentistName || responseData.dentistEmail
+        }</strong> has requested you to complete a consent form for your upcoming procedure.</p>
+        <div class="details">
+            <div class="detail-row">
+                <span class="detail-label">Procedure:</span>
+                <span>${procedureName || "Dental Procedure"}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Scheduled Date:</span>
+                <span>${new Date(data.treatmentDate).toLocaleDateString(
+                  "en-US",
+                  {
+                    weekday: "long",
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  }
+                )}</span>
+            </div>
+        </div>
+        ${
+          data.customNote
+            ? `
+        <div class="note">
+            <strong>Note from your dentist:</strong><br/>
+            ${data.customNote}
+        </div>
+        `
+            : ""
+        }
+        <p style="margin-bottom: 25px;">Please click the button below to complete your consent form at your earliest convenience:</p>
+<div style="text-align: center;">
     <a href="${process.env.NEXT_PUBLIC_BASE_URL}consent-form/${
-              responseData.token
-            }"
-       style="display: inline-block; margin-top: 20px; padding: 12px 24px; background-color: #4f46e5; color: #fff; text-decoration: none; font-weight: bold; border-radius: 6px;">
-      Fill Out Consent Form
+            responseData.token
+          }" 
+       style="display: inline-block; padding: 12px 24px; background-color: #4f46e5; color: #ffffff; text-decoration: none; border-radius: 6px; font-weight: bold; margin: 15px 0;">
+        Complete Consent Form
     </a>
+</div>
+        <p style="font-size: 14px; color: #666666;">
+            <strong>Important:</strong> This consent form must be completed prior to your scheduled appointment.
+        </p>
+    </div>
+    <div class="footer">
+        <p>If you have any questions or need to reschedule, please contact our office at ${
+          responseData.dentistEmail
+        }.</p>
+        <p>© ${new Date().getFullYear()} Your Dental Clinic. All rights reserved.</p>
+    </div>
+</body>
+</html>
+`;
 
-    <p style="margin-top: 40px; font-size: 12px; color: #777;">If you have questions, contact your dental provider at ${
-      responseData.dentistEmail
-    }.</p>
-  </div>
-`,
-          };
+          // Create simple text version for non-HTML clients
+          const textContent = `This is the consent form sent by ${
+            responseData.dentistEmail
+          }.\n\n${
+            data.customNote
+              ? `Additional Note:\n${stripHtml(data.customNote).result}\n\n`
+              : ""
+          }Please fill out the consent form at the following link:\n${
+            process.env.NEXT_PUBLIC_BASE_URL
+          }consent-form/${responseData.token}?email=${
+            responseData.patientEmail
+          }`;
 
-          sendEmail(emailContent, {
-            onSuccess: () => {
-              toast.success("Consent Link sent to the provided email");
-              form.reset();
-              setTimeout(() => {
-                router.refresh();
-              }, 100);
+          // Direct call to your sendEmail function
+          sendEmail(
+            {
+              to: responseData.patientEmail,
+              subject:
+                "Consent Form Required for Your Upcoming Dental Procedure",
+              text: textContent,
+              html: htmlTemplate, // Pass the complete HTML template
             },
-            onError: (err) => {
-              if (axios.isAxiosError(err) && err.response) {
-                const message =
-                  err.response.data?.message || "Something went wrong";
-                toast.error(message);
-              } else {
-                toast.error("Network error. Please check your connection.");
-              }
-            },
-          });
+            {
+              onSuccess: () => {
+                toast.success("Consent Link sent to the provided email");
+                form.reset();
+                setTimeout(() => {
+                  router.refresh();
+                }, 100);
+                setEditorKey((prev) => prev + 1);
+              },
+              onError: (err) => {
+                if (axios.isAxiosError(err) && err.response) {
+                  const message =
+                    err.response.data?.message || "Something went wrong";
+                  toast.error(message);
+                } else {
+                  toast.error("Network error. Please check your connection.");
+                }
+              },
+            }
+          );
         },
         onError: (error) => {
           console.error("Error in generating Link:", error);

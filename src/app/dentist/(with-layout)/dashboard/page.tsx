@@ -43,7 +43,6 @@ export default async function Dashboard() {
         </div>
 
         <div className="col-span-full">
-         
           <ConsentDataTableComponent cookieHeader={cookieHeader} />
         </div>
       </div>
@@ -85,12 +84,10 @@ export default async function Dashboard() {
 //     try {
 //       // Get the signed URL from the API
 
-//       const response = await axiosInstance.get("/api/s3", {
-//         params: {
-//           fileName: selectedFile.name,
-
-//           fileType: selectedFile.type,
-//         },
+//       const response = await axiosInstance.post("/api/s3", {
+//         fileName: selectedFile.name,
+//         fileSize: selectedFile.size,
+//         fileType: selectedFile.type,
 //       });
 
 //       const data = await response.data;
@@ -98,13 +95,12 @@ export default async function Dashboard() {
 //       if (!data.success) throw new Error("Failed to get signed URL");
 
 //       // Upload file to S3
-
-//       await fetch(data.url, {
+//       await fetch(data.uploadUrl, {
 //         method: "PUT",
-
-//         body: selectedFile,
-
-//         headers: { "Content-Type": selectedFile.type },
+//         body: selectedFile, // This is your actual file
+//         headers: {
+//           "Content-Type": selectedFile.type,
+//         },
 //       });
 
 //       // alert("File uploaded successfully!");
@@ -187,23 +183,29 @@ export default async function Dashboard() {
 //           {mediaFiles.map((file, index) =>
 //             file.fileName.match(/\.(jpeg|jpg|png|gif|webp|svg)$/i) ? (
 //               // Render image
-//               <Image
-//                 src={file.url}
-//                 alt="Uploaded"
-//                 width={400}
-//                 height={300}
-//                 className="w-full max-w-md rounded-lg shadow-md"
-//               />
+//               <div className="flex flex-col gap-2">
+//                 <Image
+//                   src={file.url}
+//                   alt="Uploaded"
+//                   width={400}
+//                   height={300}
+//                   className="w-full max-w-md rounded-lg shadow-md"
+//                 />
+//                 <p>file name :{file.fileName}</p>
+//               </div>
 //             ) : (
 //               // Render video
 
-//               <video key={index} controls width="400">
-//                 <source
-//                   src={file.url}
-//                   type={`video/${file.fileName.split(".").pop()}`}
-//                 />
-//                 Your browser does not support the video tag.
-//               </video>
+//               <div className="flex flex-col gap-2">
+//                 <video key={index} controls width="400">
+//                   <source
+//                     src={file.url}
+//                     type={`video/${file.fileName.split(".").pop()}`}
+//                   />
+//                   Your browser does not support the video tag.
+//                 </video>
+//                 <p>file name :{file.fileName}</p>
+//               </div>
 //             )
 //           )}
 //         </div>
@@ -212,11 +214,72 @@ export default async function Dashboard() {
 //   );
 // }
 
-// export default async function Page() {
-//   const response = await getAMedia(
-//     "uploads/aspire-consent/aspire-consent-black-logo.svg"
+// "use client";
+// import DownloadPdfButton from "@/components/DownloadPdfButton";
+// export default function ConsentForm() {
+//   const pdfData = {
+//     patient: "John Doe",
+//     procedure: "Knee Arthroscopy",
+//     date: new Date(),
+//     qa: [
+//       { question: "Do you have any allergies?", answer: "No" },
+//       { question: "Have you had this procedure before?", answer: "No" },
+//       { question: "Do you understand the risks?", answer: "Yes" },
+//       { question: "Consent given for anesthesia?", answer: "Yes" },
+//     ],
+//     timestamps: [
+//       { event: "Form started", time: new Date(Date.now() - 3600000) },
+//       { event: "Form completed", time: new Date() },
+//     ],
+//   };
+
+//   return (
+//     <div>
+//       <h1>Patient Consent Form</h1>
+//       <DownloadPdfButton
+//         data={pdfData}
+//         fileName={`${pdfData.patient}-consent-form.pdf`}
+//       >
+//         Download Consent Form
+//       </DownloadPdfButton>
+
+//       {/* Display the same information in the UI */}
+//       <div
+//         style={{ marginTop: "2rem", border: "1px solid #eee", padding: "1rem" }}
+//       >
+//         <h2>Patient Information</h2>
+//         <p>
+//           <strong>Name:</strong> {pdfData.patient}
+//         </p>
+//         <p>
+//           <strong>Procedure:</strong> {pdfData.procedure}
+//         </p>
+//         <p>
+//           <strong>Date:</strong> {pdfData.date.toLocaleDateString()}
+//         </p>
+
+//         <h2>Questions & Answers</h2>
+//         <ul>
+//           {pdfData.qa.map((item, index) => (
+//             <li key={index}>
+//               <strong>{item.question}</strong> - {item.answer}
+//             </li>
+//           ))}
+//         </ul>
+
+//         <h2>Timestamps</h2>
+//         <p>
+//           Document will be generated with current time:{" "}
+//           {new Date().toLocaleString()}
+//         </p>
+//         <ul>
+//           {pdfData.timestamps.map((ts, i) => (
+//             <li key={i}>
+//               <strong>{ts.event}:</strong> {new Date(ts.time).toLocaleString()}
+//             </li>
+//           ))}
+//         </ul>
+//       </div>
+//     </div>
 //   );
-//   const base64Data = Buffer.from(response).toString("base64");
-//   console.log("base is ", base64Data);
-//   return <Image src={response} alt="image" width={100} height={100} />;
 // }

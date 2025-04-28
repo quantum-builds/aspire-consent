@@ -1,16 +1,18 @@
-import { PutObjectCommand } from "@aws-sdk/client-s3";
-import { NextRequest, NextResponse } from "next/server";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import s3 from "@/config/s3-config";
+import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { NextRequest, NextResponse } from "next/server";
 
-const MAX_FILE_SIZE = 1024 * 1024 * 10; //10 MB
-export async function GET(req: NextRequest) {
-  const searchParams = req.nextUrl.searchParams;
+const MAX_FILE_SIZE = 1024 * 1024 * 10; // 10 MB
+
+export async function POST(req: NextRequest) {
   try {
-    const fileName = searchParams.get("fileName");
-    const fileType = searchParams.get("fileType");
-    const fileSizeStr = searchParams.get("fileSize");
-    const fileSize = fileSizeStr ? Number.parseInt(fileSizeStr) : 0;
+    const body = await req.json();
+    const { fileName, fileType, fileSize } = body;
+
+    console.log("file name ", fileName);
+    console.log("file type ", fileType);
+    console.log("file size ", fileSize);
 
     if (!fileName || !fileType) {
       return NextResponse.json(
@@ -18,20 +20,39 @@ export async function GET(req: NextRequest) {
         { status: 400 }
       );
     }
+
     if (fileSize > MAX_FILE_SIZE) {
-      console.log("FIle is too large");
+      return NextResponse.json(
+        { success: false, message: "File is too large" },
+        { status: 400 }
+      );
     }
+
+    // For public buckets, we'll generate a presigned URL for upload
+    // but also return the public URL that will be accessible after upload
+    const objectKey = `uploads/aspire-consent/${fileName}`;
+
     const params = {
-      Bucket: process.env.AWS_BUCKET_NAME!,
-      Key: `uploads/aspire-consent/${fileName}`,
+      Bucket: process.env.NEXT_PUBLIC_AWS_BUCKET_NAME!,
+      Key: objectKey,
       ContentType: fileType,
-      ContentSize: fileSize,
+      ContentLength: fileSize,
+      ACL: "public-read" as const, // Make the object publicly readable
     };
 
     const command = new PutObjectCommand(params);
-    const signedUrl = await getSignedUrl(s3, command, { expiresIn: 3600 });
 
-    return NextResponse.json({ success: true, url: signedUrl });
+    // Generate a presigned URL for upload
+    const uploadUrl = await getSignedUrl(s3, command, { expiresIn: 3600 });
+
+    // Generate the public URL that will be accessible after upload
+    const publicUrl = `https://${process.env.NEXT_PUBLIC_AWS_BUCKET_NAME}.s3.${process.env.NEXT_PUBLIC_AWS_REGION}.amazonaws.com/${objectKey}`;
+
+    return NextResponse.json({
+      success: true,
+      uploadUrl: uploadUrl,
+      publicUrl: publicUrl,
+    });
   } catch (error) {
     console.error("Error generating upload URL:", error);
     return NextResponse.json(
