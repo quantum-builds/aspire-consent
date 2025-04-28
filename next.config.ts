@@ -8,6 +8,16 @@ const nextConfig: NextConfig = {
         destination: "/login",
         permanent: false,
       },
+      {
+        source: "/dentist/",
+        destination: "/dentist/dashboard",
+        permanent: false,
+      },
+      {
+        source: "/patient",
+        destination: "/patient/dashboard",
+        permanent: false,
+      },
     ];
   },
 };

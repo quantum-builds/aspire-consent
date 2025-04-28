@@ -592,7 +592,7 @@ export default function ConsentForm({ data, formId }: ConsentFormProps) {
 
                     <div className="mt-4">
                       <FormLabel className="font-medium">
-                        Educational Video:
+                        Video:
                       </FormLabel>
                       {/* <Controller
                         name={`snapshotMCQs.${mcqIndex}.videoFile`}

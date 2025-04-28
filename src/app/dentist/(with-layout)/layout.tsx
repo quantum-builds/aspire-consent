@@ -32,7 +32,7 @@ export default function RootLayout({
   return (
     <div className="flex flex-col lg:flex-row min-h-screen">
       {/* Desktop Sidebar */}
-      <div className="hidden lg:flex lg:w-[19%] z-30">
+      <div className="hidden lg:flex lg:w-[19%]  2xl:w-[12%] z-30">
         <SideBar data={SIDE_BAR_DATA} />
       </div>
 

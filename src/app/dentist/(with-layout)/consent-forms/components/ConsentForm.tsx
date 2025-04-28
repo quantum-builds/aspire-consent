@@ -182,7 +182,7 @@ export default function ConsentForm({ data }: { data: TConsentForm | null }) {
                   {currentVideo?.mcqId === mcq.id && (
                     <div className="mt-4 pt-4 border-t border-gray-200">
                       <h4 className="text-sm font-medium text-gray-700 mb-2">
-                        Educational Video:
+                        Video:
                         {getPathAfterUploadsImages(
                           mcq.videoName ||
                             "/uploads/aspire-consent/placeholder.mp4"
