@@ -126,7 +126,7 @@ export default function RadialProgressChart({
             </RadialBarChart>
           </ResponsiveContainer>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-2 gap-1">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-1 gap-1">
           {chartData.map((entry, index) => (
             <div key={index} className="flex items-center gap-2">
               <div

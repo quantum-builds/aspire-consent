@@ -13,7 +13,7 @@ export default function SideBar({ data }: SideBarProps) {
   const pathname = usePathname();
 
   return (
-    <div className="bg-[#5353FF] w-full min-h-screen px-6 py-8 lg:flex flex-col z-50">
+    <div className="bg-[#5353FF] w-full min-h-screen px-6 py-8 lg:flex flex-col z-50 ">
       <div className="mb-10 flex items-center justify-center">
         <Image
           src={AspireConsentWhiteLogo}
