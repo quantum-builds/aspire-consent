@@ -161,10 +161,221 @@ export default function DataTable({
     }
   };
 
+  // return (
+  //   <div className="space-y-4">
+  //     <div className="rounded-md border p-5 flex flex-col gap-5">
+  //       <div className="flex items-center justify-end mt-4 ">
+  //         <div className="relative w-full max-w-lg">
+  //           <Search className="absolute left-2.5 top-4 h-4 w-4 text-gray-500" />
+  //           <Input
+  //             placeholder="Search by email, procedure or status..."
+  //             value={searchTerm}
+  //             onChange={(e) => {
+  //               setSearchTerm(e.target.value);
+  //               setCurrentPage(1);
+  //             }}
+  //             className="pl-9 text-md h-12"
+  //           />
+  //         </div>
+  //       </div>
+  //       <Table>
+  //         <TableHeader className="">
+  //           <TableRow className="text-lg">
+  //             <TableHead>Patient Email</TableHead>
+  //             <TableHead>Procedure Name</TableHead>
+  //             <TableHead>Status</TableHead>
+  //             <TableHead>Expiry Date</TableHead>
+  //             <TableHead className="">Actions</TableHead>
+  //           </TableRow>
+  //         </TableHeader>
+
+  //         {isLoading ? (
+  //           <TableSkeleton />
+  //         ) : (
+  //           <TableBody className="text-lg ">
+  //             {paginatedData.length > 0 ? (
+  //               paginatedData.map((record) => (
+  //                 <TableRow key={record.id}>
+  //                   <TableCell className="">{record.patient.email}</TableCell>
+  //                   <TableCell>{record.procedure.name}</TableCell>
+  //                   <TableCell className="flex gap-1 items-center my-auto">
+  //                     <div className="w-3 h-3 rounded-full">
+  //                       <span
+  //                         className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusClasses(
+  //                           record.status
+  //                         )}`}
+  //                       >
+  //                         <span
+  //                           className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusClasses(
+  //                             record.status
+  //                           )}`}
+  //                         >
+  //                           {record.status
+  //                             .replace("_", " ")
+  //                             .toLowerCase()
+  //                             .replace(/^./, (char) => char.toUpperCase())}
+  //                         </span>
+  //                       </span>
+  //                     </div>
+  //                   </TableCell>
+  //                   <TableCell>{formatDate(record.expiresAt)}</TableCell>
+  //                   <TableCell className="text-right">
+  //                     <div className="hidden md:flex justify-start md:items-center gap-2">
+  //                       <Button
+  //                         variant="ghost"
+  //                         size="icon"
+  //                         className="h-8 w-8 hover:bg-gray-100"
+  //                         asChild
+  //                       >
+  //                         <Link
+  //                           href={`/dentist/consent-forms/view/${record.token}`}
+  //                         >
+  //                           <Eye className="h-4 w-4" />
+  //                         </Link>
+  //                       </Button>
+
+  //                       <Button
+  //                         variant="ghost"
+  //                         size="icon"
+  //                         className="h-8 w-8 hover:bg-gray-100"
+  //                         asChild
+  //                       >
+  //                         <Link
+  //                           href={`/dentist/consent-forms/edit/${record.token}`}
+  //                         >
+  //                           <Edit className="h-4 w-4" />
+  //                         </Link>
+  //                       </Button>
+
+  //                       <Button
+  //                         variant="ghost"
+  //                         size="icon"
+  //                         className="h-8 w-8 text-red-500 hover:text-red-500 hover:bg-red-50"
+  //                         onClick={() => handleDelete(record.id)}
+  //                         disabled={isPending && deletingId === record.id}
+  //                       >
+  //                         {isPending && deletingId === record.id ? (
+  //                           <span className="animate-spin">↻</span>
+  //                         ) : (
+  //                           <Trash2 className="h-6 w-6" />
+  //                         )}
+  //                       </Button>
+  //                     </div>
+
+  //                     <div className="md:hidden">
+  //                       <DropdownMenu>
+  //                         <DropdownMenuTrigger asChild>
+  //                           <Button variant="ghost" size="sm">
+  //                             <MoreHorizontal className="h-4 w-4" />
+  //                           </Button>
+  //                         </DropdownMenuTrigger>
+  //                         <DropdownMenuContent align="start">
+  //                           <DropdownMenuItem asChild>
+  //                             <Link
+  //                               href={`/dentist/consent-forms/view/${record.token}`}
+  //                             >
+  //                               <Eye className="h-4 w-4 mr-2" />
+  //                               View
+  //                             </Link>
+  //                           </DropdownMenuItem>
+  //                           <DropdownMenuItem asChild>
+  //                             <Link
+  //                               href={`/dentist/consent-forms/edit/${record.token}`}
+  //                             >
+  //                               <Edit className="h-4 w-4 mr-2" />
+  //                               Edit
+  //                             </Link>
+  //                           </DropdownMenuItem>
+  //                           <DropdownMenuItem
+  //                             onClick={() => handleDelete(record.id)}
+  //                             className="text-red-500 focus:text-red-500"
+  //                             disabled={isPending && deletingId === record.id}
+  //                           >
+  //                             {isPending && deletingId === record.id ? (
+  //                               <span className="flex items-center">
+  //                                 <span className="animate-spin mr-2">↻</span>
+  //                                 Deleting...
+  //                               </span>
+  //                             ) : (
+  //                               <>
+  //                                 <Trash2 className="h-4 w-4 mr-2" />
+  //                                 Delete
+  //                               </>
+  //                             )}
+  //                           </DropdownMenuItem>
+  //                         </DropdownMenuContent>
+  //                       </DropdownMenu>
+  //                     </div>
+  //                   </TableCell>
+  //                 </TableRow>
+  //               ))
+  //             ) : (
+  //               <TableRow>
+  //                 <TableCell
+  //                   colSpan={5}
+  //                   className="h-24 text-center text-red-500"
+  //                 >
+  //                   No results found.
+  //                 </TableCell>
+  //               </TableRow>
+  //             )}
+  //           </TableBody>
+  //         )}
+  //       </Table>
+  //     </div>
+
+  //     {filteredData.length > 0 && (
+  //       <div className="flex items-center justify-between">
+  //         <p className="text-sm text-gray-500">
+  //           Showing {startIndex + 1} to{" "}
+  //           {Math.min(startIndex + itemsPerPage, filteredData.length)} of{" "}
+  //           {filteredData.length} entries
+  //         </p>
+  //         <div className="flex items-center space-x-2">
+  //           <Button
+  //             variant="outline"
+  //             size="sm"
+  //             onClick={() => setCurrentPage(1)}
+  //             disabled={currentPage === 1}
+  //           >
+  //             <ChevronsLeft className="h-4 w-4" />
+  //           </Button>
+  //           <Button
+  //             variant="outline"
+  //             size="sm"
+  //             onClick={() => setCurrentPage(currentPage - 1)}
+  //             disabled={currentPage === 1}
+  //           >
+  //             <ChevronLeft className="h-4 w-4" />
+  //           </Button>
+  //           <span className="text-sm">
+  //             Page {currentPage} of {totalPages || 1}
+  //           </span>
+  //           <Button
+  //             variant="outline"
+  //             size="sm"
+  //             onClick={() => setCurrentPage(currentPage + 1)}
+  //             disabled={currentPage === totalPages || totalPages === 0}
+  //           >
+  //             <ChevronRight className="h-4 w-4" />
+  //           </Button>
+  //           <Button
+  //             variant="outline"
+  //             size="sm"
+  //             onClick={() => setCurrentPage(totalPages)}
+  //             disabled={currentPage === totalPages || totalPages === 0}
+  //           >
+  //             <ChevronsRight className="h-4 w-4" />
+  //           </Button>
+  //         </div>
+  //       </div>
+  //     )}
+  //   </div>
+  // );
   return (
     <div className="space-y-4">
       <div className="rounded-md border p-5 flex flex-col gap-5">
-        <div className="flex items-center justify-end mt-4 ">
+        <div className="flex items-center justify-end mt-4">
           <div className="relative w-full max-w-lg">
             <Search className="absolute left-2.5 top-4 h-4 w-4 text-gray-500" />
             <Input
@@ -178,33 +389,37 @@ export default function DataTable({
             />
           </div>
         </div>
-        <Table>
-          <TableHeader className="">
-            <TableRow className="text-lg">
-              <TableHead>Patient Email</TableHead>
-              <TableHead>Procedure Name</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Expiry Date</TableHead>
-              <TableHead className="">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader className="">
+              <TableRow className="text-lg">
+                <TableHead>Patient Email</TableHead>
+                <TableHead>Procedure Name</TableHead>
+                <TableHead className="whitespace-nowrap">Status</TableHead>
+                <TableHead className="whitespace-nowrap">Expiry Date</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
 
-          {isLoading ? (
-            <TableSkeleton />
-          ) : (
-            <TableBody className="text-lg ">
-              {paginatedData.length > 0 ? (
-                paginatedData.map((record) => (
-                  <TableRow key={record.id}>
-                    <TableCell className="">{record.patient.email}</TableCell>
-                    <TableCell>{record.procedure.name}</TableCell>
-                    <TableCell className="flex gap-1 items-center my-auto">
-                      <div className="w-3 h-3 rounded-full">
-                        <span
-                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusClasses(
-                            record.status
-                          )}`}
-                        >
+            {isLoading ? (
+              <TableSkeleton />
+            ) : (
+              <TableBody className="text-lg">
+                {paginatedData.length > 0 ? (
+                  paginatedData.map((record) => (
+                    <TableRow key={record.id}>
+                      <TableCell className="min-w-[180px]">
+                        {/* <div className="truncate max-w-[180px]"> */}
+                        {record.patient.email}
+                        {/* </div> */}
+                      </TableCell>
+                      <TableCell className="min-w-[150px]">
+                        {/* <div className="truncate max-w-[150px]"> */}
+                        {record.procedure.name}
+                        {/* </div> */}
+                      </TableCell>
+                      <TableCell className="min-w-[120px]">
+                        <div className="w-full">
                           <span
                             className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusClasses(
                               record.status
@@ -215,161 +430,163 @@ export default function DataTable({
                               .toLowerCase()
                               .replace(/^./, (char) => char.toUpperCase())}
                           </span>
-                        </span>
-                      </div>
-                    </TableCell>
-                    <TableCell>{formatDate(record.expiresAt)}</TableCell>
-                    <TableCell className="text-right">
-                      <div className="hidden md:flex justify-start md:items-center gap-2">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 hover:bg-gray-100"
-                          asChild
-                        >
-                          <Link
-                            href={`/dentist/consent-forms/view/${record.token}`}
+                        </div>
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap min-w-[120px]">
+                        {formatDate(record.expiresAt)}
+                      </TableCell>
+                      <TableCell className="text-right min-w-[120px]">
+                        <div className="hidden md:flex justify-end md:items-center gap-2">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 hover:bg-gray-100"
+                            asChild
                           >
-                            <Eye className="h-4 w-4" />
-                          </Link>
-                        </Button>
-
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 hover:bg-gray-100"
-                          asChild
-                        >
-                          <Link
-                            href={`/dentist/consent-forms/edit/${record.token}`}
-                          >
-                            <Edit className="h-4 w-4" />
-                          </Link>
-                        </Button>
-
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 text-red-500 hover:text-red-500 hover:bg-red-50"
-                          onClick={() => handleDelete(record.id)}
-                          disabled={isPending && deletingId === record.id}
-                        >
-                          {isPending && deletingId === record.id ? (
-                            <span className="animate-spin">↻</span>
-                          ) : (
-                            <Trash2 className="h-6 w-6" />
-                          )}
-                        </Button>
-                      </div>
-
-                      <div className="md:hidden">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="sm">
-                              <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="start">
-                            <DropdownMenuItem asChild>
-                              <Link
-                                href={`/dentist/consent-forms/view/${record.token}`}
-                              >
-                                <Eye className="h-4 w-4 mr-2" />
-                                View
-                              </Link>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem asChild>
-                              <Link
-                                href={`/dentist/consent-forms/edit/${record.token}`}
-                              >
-                                <Edit className="h-4 w-4 mr-2" />
-                                Edit
-                              </Link>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={() => handleDelete(record.id)}
-                              className="text-red-500 focus:text-red-500"
-                              disabled={isPending && deletingId === record.id}
+                            <Link
+                              href={`/dentist/consent-forms/view/${record.token}`}
                             >
-                              {isPending && deletingId === record.id ? (
-                                <span className="flex items-center">
-                                  <span className="animate-spin mr-2">↻</span>
-                                  Deleting...
-                                </span>
-                              ) : (
-                                <>
-                                  <Trash2 className="h-4 w-4 mr-2" />
-                                  Delete
-                                </>
-                              )}
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </div>
+                              <Eye className="h-4 w-4" />
+                            </Link>
+                          </Button>
+
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 hover:bg-gray-100"
+                            asChild
+                          >
+                            <Link
+                              href={`/dentist/consent-forms/edit/${record.token}`}
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Link>
+                          </Button>
+
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-red-500 hover:text-red-500 hover:bg-red-50"
+                            onClick={() => handleDelete(record.id)}
+                            disabled={isPending && deletingId === record.id}
+                          >
+                            {isPending && deletingId === record.id ? (
+                              <span className="animate-spin">↻</span>
+                            ) : (
+                              <Trash2 className="h-4 w-4" />
+                            )}
+                          </Button>
+                        </div>
+
+                        <div className="md:hidden flex justify-end">
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="sm">
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem asChild>
+                                <Link
+                                  href={`/dentist/consent-forms/view/${record.token}`}
+                                >
+                                  <Eye className="h-4 w-4 mr-2" />
+                                  View
+                                </Link>
+                              </DropdownMenuItem>
+                              <DropdownMenuItem asChild>
+                                <Link
+                                  href={`/dentist/consent-forms/edit/${record.token}`}
+                                >
+                                  <Edit className="h-4 w-4 mr-2" />
+                                  Edit
+                                </Link>
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() => handleDelete(record.id)}
+                                className="text-red-500 focus:text-red-500"
+                                disabled={isPending && deletingId === record.id}
+                              >
+                                {isPending && deletingId === record.id ? (
+                                  <span className="flex items-center">
+                                    <span className="animate-spin mr-2">↻</span>
+                                    Deleting...
+                                  </span>
+                                ) : (
+                                  <>
+                                    <Trash2 className="h-4 w-4 mr-2" />
+                                    Delete
+                                  </>
+                                )}
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell
+                      colSpan={5}
+                      className="h-24 text-center text-red-500"
+                    >
+                      No results found.
                     </TableCell>
                   </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell
-                    colSpan={5}
-                    className="h-24 text-center text-red-500"
-                  >
-                    No results found.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          )}
-        </Table>
-      </div>
-
-      {filteredData.length > 0 && (
-        <div className="flex items-center justify-between">
-          <p className="text-sm text-gray-500">
-            Showing {startIndex + 1} to{" "}
-            {Math.min(startIndex + itemsPerPage, filteredData.length)} of{" "}
-            {filteredData.length} entries
-          </p>
-          <div className="flex items-center space-x-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setCurrentPage(1)}
-              disabled={currentPage === 1}
-            >
-              <ChevronsLeft className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setCurrentPage(currentPage - 1)}
-              disabled={currentPage === 1}
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <span className="text-sm">
-              Page {currentPage} of {totalPages || 1}
-            </span>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setCurrentPage(currentPage + 1)}
-              disabled={currentPage === totalPages || totalPages === 0}
-            >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setCurrentPage(totalPages)}
-              disabled={currentPage === totalPages || totalPages === 0}
-            >
-              <ChevronsRight className="h-4 w-4" />
-            </Button>
-          </div>
+                )}
+              </TableBody>
+            )}
+          </Table>
         </div>
-      )}
+
+        {filteredData.length > 0 && (
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p className="text-sm text-gray-500">
+              Showing {startIndex + 1} to{" "}
+              {Math.min(startIndex + itemsPerPage, filteredData.length)} of{" "}
+              {filteredData.length} entries
+            </p>
+            <div className="flex items-center space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage(1)}
+                disabled={currentPage === 1}
+              >
+                <ChevronsLeft className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage(currentPage - 1)}
+                disabled={currentPage === 1}
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <span className="text-sm">
+                Page {currentPage} of {totalPages || 1}
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage(currentPage + 1)}
+                disabled={currentPage === totalPages || totalPages === 0}
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage(totalPages)}
+                disabled={currentPage === totalPages || totalPages === 0}
+              >
+                <ChevronsRight className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

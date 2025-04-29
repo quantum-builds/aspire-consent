@@ -96,36 +96,10 @@ export default function RadialProgressChart({
 
   return (
     <div className="w-full p-2 bg-white rounded-lg shadow-md h-full my-auto">
-      <h2 className="text-xl font-medium text-gray-800 mb-4">
+      <h2 className="text-xl xl:text-3xl font-medium text-gray-800 mb-4">
         Consent Form Status
       </h2>
       <div className="flex items-center justify-between flex-col 2xl:flex-row p-0 2xl:p-7">
-        {/* <div className="w-[180px] h-[180px] xl:w-60 xl:h-60 relative">
-          <ResponsiveContainer width="100%" height="100%">
-            <RadialBarChart
-              innerRadius="30%"
-              outerRadius="100%"
-              data={chartData}
-              startAngle={90}
-              endAngle={-270}
-              barSize={10}
-            >
-              <PolarAngleAxis
-                type="number"
-                domain={[0, 100]}
-                angleAxisId={0}
-                tick={false}
-              />
-              <RadialBar
-                background
-                dataKey="value"
-                cornerRadius={30}
-                label={false}
-              />
-              <Tooltip content={<CustomTooltip />} />
-            </RadialBarChart>
-          </ResponsiveContainer>
-        </div> */}
         <div className="w-[180px] h-[180px] sm:w-[200px] sm:h-[200px] md:w-[300px] md:h-[260px] lg:w-[200px] lg:h-[240px] xl:w-[260px] xl:h-[260px] 2xl:w-[300px] 2xl:h-[300px] relative">
           <ResponsiveContainer width="100%" height="100%">
             <RadialBarChart

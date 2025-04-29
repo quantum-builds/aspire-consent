@@ -28,7 +28,7 @@ const StatCard = ({
   color,
 }: StatCardProps) => {
   return (
-    <Card className="overflow-hidden">
+    <Card className="overflow-hidden p-3">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <div className="flex items-center space-x-2">
           <div
@@ -37,7 +37,9 @@ const StatCard = ({
           >
             {icon}
           </div>
-          <CardTitle className="text-sm font-medium">{title}</CardTitle>
+          <CardTitle className="text-sm lg:text-lg font-medium">
+            {title}
+          </CardTitle>
         </div>
       </CardHeader>
       <CardContent>

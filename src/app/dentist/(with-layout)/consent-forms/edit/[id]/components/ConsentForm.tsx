@@ -1,7 +1,7 @@
 "use client";
 
 import { TConsentForm } from "@/types/consent-form";
-import { Plus, Trash2 } from "lucide-react";
+import { Calendar, CheckCircle, Clock, Plus, Trash2, User } from "lucide-react";
 import { useEffect } from "react";
 import { useForm, Controller, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,6 +20,8 @@ import { useSaveDraftAnswers } from "@/services/consent-form/ConsentFomMutation"
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const formSchema = z.object({
   patient: z.object({
@@ -68,6 +70,24 @@ interface ConsentFormProps {
 export default function ConsentForm({ data, formId }: ConsentFormProps) {
   const router = useRouter();
 
+  const formatDateForInput = (date: Date) => {
+    if (!(date instanceof Date) || isNaN(date.getTime())) return "";
+
+    const pad = (num: number) => num.toString().padStart(2, "0");
+    const localDate = new Date(
+      date.getTime() - date.getTimezoneOffset() * 60000
+    );
+
+    return `${localDate.getFullYear()}-${pad(localDate.getMonth() + 1)}-${pad(
+      localDate.getDate()
+    )}T${pad(localDate.getHours())}:${pad(localDate.getMinutes())}`;
+  };
+
+  const getCurrentLocalDatetime = () => {
+    const now = new Date();
+    const localNow = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
+    return localNow.toISOString().slice(0, 16);
+  };
   const formMethods = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -239,7 +259,7 @@ export default function ConsentForm({ data, formId }: ConsentFormProps) {
           onSubmit={handleSubmit(handleSaveDraft)}
           className="flex flex-col gap-6"
         >
-          <div className="py-10 px-10 bg-[#698AFF4D] rounded-lg shadow-sm border border-gray-200 text-lg">
+          {/* <div className="py-10 px-10 bg-[#698AFF4D] rounded-lg shadow-sm border border-gray-200 text-lg">
             <div>
               <FormField
                 name="patient.fullName"
@@ -373,7 +393,132 @@ export default function ConsentForm({ data, formId }: ConsentFormProps) {
                 )}
               />
             </div>
-          </div>
+          </div> */}
+          <Card className="overflow-hidden border-gray-200 shadow-sm">
+            <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 py-4 md:py-6 px-4">
+              <CardTitle className="flex items-center gap-3 text-xl md:text-2xl font-semibold text-gray-800 h-full">
+                <Clock className="h-5 w-5 text-blue-600" />
+                Consent Details
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6 p-6">
+              <div className="grid gap-6 md:grid-cols-2">
+                {/* Patient Name Field */}
+                <FormField
+                  name="patient.fullName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex items-center gap-2 font-medium text-gray-700">
+                        <User className="h-4 w-4 text-blue-600" />
+                        Patient Name
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          disabled={true}
+                          className="mt-1 border-gray-300 bg-gray-50 focus-visible:ring-blue-500"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Procedure Name Field */}
+                <FormField
+                  name="procedure.name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex items-center gap-2 font-medium text-gray-700">
+                        <Clock className="h-4 w-4 text-blue-600" />
+                        Procedure Name
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          disabled={true}
+                          className="mt-1 border-gray-300 bg-gray-50 focus-visible:ring-blue-500"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              {/* Expiration Date Field */}
+              <FormField
+                name="expiresAt"
+                render={({ field }) => {
+                  const value =
+                    field.value instanceof Date
+                      ? formatDateForInput(field.value)
+                      : "";
+
+                  return (
+                    <FormItem>
+                      <FormLabel className="flex items-center gap-2 font-medium text-gray-700">
+                        <Calendar className="h-4 w-4 text-blue-600" />
+                        Expiration Date
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="datetime-local"
+                          value={value}
+                          min={getCurrentLocalDatetime()}
+                          onChange={(e) => {
+                            const newValue = e.target.value;
+                            if (!newValue) {
+                              field.onChange(null);
+                              return;
+                            }
+
+                            // Convert to Date object in local timezone
+                            const localDate = new Date(newValue);
+                            const offset =
+                              localDate.getTimezoneOffset() * 60000;
+                            const adjustedDate = new Date(
+                              localDate.getTime() + offset
+                            );
+
+                            field.onChange(adjustedDate);
+                          }}
+                          className="mt-1 border-gray-300 focus-visible:ring-blue-500"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  );
+                }}
+              />
+
+              {/* Active Status Field */}
+              <FormField
+                name="isActive"
+                render={({ field }) => (
+                  <FormItem className="flex items-start space-x-3 space-y-0 rounded-md border border-gray-100 bg-gray-50 p-4">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white"
+                      />
+                    </FormControl>
+                    <div className="space-y-1 leading-none">
+                      <FormLabel className="flex items-center gap-2 font-medium text-gray-700">
+                        <CheckCircle className="h-4 w-4 text-blue-600" />
+                        Active Form
+                      </FormLabel>
+                      <p className="text-sm text-gray-500">
+                        Enable this to make the procedure active
+                      </p>
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </CardContent>
+          </Card>
 
           <div className="p-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -417,114 +562,6 @@ export default function ConsentForm({ data, formId }: ConsentFormProps) {
                         </FormItem>
                       )}
                     />
-
-                    {/* <div className="space-y-2 mt-4">
-                      <FormLabel className="block text-gray-700 mb-1">
-                        Options:
-                      </FormLabel>
-                      {watch(`snapshotMCQs.${mcqIndex}.options`)?.map(
-                        (_option, optionIndex) => (
-                          <div
-                            className="flex items-center gap-2"
-                            key={`${mcq.id}-${optionIndex}`}
-                          >
-                            <span className="text-gray-600 w-6">
-                              {String.fromCharCode(
-                                97 + optionIndex
-                              ).toUpperCase()}
-                              .
-                            </span>
-                            <FormField
-                              name={`snapshotMCQs.${mcqIndex}.options.${optionIndex}`}
-                              render={({ field }) => (
-                                <FormItem className="flex-1">
-                                  <FormControl>
-                                    <Input
-                                      {...field}
-                                      className="border rounded px-3 py-1 flex-1"
-                                    />
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="sm"
-                              onClick={() =>
-                                handleRemoveOption(mcqIndex, optionIndex)
-                              }
-                              className="text-red-500 hover:text-red-700"
-                              disabled={
-                                isSubmittingForm ||
-                                watch(`snapshotMCQs.${mcqIndex}.options`)
-                                  .length <= 2
-                              }
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        )
-                      )}
-
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleAddOption(mcqIndex)}
-                        className="mt-2"
-                        disabled={isSubmittingForm}
-                      >
-                        + Add Option
-                      </Button>
-                    </div>
-
-                    <div className="mt-4">
-                      <FormField
-                        name={`snapshotMCQs.${mcqIndex}.correctAnswer`}
-                        render={({ field, fieldState }) => (
-                          <FormItem className="mb-4">
-                            <FormLabel className="font-medium">
-                              Correct Answer:
-                            </FormLabel>
-                            <FormControl>
-                              <RadioGroup
-                                onValueChange={field.onChange}
-                                value={field.value}
-                                className="flex flex-col space-y-1 mt-2"
-                              >
-                                {watch(`snapshotMCQs.${mcqIndex}.options`)?.map(
-                                  (option, optionIndex) => (
-                                    <div
-                                      key={optionIndex}
-                                      className="flex items-center space-x-2"
-                                    >
-                                      <RadioGroupItem
-                                        value={option}
-                                        id={`answer-${mcqIndex}-${optionIndex}`}
-                                        disabled={isSubmittingForm}
-                                      />
-                                      <FormLabel
-                                        htmlFor={`answer-${mcqIndex}-${optionIndex}`}
-                                        className="font-normal"
-                                      >
-                                        {option}
-                                      </FormLabel>
-                                    </div>
-                                  )
-                                )}
-                              </RadioGroup>
-                            </FormControl>
-                            {fieldState.error && (
-                              <p className="text-sm font-medium text-destructive">
-                                {fieldState.error.message}
-                              </p>
-                            )}
-                          </FormItem>
-                        )}
-                      />
-                    </div> */}
 
                     <div className="space-y-4 mb-4">
                       <div className="flex justify-between items-center">
@@ -622,45 +659,6 @@ export default function ConsentForm({ data, formId }: ConsentFormProps) {
 
                     <div className="mt-4">
                       <FormLabel className="font-medium">Video:</FormLabel>
-                      {/* <Controller
-                        name={`snapshotMCQs.${mcqIndex}.videoFile`}
-                        control={control}
-                        render={({ field }) => (
-                          <FileUploader
-                            onFileUpload={(files) => {
-                              if (files && files.length > 0) {
-                                field.onChange(files[0]);
-                                setValue(
-                                  `snapshotMCQs.${mcqIndex}.videoUrl`,
-                                  ""
-                                );
-                              } else {
-                                field.onChange(null);
-                              }
-                            }}
-                            showPreview={true}
-                            maxFiles={1}
-                            text="Upload video"
-                            extraText="Drag and drop a video or click to browse"
-                            allowedTypes={[
-                              "video/mp4",
-                              "video/webm",
-                              "video/ogg",
-                              "video/quicktime",
-                            ]}
-                            defaultPreview={
-                              data.snapshotMCQs[mcqIndex].videoUrl
-                            }
-                            defaultName={data.snapshotMCQs[mcqIndex].videoName}
-                            disabled={isSubmittingForm}
-                            error={
-                              errors.snapshotMCQs?.[mcqIndex]?.videoFile
-                                ?.message as string
-                            }
-                            alwaysShowDropzone={false}
-                          />
-                        )}
-                      /> */}
                       <Controller
                         name={`snapshotMCQs.${mcqIndex}.videoFile`}
                         control={control}
@@ -705,38 +703,6 @@ export default function ConsentForm({ data, formId }: ConsentFormProps) {
                         )}
                       />
                     </div>
-
-                    {/* {hasVideo && !isNewVideo && (
-                      <div className="mt-4 pt-4 border-t border-gray-200">
-                        <div className="flex justify-between items-center mb-2">
-                          <h4 className="text-sm font-medium text-gray-700">
-                            Current Video:
-                          </h4>
-                          <button
-                            type="button"
-                            className="text-sm text-blue-500 hover:underline flex items-center gap-1"
-                            onClick={() =>
-                              setCurrentVideo({
-                                mcqId: mcq.id,
-                                autoplay: false,
-                              })
-                            }
-                          >
-                            <Play className="w-3 h-3" /> Watch video
-                          </button>
-                        </div>
-                        {currentVideo?.mcqId === mcq.id && videoUrl && (
-                          <iframe
-                            src={`${videoUrl}${
-                              currentVideo.autoplay ? "?autoplay=1" : ""
-                            }`}
-                            className="w-full aspect-video rounded"
-                            allowFullScreen
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                          />
-                        )}
-                      </div>
-                    )} */}
                   </div>
                 );
               })}

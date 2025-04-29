@@ -5,6 +5,7 @@ import { Play } from "lucide-react";
 import { useState } from "react";
 import getPathAfterUploadsImages from "@/utils/getSplittedPath";
 import DownloadPdfButton from "@/components/DownloadPdfButton";
+import ConsentQuestionHeader from "@/components/ConsentQuestionHeader";
 
 export default function ConsentForm({ data }: { data: TConsentForm | null }) {
   const [currentVideo, setCurrentVideo] = useState<{
@@ -25,39 +26,12 @@ export default function ConsentForm({ data }: { data: TConsentForm | null }) {
 
   return (
     <div className="flex flex-col gap-10 max-w-6xl mx-auto">
-      {/* <div className="flex flex-row gap-6 items-center">
-        <MoveLeft
-          size={20}
-          className="cursor-pointer"
-          onClick={() => router.back()}
-        /> */}
-      {/* <Image
-          src={AspireConsentBlackLogo || "/placeholder.svg"}
-          alt="Aspire Logo"
-          width={140}
-          className="object-contain"
-          priority
-        /> */}
-      {/* </div> */}
-      <div className="grid grid-cols-2 py-10 px-10 bg-[#698AFF4D] rounded-lg shadow-sm border border-gray-200 text-lg">
-        <div>
-          <span className="font-medium">Patient name : </span>
-          {data.patient?.fullName}
-        </div>
-        <div>
-          <span className="font-medium">Procedure name : </span>
-          {data.procedure.name}
-        </div>
-
-        <div>
-          <span className="font-medium">Expiry Date : </span>
-          {data.expiresAt.toString().split("T")[0]}
-        </div>
-        <div>
-          <span className="font-medium"> Active Status : </span>
-          {data.isActive ? "true" : "false"}
-        </div>
-      </div>
+      <ConsentQuestionHeader
+        patienFfullName={data.patient.fullName}
+        procedureName={data.procedure.name}
+        expiresAt={data.expiresAt}
+        isActive={data.isActive}
+      />
 
       <div className="p-4 bg-white rounded-lg shadow-sm border border-gray-200">
         {data.snapshotMCQs?.length ? (

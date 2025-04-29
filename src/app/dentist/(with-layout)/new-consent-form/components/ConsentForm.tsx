@@ -271,6 +271,7 @@ export default function ConsentForm({
                   router.refresh();
                 }, 100);
                 setEditorKey((prev) => prev + 1);
+                router.back();
               },
               onError: (err) => {
                 if (axios.isAxiosError(err) && err.response) {

@@ -34,17 +34,20 @@ export default async function Page() {
   }
 
   return (
-    <div className="">
+    <div className="container mx-auto">
       <Header showSearch={false} />
-      <div className="flex items-center gap-4">
+      <div className="flex gap-5">
         <Link href={"/dentist/dashboard"}>
-          <MoveLeft size={30} className="cursor-pointer" />
+          <MoveLeft height={40} width={20} className="cursor-pointer" />
         </Link>
-        <p className="text-2xl font-bold mb-2">New Consent</p>
+        <div className="flex flex-col ga-7">
+          <p className="text-2xl font-bold mb-2">New Consent</p>
+          <p className="text-[#0000004D] mb-5 text-lg">
+            Create new consent request to be sent to a patient.
+          </p>
+        </div>
       </div>
-      <p className="text-[#0000004D] mb-5 text-lg">
-        Create new consent request to be sent to a patient.
-      </p>
+
       <ConsentForm
         procedures={procedureData}
         patients={patientData}

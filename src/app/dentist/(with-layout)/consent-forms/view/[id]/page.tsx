@@ -17,7 +17,7 @@ export default async function ViewConsentFormPage({
   }
 
   return (
-    <div>
+    <div className="container mx-auto">
       <Header showSearch={false} />
       <ConsentForm data={response.data} />
     </div>

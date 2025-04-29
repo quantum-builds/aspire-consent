@@ -80,7 +80,7 @@ export default function ModalForm() {
         <DialogTrigger asChild>
           <Button
             style={{ backgroundColor: "#698AFF" }}
-            className="bg-[#698AFF] hover:bg-[#698AFF] text-white cursor-pointer py-7 text-xl px-4 flex items-center justify-center rounded-md"
+            className="bg-[#698AFF] hover:bg-[#698AFF] text-white cursor-pointer py-[26px] text-xl px-2 flex items-center justify-center rounded-md"
           >
             <Plus width={20} height={20} className="mr-1" />
             New Procedure

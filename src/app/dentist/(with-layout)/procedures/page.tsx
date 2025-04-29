@@ -17,7 +17,7 @@ export default async function Page() {
   }
 
   return (
-    <div>
+    <div className="container mx-auto ">
       <Header showSearch={false} />
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center my-4">
         <div className="flex flex-col gap-2">

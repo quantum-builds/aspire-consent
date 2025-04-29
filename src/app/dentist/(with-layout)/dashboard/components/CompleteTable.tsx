@@ -15,12 +15,15 @@ import {
 import { TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Eye, MoreHorizontal } from "lucide-react";
+import { Edit, Eye, MoreHorizontal, Trash2 } from "lucide-react";
 import { PaginationControls } from "./PaginationControl";
 import { format } from "date-fns";
 import TableSkeleton from "./TableSkeleton";
 import { TConsentFormData } from "@/types/consent-form";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
+import toast from "react-hot-toast";
+import { useDeleteConsentForm } from "@/services/consent-form/ConsentFomMutation";
+import { useRouter } from "next/navigation";
 
 type CompleteTableProps = {
   currentCompletedForms: TConsentFormData[];
@@ -40,6 +43,29 @@ export default function CompleteTable({
   setCurrentPage,
   itemsPerPage,
 }: CompleteTableProps) {
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const { mutate: deleteConsentForm, isPending } = useDeleteConsentForm();
+  const router = useRouter();
+
+  const handleDelete = async (id: string) => {
+    setDeletingId(id);
+    deleteConsentForm(
+      { id },
+      {
+        onSuccess: () => {
+          setTimeout(() => {
+            router.refresh();
+          }, 100);
+          toast.success("Consent form deleted successfully");
+          setDeletingId(null);
+        },
+        onError: (error) => {
+          toast.error(error.message);
+          setDeletingId(null);
+        },
+      }
+    );
+  };
   return (
     <TabsContent value="completed">
       <Table>
@@ -78,7 +104,7 @@ export default function CompleteTable({
                       ? format(new Date(form.completedAt), "PPP")
                       : "N/A"}
                   </TableCell>
-                  <TableCell className="text-right text-lg">
+                  {/* <TableCell className="text-right text-lg">
                     <div className="hidden md:flex justify-start md:items-center gap-2">
                       <Button variant="ghost" size="sm" className="h-8" asChild>
                         <Link
@@ -105,6 +131,94 @@ export default function CompleteTable({
                               <Eye className="h-4 w-4 mr-2" />
                               View
                             </Link>
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  </TableCell> */}
+                  <TableCell className="text-right">
+                    <div className="hidden md:flex justify-start md:items-center gap-2">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 hover:bg-gray-100"
+                        asChild
+                      >
+                        <Link
+                          href={`/dentist/consent-forms/view/${form.token}`}
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Link>
+                      </Button>
+
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 hover:bg-gray-100"
+                        asChild
+                      >
+                        <Link
+                          href={`/dentist/consent-forms/edit/${form.token}`}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Link>
+                      </Button>
+
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-red-500 hover:text-red-500 hover:bg-red-50"
+                        onClick={() => handleDelete(form.id)}
+                        disabled={isPending && deletingId === form.id}
+                      >
+                        {isPending && deletingId === form.id ? (
+                          <span className="animate-spin">↻</span>
+                        ) : (
+                          <Trash2 className="h-6 w-6" />
+                        )}
+                      </Button>
+                    </div>
+
+                    <div className="md:hidden">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="sm">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="start">
+                          <DropdownMenuItem asChild>
+                            <Link
+                              href={`/dentist/consent-forms/view/${form.token}`}
+                            >
+                              <Eye className="h-4 w-4 mr-2" />
+                              View
+                            </Link>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem asChild>
+                            <Link
+                              href={`/dentist/consent-forms/edit/${form.token}`}
+                            >
+                              <Edit className="h-4 w-4 mr-2" />
+                              Edit
+                            </Link>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() => handleDelete(form.id)}
+                            className="text-red-500 focus:text-red-500"
+                            disabled={isPending && deletingId === form.id}
+                          >
+                            {isPending && deletingId === form.id ? (
+                              <span className="flex items-center">
+                                <span className="animate-spin mr-2">↻</span>
+                                Deleting...
+                              </span>
+                            ) : (
+                              <>
+                                <Trash2 className="h-4 w-4 mr-2" />
+                                Delete
+                              </>
+                            )}
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>

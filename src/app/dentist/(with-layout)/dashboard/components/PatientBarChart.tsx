@@ -116,7 +116,7 @@ export default function PatientBarChart({
     <div className="w-full p-6 bg-white rounded-lg shadow-md h-full">
       <div className="flex flex-col gap-6">
         <div className="flex md:flex-row flex-col items-center justify-between">
-          <h2 className="text-xl font-medium text-gray-800">
+          <h2 className="text-xl xl:text-3xl font-medium text-gray-800">
             Consents by {type.charAt(0).toUpperCase() + type.slice(1)}
           </h2>
           <div className="inline-flex items-center bg-[#698AFF4D] rounded-full p-1">
@@ -124,7 +124,7 @@ export default function PatientBarChart({
               variant={type === BarChartTypes.WEEKLY ? "secondary" : "ghost"}
               className={`rounded-full ${
                 type === BarChartTypes.WEEKLY
-                  ? "bg-[#B15EFF] text-white"
+                  ? "bg-[#B15EFF] text-white hover:bg-[#B15EFF] hover:text-white"
                   : "hover:bg-gray-200 hover:text-[#00000080]"
               }`}
               onClick={() => setType(BarChartTypes.WEEKLY)}
@@ -135,7 +135,7 @@ export default function PatientBarChart({
               variant={type === BarChartTypes.MONTHLY ? "secondary" : "ghost"}
               className={`rounded-full ${
                 type === BarChartTypes.MONTHLY
-                  ? "bg-[#B15EFF] text-white"
+                  ? "bg-[#B15EFF] text-white hover:bg-[#B15EFF] hover:text-white"
                   : "hover:bg-gray-200 hover:text-[#00000080]"
               }`}
               onClick={() => setType(BarChartTypes.MONTHLY)}
@@ -146,7 +146,7 @@ export default function PatientBarChart({
               variant={type === BarChartTypes.YEARLY ? "secondary" : "ghost"}
               className={`rounded-full ${
                 type === BarChartTypes.YEARLY
-                  ? "bg-[#B15EFF] text-white"
+                  ? "bg-[#B15EFF] text-white hover:bg-[#B15EFF] hover:text-white"
                   : "hover:bg-gray-200 hover:text-[#00000080]"
               }`}
               onClick={() => setType(BarChartTypes.YEARLY)}
