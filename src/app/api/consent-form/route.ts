@@ -14,8 +14,10 @@ export async function GET(req: NextRequest) {
     const token = searchParams.get("token");
     const hasValidToken = token && token !== "undefined" && token !== "null";
 
-    const sessionToken = await getToken({ req: req, secret });
-    const dentistId = sessionToken?.role === "dentist" ? sessionToken.id : null;
+    // const requestBody = await req.json();
+    // const { role, ...body } = requestBody;
+    const role = searchParams.get("role");
+    // const dentistId = searchParams.get("dentistId");
 
     if (hasValidToken) {
       const consentLink = await prisma.consentFormLink.findUnique({
@@ -40,7 +42,7 @@ export async function GET(req: NextRequest) {
         );
       }
 
-      if (!dentistId) {
+      if (role === "patient") {
         const now = new Date();
         const isExpired = consentLink.expiresAt < now;
         const isActive = consentLink.isActive;
@@ -75,7 +77,17 @@ export async function GET(req: NextRequest) {
         }),
         { status: 200 }
       );
-    } else if (dentistId) {
+    } else if (role === "dentist") {
+      const sessionToken = await getToken({ req: req, secret });
+      const dentistId =
+        sessionToken?.role === "dentist" ? sessionToken.id : null;
+
+      if (!dentistId) {
+        return NextResponse.json(
+          { error: "No deentist-id provided" },
+          { status: 400 }
+        );
+      }
       const consentLinks = await prisma.consentFormLink.findMany({
         where: { dentistId },
         include: {

@@ -9,14 +9,15 @@ import Header from "@/components/Header";
 export default async function PatientsPage() {
   let errorMessage = undefined;
   let consentForms: TConsentForm[] | null = null;
-
-  const response: Response<TConsentForm[]> = await getConsentForm();
+  const response: Response<TConsentForm[]> = await getConsentForm({
+    role: "dentist",
+  });
 
   if (response.status) {
     consentForms = response.data;
   } else {
     errorMessage = response.message;
-    console.log("error is: ", errorMessage);
+    // console.log("error is: ", errorMessage);
   }
 
   return (

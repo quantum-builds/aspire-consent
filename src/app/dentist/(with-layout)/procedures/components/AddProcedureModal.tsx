@@ -54,12 +54,11 @@ export default function ModalForm() {
 
   // Handle form submission
   function onSubmit(data: FormValues) {
-    console.log(data);
     createProcedure(
       { data },
       {
-        onSuccess: (data) => {
-          console.log("data is ", data);
+        onSuccess: () => {
+          // console.log("data is ", data);
           setTimeout(() => {
             router.refresh();
           }, 100);

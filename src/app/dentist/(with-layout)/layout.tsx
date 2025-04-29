@@ -20,8 +20,6 @@ const SIDE_BAR_DATA = [
     logo: ConsentFormIcon,
     link: "/dentist/procedures",
   },
-  // { text: "Patients", logo: PatientIcon, link: "/dentist/patients" },
-  // { text: "Settings", logo: SettingIcon, link: "/settings" },
 ];
 
 export default function RootLayout({
@@ -31,8 +29,8 @@ export default function RootLayout({
 }) {
   return (
     <div className="flex flex-col lg:flex-row min-h-screen">
-      {/* Desktop Sidebar */}
-      <div className="hidden lg:flex lg:w-[19%] 2xl:w-[15%] z-30">
+      {/* Desktop Sidebar - now fixed */}
+      <div className="hidden lg:block fixed lg:w-[19%] 2xl:w-[15%] h-screen z-30">
         <SideBar data={SIDE_BAR_DATA} />
       </div>
 
@@ -41,8 +39,8 @@ export default function RootLayout({
         <SmallScreenSideBar data={SIDE_BAR_DATA} />
       </div>
 
-      {/* Main Content */}
-      <main className="flex-1 bg-white p-6 pt-0 lg:pt-6 z-0 relative">
+      {/* Main Content - add margin to account for fixed sidebar */}
+      <main className="flex-1 bg-white lg:ml-[19%] 2xl:ml-[15%] p-6 pt-0 lg:pt-6 z-0 relative">
         {children}
       </main>
     </div>

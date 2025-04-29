@@ -26,8 +26,8 @@ export const useCreateConsentFormLink = () => {
     onError: (err) => {
       console.error("Service error in updating dentist-practice", err);
     },
-    onSuccess: (data) => {
-      console.log("Dentist Practice updated successfully", data);
+    onSuccess: () => {
+      console.log("Dentist Practice updated successfully");
     },
   });
 };
@@ -113,8 +113,8 @@ export const useSaveDraftAnswers = () => {
         videoUrl?: string;
       }>;
     }) => {
-      console.log("IN MUTATION ", formId);
-      console.log("snap shot mcq is ", mcqUpdates);
+      // console.log("IN MUTATION ", formId);
+      // console.log("snap shot mcq is ", mcqUpdates);
       // For patients - only answers
       if (role === "dentist") {
         const response = await axiosInstance.patch(
@@ -140,8 +140,8 @@ export const useSaveDraftAnswers = () => {
     onError: (err) => {
       console.error("Error saving draft:", err);
     },
-    onSuccess: (data) => {
-      console.log("Draft saved successfully:", data);
+    onSuccess: () => {
+      console.log("Draft saved successfully:");
     },
   });
 };
@@ -183,8 +183,8 @@ export const useSubmitConsentForm = () => {
     onError: (err) => {
       console.error("Error submitting form:", err);
     },
-    onSuccess: (data) => {
-      console.log("Form submitted successfully:", data);
+    onSuccess: () => {
+      console.log("Form submitted successfully:");
     },
   });
 };
@@ -200,8 +200,8 @@ export const useDeleteConsentForm = () => {
     onError: (err) => {
       console.error("Service error in deleting consent form", err);
     },
-    onSuccess: (data) => {
-      console.log("COnsent form deleted successfully", data);
+    onSuccess: () => {
+      console.log("COnsent form deleted successfully");
     },
   });
 };

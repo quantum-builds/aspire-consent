@@ -14,8 +14,5 @@ export const useUpdateAUser = () => {
     onError: (err) => {
       console.error("Service error in updating member", err);
     },
-    onSuccess: (data) => {
-      console.log("Member updated successfully", data);
-    },
   });
 };

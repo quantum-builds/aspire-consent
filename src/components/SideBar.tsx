@@ -13,7 +13,8 @@ export default function SideBar({ data }: SideBarProps) {
   const pathname = usePathname();
 
   return (
-    <div className="bg-[#5353FF] w-full min-h-screen px-6 py-8 lg:flex flex-col z-50 ">
+    <div className="bg-[#5353FF] w-full h-screen px-6 py-8 flex flex-col z-50 sticky top-0 overflow-y-auto">
+      {/* Rest of your sidebar content remains the same */}
       <div className="mb-10 flex items-center justify-center">
         <Image
           src={AspireConsentWhiteLogo}
@@ -26,7 +27,6 @@ export default function SideBar({ data }: SideBarProps) {
 
       <div className="flex flex-col gap-4 mb-4">
         {data.map((content, index) => {
-          // Check if current path exactly matches or starts with the link
           const isActive =
             pathname === content.link ||
             pathname.startsWith(`${content.link}/`);

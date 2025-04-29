@@ -17,8 +17,8 @@ export const useCreateProcedure = () => {
     onError: (err) => {
       console.error("Service error in creaeting procedure", err);
     },
-    onSuccess: (data) => {
-      console.log("Procedure created successfully", data);
+    onSuccess: () => {
+      console.log("Procedure created successfully");
     },
   });
 };
@@ -34,8 +34,8 @@ export const useDeleteProcedure = () => {
     onError: (err) => {
       console.error("Service error in deleting procedure", err);
     },
-    onSuccess: (data) => {
-      console.log("Procedure deleted successfully", data);
+    onSuccess: () => {
+      console.log("Procedure deleted successfully");
     },
   });
 };

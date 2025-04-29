@@ -93,7 +93,7 @@ export default function ConsentForm({
       },
       {
         onSuccess: (responseData) => {
-          console.log("patient email is ", responseData);
+          // console.log("patient email is ", responseData);
           const selectedProcedure = procedures.find(
             (proc) => proc.procedure.id === data.treatment
           );
@@ -177,7 +177,7 @@ export default function ConsentForm({
         <!-- Use the direct public S3 URL for your logo -->
         <img src="https://${process.env.NEXT_PUBLIC_AWS_BUCKET_NAME}.s3.${
             process.env.NEXT_PUBLIC_AWS_REGION
-          }.amazonaws.com/uploads/aspire-consent/aspire-consent-black-logo.svg" 
+          }.amazonaws.com/uploads/aspire-consent/aspire-academy-logo.png" 
              alt="Dental Clinic Logo" 
              class="logo">
         <h1 style="color: #4f46e5; margin-bottom: 10px;">Consent Form Required</h1>

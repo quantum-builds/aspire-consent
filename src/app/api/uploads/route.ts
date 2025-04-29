@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
 
       const { Contents } = await s3.send(command);
       if (!Contents || Contents.length === 0) {
-        console.log("No media files found.");
+        // console.log("No media files found.");
         return NextResponse.json({ success: true, media: [] }, { status: 200 });
       }
 
@@ -48,7 +48,7 @@ export async function GET(req: NextRequest) {
       );
 
       // Generate public URLs
-      console.log("Generating public URLs for media files...");
+      // console.log("Generating public URLs for media files...");
       const mediaUrls = mediaFiles.map((file) => {
         const publicUrl = `https://${process.env.NEXT_PUBLIC_AWS_BUCKET_NAME}.s3.${process.env.NEXT_PUBLIC_AWS_REGION}.amazonaws.com/${file.Key}`;
 
@@ -63,7 +63,7 @@ export async function GET(req: NextRequest) {
         };
       });
 
-      console.log("Media file URLs generated.");
+      // console.log("Media file URLs generated.");
       return NextResponse.json(
         { success: true, media: mediaUrls },
         { status: 200 }

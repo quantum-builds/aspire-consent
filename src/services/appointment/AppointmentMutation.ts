@@ -14,8 +14,8 @@ export const useCreateAppointment = () => {
     onError: (err) => {
       console.error("Service error in creating appointment(s)", err);
     },
-    onSuccess: (data) => {
-      console.log("Appointment(s) created successfully", data);
+    onSuccess: () => {
+      console.log("Appointment(s) created successfully");
     },
   });
 };
@@ -38,8 +38,8 @@ export const useUpdateAppointment = () => {
     onError: (err) => {
       console.error("Service error in updating appointment", err);
     },
-    onSuccess: (data) => {
-      console.log("Appointment updated successfully", data);
+    onSuccess: () => {
+      console.log("Appointment updated successfully");
     },
   });
 };
@@ -55,8 +55,8 @@ export const useDeleteAppointment = () => {
     onError: (err) => {
       console.error("Service error in deleting appointment", err);
     },
-    onSuccess: (data) => {
-      console.log("Appointment deleted successfully", data);
+    onSuccess: () => {
+      console.log("Appointment deleted successfully");
     },
   });
 };

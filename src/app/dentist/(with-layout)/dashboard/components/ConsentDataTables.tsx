@@ -22,7 +22,7 @@ export default function ConsentDataTable({
   errorMessage,
   isLoading = false,
 }: ConsentDataTableProps) {
-  console.log(data);
+  // console.log(data);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;

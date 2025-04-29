@@ -10,7 +10,7 @@ export default async function ViewConsentFormPage({
   params: Params;
 }) {
   const { id } = await params;
-  const response = await getConsentForm(id);
+  const response = await getConsentForm({ role: "dentist", token: id });
 
   if (!response.status) {
     return notFound();

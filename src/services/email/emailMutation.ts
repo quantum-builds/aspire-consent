@@ -14,7 +14,7 @@ export const useSendEmail = () => {
       text: string;
       html?: string;
     }) => {
-      console.log("mutation html is ", html);
+      // console.log("mutation html is ", html);
       const response = await axiosInstance.post(ENDPOINTS.email.sendEmail, {
         to,
         subject,

@@ -263,9 +263,17 @@ export async function POST(req: NextRequest) {
       // const { answers = [] } = (await req.json()) as {
       //   answers?: AnswerInput[];
       // };
-      const { answers = [] } = body.answers as {
-        answers?: AnswerInput[];
-      };
+      // const { answers = [] } = body.answers as {
+      //   answers?: AnswerInput[];
+      // };
+
+      const answers = (body.answers as AnswerInput[]) || [];
+      if (answers.length === 0) {
+        return NextResponse.json(
+          { error: "No answers provided" },
+          { status: 400 }
+        );
+      }
       const formAnswersData: FormAnswerCreateInput[] = answers.map((a) => {
         const mcq = form.snapshotMCQs.find((m) => m.id === a.mcqId);
         return {
@@ -279,6 +287,7 @@ export async function POST(req: NextRequest) {
         };
       });
 
+      console.log("form answers are ", formAnswersData);
       // Get all answers after submission
       const transactionResults = await prisma.$transaction([
         ...(answers.length > 0
@@ -335,6 +344,7 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
 export async function DELETE(req: NextRequest) {
   const id = req.nextUrl.pathname.split("/").pop();
   try {

@@ -6,7 +6,7 @@ type Params = Promise<{ slug: string }>;
 export default async function Page({ params }: { params: Params }) {
   const { slug } = await params;
   const token = decodeURIComponent(slug);
-  console.log("token is ", token);
+  // console.log("token is ", token);
   return (
     <Suspense fallback={<ConsentFormContentSkeleton />}>
       <ConsentForm token={token} />

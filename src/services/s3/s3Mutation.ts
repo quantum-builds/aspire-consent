@@ -12,7 +12,7 @@ export const useUploadFile = () => {
         fileSize: selectedFile.size,
       });
 
-      console.log("params are ", selectedFile.size);
+      // console.log("params are ", selectedFile.size);
       const data = response.data;
       if (!data.success) throw new Error("Failed to get signed URL");
       // console.log("upoload data is ", data);

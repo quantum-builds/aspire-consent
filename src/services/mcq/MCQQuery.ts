@@ -7,7 +7,7 @@ import { getAMedia } from "../s3/s3Query";
 
 export async function getMCQs(procedureId?: string) {
   try {
-    console.log("in quesry name is ", procedureId);
+    // console.log("in quesry name is ", procedureId);
     const cookieStore = cookies();
     const cookieHeader = (await cookieStore)
       .getAll()
@@ -25,7 +25,7 @@ export async function getMCQs(procedureId?: string) {
 
     const responseData: Response<ExtendedTMCQ[] | string> = response.data;
     const mcqs = responseData.data;
-    console.log("id is ", mcqs);
+    // console.log("id is ", mcqs);
     if (Array.isArray(mcqs)) {
       const uploads = await Promise.all(
         mcqs.map(async (mcq) => {
@@ -33,7 +33,7 @@ export async function getMCQs(procedureId?: string) {
           return imageResponse;
         })
       );
-      console.log("uploads in mcq is ", uploads);
+      // console.log("uploads in mcq is ", uploads);
 
       mcqs.forEach((mcq, index: number) => {
         mcq.videoName = mcq.videoUrl;

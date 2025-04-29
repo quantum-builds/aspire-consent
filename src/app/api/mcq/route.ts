@@ -85,7 +85,7 @@ export async function GET(req: NextRequest) {
       },
     });
 
-    console.log("mcq length is ", mcqs.length);
+    // console.log("mcq length is ", mcqs.length);
     if (mcqs.length === 0) {
       const procedure = await prisma.procedure.findUnique({
         where: { id: procedureId },

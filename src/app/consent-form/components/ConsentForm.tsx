@@ -9,8 +9,11 @@ type ConsentFormProps = {
 export default async function ConsentForm({ token }: ConsentFormProps) {
   let errorMessage = undefined;
   let consentForm: TConsentForm | null = null;
-
-  const response: Response<TConsentForm> = await getConsentForm(token);
+  
+  const response: Response<TConsentForm> = await getConsentForm({
+    role: "patient",
+    token: token,
+  });
 
   if (response.status) {
     consentForm = response.data;

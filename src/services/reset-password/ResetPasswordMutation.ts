@@ -22,8 +22,8 @@ export const useResetPassword = () => {
     onError: (err) => {
       console.error("Password update failed", err);
     },
-    onSuccess: (data) => {
-      console.log("Password updated successfully", data);
+    onSuccess: () => {
+      console.log("Password updated successfully");
     },
   });
 };

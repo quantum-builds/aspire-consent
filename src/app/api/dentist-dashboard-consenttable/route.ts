@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
       },
       orderBy: { lastUpdated: "desc" },
     });
-    console.log(consentForms);
+    // console.log(consentForms);
 
     // Format responses to match TConsentFormData
     const responseData = consentForms.map((form) => ({

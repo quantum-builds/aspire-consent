@@ -29,8 +29,8 @@ export const useSignUp = () => {
     onError: (err) => {
       console.error("Service error in registration", err);
     },
-    onSuccess: (data) => {
-      console.log("Registration successful", data);
+    onSuccess: () => {
+      console.log("Registration successful");
     },
   });
 };

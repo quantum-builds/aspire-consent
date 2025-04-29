@@ -76,7 +76,7 @@ export default function LoginForm() {
       password: data.password,
       role: data.role, // Use the role from the form data
     });
-    console.log("result is ", res);
+    // console.log("result is ", res);
     if (res?.ok) {
       toast.success("User logged in successfully");
       if (callbackUrl) {

@@ -22,8 +22,8 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    console.log("user otp is ", user.otp);
-    console.log("otp is ", otp);
+    // console.log("user otp is ", user.otp);
+    // console.log("otp is ", otp);
     if (otp === user.otp) {
       return NextResponse.json(
         createResponse(true, "OTP verification successful", user),

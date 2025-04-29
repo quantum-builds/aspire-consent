@@ -10,9 +10,9 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { fileName, fileType, fileSize } = body;
 
-    console.log("file name ", fileName);
-    console.log("file type ", fileType);
-    console.log("file size ", fileSize);
+    // console.log("file name ", fileName);
+    // console.log("file type ", fileType);
+    // console.log("file size ", fileSize);
 
     if (!fileName || !fileType) {
       return NextResponse.json(

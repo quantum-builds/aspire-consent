@@ -141,7 +141,7 @@ export default function QuestionForm({
         if (q.videoUrl && q.videoName) {
           const fetchVideo = async () => {
             try {
-              console.log("video url is ", q.videoUrl);
+              // console.log("video url is ", q.videoUrl);
               const response = await fetch(q.videoUrl || "");
               if (!response.ok) {
                 throw new Error(`Failed to fetch video: ${response.status}`);

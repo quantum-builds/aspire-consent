@@ -35,8 +35,8 @@ export const usePatchMCQ = () => {
     onError: (err) => {
       console.error("Service error in updated mcqs", err);
     },
-    onSuccess: (data) => {
-      console.log("MCQS updated successfully", data);
+    onSuccess: () => {
+      console.log("MCQS updated successfully");
     },
   });
 };
@@ -50,8 +50,8 @@ export const useDeleteMCQ = () => {
     onError: (err) => {
       console.error("Service error in deleting mcqs", err);
     },
-    onSuccess: (data) => {
-      console.log("MCQS deleted successfully", data);
+    onSuccess: () => {
+      console.log("MCQS deleted successfully");
     },
   });
 };

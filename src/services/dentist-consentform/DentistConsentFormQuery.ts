@@ -62,7 +62,7 @@ export async function getConsentTableData(cookieHeader: string) {
         },
       }
     );
-    console.log("response is ", response.data);
+    // console.log("response is ", response.data);
     return response.data;
   } catch (error) {
     console.error("Error fetching consent forms for table:", error);

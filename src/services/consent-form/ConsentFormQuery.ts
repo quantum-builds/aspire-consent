@@ -7,7 +7,14 @@ import axios from "axios";
 import { getAMedia } from "../s3/s3Query";
 import { cookies } from "next/headers";
 
-export async function getConsentForm(token?: string, dentistId?: string) {
+export async function getConsentForm({
+  role,
+  token,
+}: {
+  role: string;
+  token?: string;
+  dentistId?: string;
+}) {
   try {
     const cookieStore = cookies();
     const cookieHeader = (await cookieStore)
@@ -16,7 +23,7 @@ export async function getConsentForm(token?: string, dentistId?: string) {
       .join("; ");
 
     const response = await axiosInstance.get(
-      ENDPOINTS.consentLink.getConsentForm(token, dentistId),
+      ENDPOINTS.consentLink.getConsentForm(role, token),
       {
         headers: {
           Cookie: cookieHeader,

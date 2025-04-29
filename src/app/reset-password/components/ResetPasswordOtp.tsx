@@ -108,9 +108,8 @@ export default function PasswordResetOTP({
     try {
       const response: Response<TUser> = await verifyOtp(email, data.otp);
 
-      console.log("OTP verification success:", response.data);
-
-      console.log("otp response is ", response);
+      // console.log("OTP verification success:", response.data);
+      // console.log("otp response is ", response);
       if (response.status && onVerified) {
         onVerified();
       } else {

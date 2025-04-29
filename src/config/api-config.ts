@@ -47,9 +47,9 @@ export const ENDPOINTS = {
   },
   consentLink: {
     createConsentFormLink: "/api/consent-form",
-    getConsentForm: (token?: string, dentistId?: string) =>
-      `/api/consent-form?token=${token}&dentistId=${dentistId}`,
-  updatePatientFormAnswers: (id: string) => `/api/consent-form/${id}`,
+    getConsentForm: (role: string, token?: string, dentistId?: string) =>
+      `/api/consent-form?token=${token}&role=${role}&dentistId=${dentistId}`,
+    updatePatientFormAnswers: (id: string) => `/api/consent-form/${id}`,
     postPatientFormAnswers: (id: string) => `/api/consent-form/${id}`,
     deleteConsentForm: (id: string) => `/api/consent-form/${id}`,
   },

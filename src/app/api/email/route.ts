@@ -106,7 +106,7 @@ interface EmailRequest {
 export async function POST(req: NextRequest) {
   const { to, subject, text, html }: EmailRequest = await req.json();
 
-  console.log("html is ", html);
+  // console.log("html is ", html);
   if (!to || !subject || !text) {
     return NextResponse.json(
       { message: "to, subject and text are required" },
@@ -164,7 +164,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Send the email
-    console.log("email data is ", emailData);
+    // console.log("email data is ", emailData);
     await sendgrid.send(emailData);
 
     return NextResponse.json(
