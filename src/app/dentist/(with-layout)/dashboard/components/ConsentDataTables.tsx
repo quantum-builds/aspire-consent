@@ -100,7 +100,7 @@ export default function ConsentDataTable({
     <div className="space-y-4">
       <div className="rounded-md border p-5 flex flex-col gap-5">
         <div className="flex justify-between">
-          <h2 className="text-xl xl:text-3xl font-medium text-gray-800">
+          <h2 className="text-xl xl:text-2xl font-medium text-gray-800">
             Consents
           </h2>
           <div className="relative w-full max-w-lg">

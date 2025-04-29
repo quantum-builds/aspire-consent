@@ -95,8 +95,8 @@ export default function RadialProgressChart({
   }
 
   return (
-    <div className="w-full p-2 bg-white rounded-lg shadow-md h-full my-auto">
-      <h2 className="text-xl xl:text-3xl font-medium text-gray-800 mb-4">
+    <div className="w-full p-2 pt-6  bg-white rounded-lg shadow-md h-full my-auto">
+      <h2 className="text-xl xl:text-2xl font-medium text-gray-800 mb-4">
         Consent Form Status
       </h2>
       <div className="flex items-center justify-between flex-col 2xl:flex-row p-0 2xl:p-7">

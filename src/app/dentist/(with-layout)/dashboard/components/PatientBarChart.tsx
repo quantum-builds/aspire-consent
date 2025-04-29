@@ -116,7 +116,7 @@ export default function PatientBarChart({
     <div className="w-full p-6 bg-white rounded-lg shadow-md h-full">
       <div className="flex flex-col gap-6">
         <div className="flex md:flex-row flex-col items-center justify-between">
-          <h2 className="text-xl xl:text-3xl font-medium text-gray-800">
+          <h2 className="text-xl xl:text-2xl font-medium text-gray-800">
             Consents by {type.charAt(0).toUpperCase() + type.slice(1)}
           </h2>
           <div className="inline-flex items-center bg-[#698AFF4D] rounded-full p-1">
