@@ -38,7 +38,10 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-export default function ModalForm() {
+type ModalFormProps = {
+  practiceId: string;
+};
+export default function ModalForm({ practiceId }: ModalFormProps) {
   const [open, setOpen] = useState(false);
   const { mutate: createProcedure } = useCreateProcedure();
   const router = useRouter();
@@ -54,8 +57,9 @@ export default function ModalForm() {
 
   // Handle form submission
   function onSubmit(data: FormValues) {
+    console.log("practice id at submission is ", practiceId);
     createProcedure(
-      { data },
+      { data, practiceId },
       {
         onSuccess: () => {
           // console.log("data is ", data);

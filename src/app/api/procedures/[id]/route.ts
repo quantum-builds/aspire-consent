@@ -46,7 +46,7 @@ export async function PATCH(req: NextRequest) {
   try {
     if (!id || !isCuid(id)) {
       return NextResponse.json(
-        { error: "Invalid practice Id." },
+        { error: "Invalid procedure Id." },
         { status: 400 }
       );
     }

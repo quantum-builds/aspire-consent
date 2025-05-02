@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
-import SideBar from "@/components/SideBar";
-import SmallScreenSideBar from "@/components/SmallScreenSideBar";
-import {
-  DashboardIcon,
-} from "@/asssets";
+import { DashboardIcon } from "@/asssets";
+import SideBarWrapper from "@/components/SideBarWrapper";
+import SmallScreenSideBarWrapper from "@/components/SmallScreenSideBarWrapper";
 
 export const metadata: Metadata = {
   title: "Aspire Consent",
@@ -28,15 +26,15 @@ export default function RootLayout({
   return (
     <div className="flex flex-col lg:flex-row min-h-screen">
       {/* Desktop Sidebar */}
-      <div className="hidden lg:flex lg:w-[19%] z-30">
-        <SideBar data={SIDE_BAR_DATA} />
+      <div className="hidden lg:block fixed lg:w-[19%] 2xl:w-[15%] h-screen z-30">
+        {/* <SideBar data={SIDE_BAR_DATA} /> */}
+        <SideBarWrapper data={SIDE_BAR_DATA} />
       </div>
 
       {/* Mobile Sidebar Wrapper */}
       <div className="lg:hidden relative z-40">
-        <SmallScreenSideBar data={SIDE_BAR_DATA} />
+        <SmallScreenSideBarWrapper data={SIDE_BAR_DATA} />
       </div>
-
       {/* Main Content */}
       <main className="flex-1 bg-white p-6 pt-0 lg:pt-6 z-0 relative">
         {children}

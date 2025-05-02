@@ -1,24 +1,19 @@
-import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { NextRequest, NextResponse } from "next/server";
 import { createResponse } from "@/utils/createResponse";
-
-const prisma = new PrismaClient();
+import prisma from "@/lib/db";
+import { getToken } from "next-auth/jwt";
 
 export async function GET() {
   try {
-    const practices = await prisma.practice.findMany({
-      include: {
-        users: true,
-      },
-    });
+    const practices = await prisma.practice.findMany({});
     if (practices.length === 0) {
       return NextResponse.json(
-        createResponse(false, "No Practices found", null),
+        createResponse(false, "No practices found", null),
         { status: 404 }
       );
     }
     return NextResponse.json(
-      createResponse(true, "Practices fetch successfully", practices),
+      createResponse(true, "Practices fetched successfully", practices),
       { status: 200 }
     );
   } catch (error) {
@@ -30,43 +25,41 @@ export async function GET() {
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(req: NextRequest) {
   try {
-    const body = await request.json();
+    const token = await getToken({ req });
+    const { name, address } = await req.json();
 
-    const practices = Array.isArray(body) ? body : [body];
-
-    for (const item of practices) {
-      if (!item.name) {
-        return NextResponse.json(
-          { message: "Each practice must have a name" },
-          { status: 400 }
-        );
-      }
+    if (!name || !token || token?.role !== "dentist" || !token.id) {
+      return NextResponse.json({ message: "Invalid Entry" }, { status: 400 });
     }
+    const dentistId = token.id;
 
-    const createdPractices = await Promise.all(
-      practices.map((practice) =>
-        prisma.practice.create({
-          data: {
-            name: practice.name,
-            address: practice.address,
+    const procedure = await prisma.practice.create({
+      data: {
+        name,
+        address,
+        dentists: {
+          create: {
+            dentistId,
           },
-        })
-      )
-    );
-
+        },
+      },
+      include: {
+        dentists: true,
+      },
+    });
     return NextResponse.json(
       {
-        message: `Created ${createdPractices.length} practice(s) successfully`,
-        practices: createdPractices,
+        message: "Practice created successfully",
+        data: procedure,
       },
       { status: 201 }
     );
   } catch (error) {
-    console.error("Create practice error:", error);
+    console.error(error);
     return NextResponse.json(
-      { error: "Failed to create practice(s)" },
+      { error: "Failed to create procedures" },
       { status: 500 }
     );
   }

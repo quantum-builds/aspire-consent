@@ -31,20 +31,16 @@ import { TDentistProcedure } from "@/types/dentist-procedure";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useDeleteProcedure } from "@/services/procedure/ProcedureMutation";
-// import ModalForm from "./AddProcedureModal";
-import { Skeleton } from "@/components/ui/skeleton";
 import { useRouter } from "next/navigation";
 
 type ProcedureQuestionFormListProps = {
   data: TDentistProcedure[];
   errorMessage?: string | null;
-  isLoading?: boolean;
 };
 
 export default function ProcedureQuestionFormsList({
   data,
   errorMessage,
-  isLoading = false,
 }: ProcedureQuestionFormListProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -73,13 +69,6 @@ export default function ProcedureQuestionFormsList({
 
   console.log(errorMessage);
 
-  // useEffect(() => {
-  //   if (errorMessage) {
-  //     toast.error(errorMessage, { id: "fetch-dentist-procedure-error" });
-  //   }
-  // }, [errorMessage]);
-
-  // Filter data based on search term
   const filteredData =
     data?.filter((procedure) =>
       procedure.procedure.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -93,24 +82,24 @@ export default function ProcedureQuestionFormsList({
     startIndex + itemsPerPage
   );
 
-  // Table skeleton loader
-  const TableSkeleton = () => (
-    <TableBody>
-      {[...Array(5)].map((_, index) => (
-        <TableRow key={index}>
-          <TableCell>
-            <Skeleton className="h-6 w-full" />
-          </TableCell>
-          <TableCell className="text-right">
-            <div className="flex justify-end gap-2">
-              <Skeleton className="h-8 w-24" />
-              <Skeleton className="h-8 w-24" />
-            </div>
-          </TableCell>
-        </TableRow>
-      ))}
-    </TableBody>
-  );
+  // // Table skeleton loader
+  // const TableSkeleton = () => (
+  //   <TableBody>
+  //     {[...Array(5)].map((_, index) => (
+  //       <TableRow key={index}>
+  //         <TableCell>
+  //           <Skeleton className="h-6 w-full" />
+  //         </TableCell>
+  //         <TableCell className="text-right">
+  //           <div className="flex justify-end gap-2">
+  //             <Skeleton className="h-8 w-24" />
+  //             <Skeleton className="h-8 w-24" />
+  //           </div>
+  //         </TableCell>
+  //       </TableRow>
+  //     ))}
+  //   </TableBody>
+  // );
 
   if (errorMessage) {
     return (
@@ -122,7 +111,7 @@ export default function ProcedureQuestionFormsList({
     );
   }
 
-  if (!data && !isLoading) {
+  if (!data) {
     return (
       <div className="rounded-md border p-5">
         <div className="flex items-center justify-center h-24">
@@ -160,106 +149,98 @@ export default function ProcedureQuestionFormsList({
             </TableRow>
           </TableHeader>
 
-          {isLoading ? (
+          {/* {isLoading ? (
             <TableSkeleton />
-          ) : (
-            <TableBody className="text-lg">
-              {paginatedData.length > 0 ? (
-                paginatedData.map((procedure) => (
-                  <TableRow key={procedure.procedureId}>
-                    <TableCell>{procedure.procedure.name}</TableCell>
-                    <TableCell className="text-right">
-                      <div className="hidden md:flex justify-end md:items-center gap-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-8"
-                          asChild
+          ) : ( */}
+          <TableBody className="text-lg">
+            {paginatedData.length > 0 ? (
+              paginatedData.map((procedure) => (
+                <TableRow key={procedure.procedureId}>
+                  <TableCell>{procedure.procedure.name}</TableCell>
+                  <TableCell className="text-right">
+                    <div className="hidden md:flex justify-end md:items-center gap-2">
+                      <Button variant="ghost" size="sm" className="h-8" asChild>
+                        <Link
+                          href={`/dentist/consent-questions/${procedure.procedure.id}`}
                         >
-                          <Link
-                            href={`/dentist/consent-questions/${procedure.procedure.id}`}
-                          >
-                            <List className="h-4 w-4 mr-2" />
-                            View Questions
-                          </Link>
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 text-red-500 hover:text-red-500 hover:bg-red-50"
-                          onClick={() => handleDelete(procedure.procedureId)}
-                          disabled={
-                            isPending && deletingId === procedure.procedureId
-                          }
-                        >
-                          {isPending && deletingId === procedure.procedureId ? (
-                            <span className="animate-spin">↻</span>
-                          ) : (
-                            <>
-                              <Trash className="h-4 w-4 mr-2" />
-                              Delete
-                            </>
-                          )}
-                        </Button>
-                      </div>
+                          <List className="h-4 w-4 mr-2" />
+                          View Questions
+                        </Link>
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 text-red-500 hover:text-red-500 hover:bg-red-50"
+                        onClick={() => handleDelete(procedure.procedureId)}
+                        disabled={
+                          isPending && deletingId === procedure.procedureId
+                        }
+                      >
+                        {isPending && deletingId === procedure.procedureId ? (
+                          <span className="animate-spin">↻</span>
+                        ) : (
+                          <>
+                            <Trash className="h-4 w-4 mr-2" />
+                            Delete
+                          </>
+                        )}
+                      </Button>
+                    </div>
 
-                      <div className="md:hidden">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="sm">
-                              <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem asChild>
-                              <Link
-                                href={`/dentist/consent-questions/${procedure.procedure.id}`}
-                              >
-                                <List className="h-4 w-4 mr-2" />
-                                View Questions
-                              </Link>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={() =>
-                                handleDelete(procedure.procedureId)
-                              }
-                              className="text-red-500 focus:text-red-500"
-                              disabled={
-                                isPending &&
-                                deletingId === procedure.procedureId
-                              }
+                    <div className="md:hidden">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="sm">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem asChild>
+                            <Link
+                              href={`/dentist/consent-questions/${procedure.procedure.id}`}
                             >
-                              {isPending &&
-                              deletingId === procedure.procedureId ? (
-                                <span className="flex items-center">
-                                  <span className="animate-spin mr-2">↻</span>
-                                  Deleting...
-                                </span>
-                              ) : (
-                                <>
-                                  <Trash className="h-4 w-4 mr-2" />
-                                  Delete
-                                </>
-                              )}
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell
-                    colSpan={2}
-                    className="h-24 text-center text-red-500"
-                  >
-                    No results found.
+                              <List className="h-4 w-4 mr-2" />
+                              View Questions
+                            </Link>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() => handleDelete(procedure.procedureId)}
+                            className="text-red-500 focus:text-red-500"
+                            disabled={
+                              isPending && deletingId === procedure.procedureId
+                            }
+                          >
+                            {isPending &&
+                            deletingId === procedure.procedureId ? (
+                              <span className="flex items-center">
+                                <span className="animate-spin mr-2">↻</span>
+                                Deleting...
+                              </span>
+                            ) : (
+                              <>
+                                <Trash className="h-4 w-4 mr-2" />
+                                Delete
+                              </>
+                            )}
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
                   </TableCell>
                 </TableRow>
-              )}
-            </TableBody>
-          )}
+              ))
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={2}
+                  className="h-24 text-center text-red-500"
+                >
+                  No results found.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+          {/* )} */}
         </Table>
       </div>
 

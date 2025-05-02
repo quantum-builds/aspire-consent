@@ -5,14 +5,16 @@ import { getConsentTableData } from "@/services/dentist-consentform/DentistConse
 
 type ConsentDataTableComponentProps = {
   cookieHeader: string;
+  practiceId: string;
 };
 export default async function ConsentDataTableComponent({
   cookieHeader,
+  practiceId,
 }: ConsentDataTableComponentProps) {
   let errMessageConsentTable: string | null = null;
   let consentTable: TConsentFormData[] = [];
   const responseConsentTable: Response<TConsentFormData[]> =
-    await getConsentTableData(cookieHeader);
+    await getConsentTableData(cookieHeader, practiceId);
   if (responseConsentTable.status) {
     consentTable = responseConsentTable.data;
   } else {

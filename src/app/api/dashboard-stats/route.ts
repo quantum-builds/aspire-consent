@@ -1,10 +1,19 @@
 import prisma from "@/lib/db";
 import { TCountStats } from "@/types/common";
 import { createResponse } from "@/utils/createResponse";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
+    const { searchParams } = new URL(req.url);
+    const practiceId = searchParams.get("practiceId");
+    if (!practiceId) {
+      return NextResponse.json(
+        createResponse(false, "Practice Id is required", null),
+        { status: 400 }
+      );
+    }
+
     // Calculate date one week ago
     const oneWeekAgo = new Date();
     oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
@@ -20,12 +29,12 @@ export async function GET() {
       lastWeekDentists,
       lastWeekProcedures,
     ] = await Promise.all([
-      prisma.consentFormLink.count(),
+      prisma.consentFormLink.count({ where: { practiceId } }),
       prisma.user.count({ where: { role: "patient" } }),
       prisma.user.count({ where: { role: "dentist" } }),
-      prisma.procedure.count(),
+      prisma.procedure.count({ where: { practiceId } }),
       prisma.consentFormLink.count({
-        where: { createdAt: { lte: oneWeekAgo } },
+        where: { practiceId, createdAt: { lte: oneWeekAgo } },
       }),
       prisma.user.count({
         where: { role: "patient", createdAt: { lte: oneWeekAgo } },
@@ -34,7 +43,7 @@ export async function GET() {
         where: { role: "dentist", createdAt: { lte: oneWeekAgo } },
       }),
       prisma.procedure.count({
-        where: { createdAt: { lte: oneWeekAgo } },
+        where: { practiceId, createdAt: { lte: oneWeekAgo } },
       }),
     ]);
 

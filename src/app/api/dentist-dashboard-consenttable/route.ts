@@ -5,15 +5,28 @@ import { createResponse } from "@/utils/createResponse";
 
 export async function GET(req: NextRequest) {
   try {
+    const { searchParams } = new URL(req.url);
     const token = await getToken({ req });
     if (!token) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json(createResponse(false, "Unauthorized", null), {
+        status: 401,
+      });
     }
     const dentistId = token.id;
 
+    const practiceId = searchParams.get("practiceId");
+    if (!practiceId) {
+      return NextResponse.json(
+        createResponse(false, "Practice Id is required", null),
+        {
+          status: 400,
+        }
+      );
+    }
+
     // Get all consent forms for dentist
     const consentForms = await prisma.consentFormLink.findMany({
-      where: { dentistId },
+      where: { dentistId, practiceId },
       include: {
         procedure: { select: { name: true } },
         patient: { select: { email: true } },

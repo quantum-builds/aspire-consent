@@ -2,15 +2,16 @@
 
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
-import SideBar from "./SideBar";
-;
 import { StaticImageData } from "next/image";
+import SideBar from "./SideBar";
+import { TDentistPractice } from "@/types/dentist-practice";
 
 type SideBarProps = {
   data: { text: string; logo: StaticImageData; link: string }[];
+  practices: TDentistPractice[];
 };
 
-export default function SmallScreenSideBar({ data }: SideBarProps) {
+export default function SmallScreenSideBar({ data, practices }: SideBarProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -45,7 +46,7 @@ export default function SmallScreenSideBar({ data }: SideBarProps) {
       {/* Mobile Sidebar (absolute positioned) */}
       {isOpen && (
         <div className="absolute top-16 left-0 w-10/12 md:w-4/12  bg-transparent z-50 shadow-xl -mt-2">
-          <SideBar data={data} />
+          <SideBar data={data} practices={practices} />
         </div>
       )}
     </div>

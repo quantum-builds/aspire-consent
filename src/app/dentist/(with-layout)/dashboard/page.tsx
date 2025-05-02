@@ -1,52 +1,16 @@
-import Header from "@/components/Header";
-import { Plus } from "lucide-react";
-import Link from "next/link";
-import { cookies } from "next/headers";
-import RadialProgressCHartCard from "./components/RadialProgressChartCard";
-import DashboardCardComponent from "./components/DashBoardCardComponent";
-import PatientBarChartCard from "./components/PatientBarChartCard";
-import ConsentDataTableComponent from "./components/ConsentDataTableComponent";
+import { Suspense } from "react";
+import { DashboardSkeleton } from "./components/DashboardSkeleton";
+import DashboardWrapper from "./components/DashboardWrapper";
 
-export default async function Dashboard() {
-  const cookieStore = cookies();
-  const cookieHeader = (await cookieStore)
-    .getAll()
-    .map((c) => `${c.name}=${c.value}`)
-    .join("; ");
-
+export default async function Page(props: {
+  searchParams?: Promise<{ practiceId: string }>;
+}) {
+  const searchParams = await props.searchParams;
+  const practiceId = searchParams?.practiceId || "";
   return (
-    <>
-      <Header />
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center my-4">
-        <div className="flex flex-col gap-2">
-          <p className="text-2xl font-bold mb-3">Dashboard</p>
-          <p className="text-[#0000004D] mb-6">17th April 2025</p>
-        </div>
-        <Link
-          className="bg-[#698AFF] hover:bg-[#698AFF] text-white cursor-pointer py-3 text-xl px-2 flex items-center justify-center rounded-md"
-          href={"/dentist/new-consent-form"}
-        >
-          <Plus width={20} height={20} className="mr-1" />
-          New Consent
-        </Link>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-3 gap-y-5">
-        <div className="col-span-1 lg:col-span-3">
-          <DashboardCardComponent />
-        </div>
-        <div className="col-span-1 lg:col-span-2">
-          <PatientBarChartCard cookieHeader={cookieHeader} />
-        </div>
-        <div className="col-span-1">
-          <RadialProgressCHartCard cookieHeader={cookieHeader} />
-        </div>
-
-        <div className="col-span-full">
-          <ConsentDataTableComponent cookieHeader={cookieHeader} />
-        </div>
-      </div>
-    </>
+    <Suspense fallback={<DashboardSkeleton />}>
+      <DashboardWrapper practiceId={practiceId} />
+    </Suspense>
   );
 }
 

@@ -14,7 +14,6 @@ export default async function ConsentQuestion({
   let errorMessage = undefined;
   let mcqs: ExtendedTMCQ[] = [];
   let procedureName: string | null = null;
-  // console.log("procedure id is ", procedureId);
 
   const response: Response<ExtendedTMCQ[] | string> = await getMCQs(
     procedureId

@@ -1,10 +1,10 @@
 import { axiosInstance, ENDPOINTS } from "@/config/api-config";
 import axios from "axios";
 
-export async function getDashboardStats() {
+export async function getDashboardStats(practiceId: string) {
   try {
     const response = await axiosInstance.get(
-      ENDPOINTS.dashboardStats.getDashboardStats
+      ENDPOINTS.dashboardStats.getDashboardStats(practiceId)
     );
     return response.data;
   } catch (error) {

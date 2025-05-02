@@ -5,14 +5,16 @@ import PatientBarChart from "./PatientBarChart";
 
 type PatientBarChartCardProps = {
   cookieHeader: string;
+  practiceId: string;
 };
 export default async function PatientBarChartCard({
   cookieHeader,
+  practiceId,
 }: PatientBarChartCardProps) {
   let consentFormByDentist: TConsentFormTimeCountsResponse | null = null;
   let errorMessageConsentFormTimeCountsResponse: string | null = null;
   const responseConsentFormTimeCountsResponse: Response<TConsentFormTimeCountsResponse> =
-    await getDentistConsentForms(cookieHeader);
+    await getDentistConsentForms(cookieHeader, practiceId);
   if (responseConsentFormTimeCountsResponse.status) {
     consentFormByDentist = responseConsentFormTimeCountsResponse.data;
   } else {

@@ -25,7 +25,6 @@ export async function getMCQs(procedureId?: string) {
 
     const responseData: Response<ExtendedTMCQ[] | string> = response.data;
     const mcqs = responseData.data;
-    // console.log("id is ", mcqs);
     if (Array.isArray(mcqs)) {
       const uploads = await Promise.all(
         mcqs.map(async (mcq) => {

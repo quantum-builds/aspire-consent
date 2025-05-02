@@ -5,12 +5,15 @@ export const useCreateProcedure = () => {
   return useMutation({
     mutationFn: async ({
       data,
+      practiceId,
     }: {
       data: { name: string; description?: string };
+      practiceId: string;
     }) => {
+      console.log("practice id in mutauion is ", practiceId);
       const response = await axiosInstance.post(
         ENDPOINTS.procedure.createProcedure,
-        data
+        { ...data, practiceId }
       );
       return response.data.data;
     },

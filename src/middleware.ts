@@ -43,9 +43,13 @@ export async function middleware(req: NextRequest) {
   }
 
   if (!token) {
+    const cleanedUrl = req.nextUrl.clone();
+    cleanedUrl.searchParams.delete("practiceId");
+
     const callbackUrl = encodeURIComponent(
-      req.nextUrl.pathname + req.nextUrl.search
+      cleanedUrl.pathname + cleanedUrl.search
     );
+
     return NextResponse.redirect(
       new URL(`/login?callbackUrl=${callbackUrl}`, req.url)
     );

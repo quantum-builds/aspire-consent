@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import SideBar from "@/components/SideBar";
-import SmallScreenSideBar from "@/components/SmallScreenSideBar";
 import { ConsentFormIcon, DashboardIcon } from "@/asssets";
+import SideBarWrapper from "@/components/SideBarWrapper";
+import SmallScreenSideBarWrapper from "@/components/SmallScreenSideBarWrapper";
 
 export const metadata: Metadata = {
   title: "Aspire Consent",
@@ -31,12 +31,13 @@ export default function RootLayout({
     <div className="flex flex-col lg:flex-row min-h-screen">
       {/* Desktop Sidebar - now fixed */}
       <div className="hidden lg:block fixed lg:w-[19%] 2xl:w-[15%] h-screen z-30">
-        <SideBar data={SIDE_BAR_DATA} />
+        {/* <SideBar data={SIDE_BAR_DATA} /> */}
+        <SideBarWrapper data={SIDE_BAR_DATA} />
       </div>
 
       {/* Mobile Sidebar Wrapper */}
       <div className="lg:hidden relative z-40">
-        <SmallScreenSideBar data={SIDE_BAR_DATA} />
+        <SmallScreenSideBarWrapper data={SIDE_BAR_DATA} />
       </div>
 
       {/* Main Content - add margin to account for fixed sidebar */}

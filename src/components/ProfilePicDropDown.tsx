@@ -51,23 +51,10 @@ export default function ProfilePiceDropDown() {
 
       {showDropdown && (
         <div className="absolute right-0 mt-2 w-40 bg-white border rounded-xl shadow-lg z-50">
-          {/* <button
-            onClick={handleLogout}
-            className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100"
-          >
-            Logout
-          </button> */}
           <div
             className="hover:bg-gray-100 rounded-xl px-4 py-2 text-lg text-black w-full flex flex-row items-center gap-2 cursor-pointer"
             onClick={() => setLogoutDialogOpen(true)}
           >
-            {/* <Image
-              src={logo}
-              alt="logout-logo"
-              width={20}
-              height={20}
-              className="text-black"
-            /> */}
             <LogOut size={20} />
             <span className=" ">Logout</span>
           </div>

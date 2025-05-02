@@ -2,11 +2,16 @@ import { getDashboardStats } from "@/services/dashboardStats/DashboardStatsQuery
 import { Response, TCountStats } from "@/types/common";
 import DashboardCards from "./DashboardCard";
 
-export default async function DashboardCardComponent() {
+type DashboardCardComponentProps = {
+  practiceId: string;
+};
+export default async function DashboardCardComponent({
+  practiceId,
+}: DashboardCardComponentProps) {
   let dashboardStats: TCountStats | null = null;
   let errMessageDashboardStats: string | null = null;
   const responseDashboardStats: Response<TCountStats> =
-    await getDashboardStats();
+    await getDashboardStats(practiceId);
   if (responseDashboardStats.status) {
     dashboardStats = responseDashboardStats.data;
   } else {

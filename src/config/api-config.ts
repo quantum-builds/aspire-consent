@@ -23,12 +23,17 @@ export const ENDPOINTS = {
   },
   practices: {
     getAllPractices: "/api/practices",
-    updatePractice: (email: string) => `/api/practices?${email}`,
+    createProcedure: "/api/practices",
+    updatePractice: (id: string) => `/api/practices?${id}`,
+    deletePractice: (id: string) => `/api/practices/${id}`,
   },
-  dentistPractice: { updateDentisToPractice: "/api/dentist-practice" },
+  dentistPractice: {
+    getDentistPractice: (practiceId?: string) =>
+      `/api/dentist-practice?practiceId=${practiceId}`,
+  },
   dentistProcedure: {
-    getDentistProcedure: (procedureId?: string) =>
-      `/api/dentist-procedure?procedureId=${procedureId}`,
+    getDentistProcedure: (practiceId: string | null, procedureId?: string) =>
+      `/api/dentist-procedure?procedureId=${procedureId}&practiceId=${practiceId}`,
   },
   procedure: {
     createProcedure: "/api/procedures",
@@ -47,8 +52,13 @@ export const ENDPOINTS = {
   },
   consentLink: {
     createConsentFormLink: "/api/consent-form",
-    getConsentForm: (role: string, token?: string, dentistId?: string) =>
-      `/api/consent-form?token=${token}&role=${role}&dentistId=${dentistId}`,
+    getConsentForm: (
+      role: string,
+      practiceId?: string | null,
+      token?: string,
+      dentistId?: string
+    ) =>
+      `/api/consent-form?token=${token}&role=${role}&dentistId=${dentistId}&practiceId=${practiceId}`,
     updatePatientFormAnswers: (id: string) => `/api/consent-form/${id}`,
     postPatientFormAnswers: (id: string) => `/api/consent-form/${id}`,
     deleteConsentForm: (id: string) => `/api/consent-form/${id}`,
@@ -62,19 +72,24 @@ export const ENDPOINTS = {
     deleteAnAppointment: (id: string) => `/api/appointment/${id}`,
   },
   consentFormByProcedure: {
-    getConsentFormByProcedure: "/api/consentform-procedure",
+    getConsentFormByProcedure: (practiceId: string) =>
+      `/api/consentform-procedure?practiceId=${practiceId}`,
   },
   cosentFormByStatus: {
-    getConsentFormByStatus: "/api/consentform-status",
+    getConsentFormByStatus: (practiceId: string) =>
+      `/api/consentform-status?practiceId=${practiceId}`,
   },
   dentistConsentForms: {
-    getDentistConsentForms: "/api/dentist-consentform",
+    getDentistConsentForms: (practiceId: string) =>
+      `/api/dentist-consentform?practiceId=${practiceId}`,
   },
   dentistDashboardConsentTable: {
-    getdashboardConsentTable: "/api/dentist-dashboard-consenttable",
+    getdashboardConsentTable: (practiceId: string) =>
+      `/api/dentist-dashboard-consenttable?practiceId=${practiceId}`,
   },
   dashboardStats: {
-    getDashboardStats: "/api/dashboard-stats",
+    getDashboardStats: (practiceId: string) =>
+      `/api/dashboard-stats?practiceId=${practiceId}`,
   },
   s3: {
     getSignedUrl: "/api/s3",

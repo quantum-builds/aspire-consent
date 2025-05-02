@@ -23,9 +23,17 @@ type MonthlyCount = {
 
 export async function GET(req: NextRequest) {
   try {
+    const { searchParams } = new URL(req.url);
     const token = await getToken({ req });
     if (!token) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    const practiceId = searchParams.get("practiceId");
+    if (!practiceId) {
+      return NextResponse.json(
+        { error: "No practiceId provided" },
+        { status: 400 }
+      );
     }
 
     const dentistId = token.id;
@@ -48,6 +56,7 @@ export async function GET(req: NextRequest) {
         FROM "ConsentFormLink"
         WHERE 
           "dentistId" = ${dentistId} AND
+          "practiceId"= ${practiceId} AND
           "createdAt" >= ${last7Days} AND
           "createdAt" <= ${now}
         GROUP BY DATE("createdAt")
@@ -63,6 +72,7 @@ export async function GET(req: NextRequest) {
         FROM "ConsentFormLink"
         WHERE 
           "dentistId" = ${dentistId} AND
+          "practiceId"= ${practiceId} AND
           "createdAt" >= ${last30Days} AND
           "createdAt" <= ${now}
         GROUP BY week_group
@@ -77,6 +87,7 @@ export async function GET(req: NextRequest) {
         FROM "ConsentFormLink"
         WHERE 
           "dentistId" = ${dentistId} AND
+          "practiceId"= ${practiceId} AND
           "createdAt" >= ${last12Months} AND
           "createdAt" <= ${now}
         GROUP BY year, month

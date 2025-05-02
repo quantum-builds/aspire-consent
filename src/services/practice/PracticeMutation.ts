@@ -1,29 +1,41 @@
 import { axiosInstance, ENDPOINTS } from "@/config/api-config";
-import { TPractice } from "@/types/practices";
 import { useMutation } from "@tanstack/react-query";
 
-export const useUpdateAPractice = () => {
+export const useCreatePractice = () => {
   return useMutation({
     mutationFn: async ({
-      practice,
-      id,
-      email,
+      data,
     }: {
-      practice: Partial<TPractice>;
-      id: string;
-      email: string;
+      data: { name: string; address: string };
     }) => {
-      const response = await axiosInstance.put(
-        ENDPOINTS.practices.updatePractice(id),
-        { practice, email }
+      const response = await axiosInstance.post(
+        ENDPOINTS.practices.createProcedure,
+        data
       );
       return response.data.data;
     },
     onError: (err) => {
-      console.error("Service error in updating member", err);
+      console.error("Service error in creaeting practice", err);
     },
-    onSuccess: (data) => {
-      console.log("Member updated successfully", data);
+    onSuccess: () => {
+      console.log("practice created successfully");
+    },
+  });
+};
+
+export const useDeletePractice = () => {
+  return useMutation({
+    mutationFn: async ({ id }: { id: string }) => {
+      const response = await axiosInstance.delete(
+        ENDPOINTS.practices.deletePractice(id)
+      );
+      return response.data.data;
+    },
+    onError: (err) => {
+      console.error("Service error in deleting practice", err);
+    },
+    onSuccess: () => {
+      console.log("Practice deleted successfully");
     },
   });
 };

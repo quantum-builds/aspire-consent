@@ -81,15 +81,22 @@ export async function GET(req: NextRequest) {
       const sessionToken = await getToken({ req: req, secret });
       const dentistId =
         sessionToken?.role === "dentist" ? sessionToken.id : null;
-
+      const practiceId = searchParams.get("practiceId");
       if (!dentistId) {
         return NextResponse.json(
-          { error: "No deentist-id provided" },
+          { error: "No dentist-id provided" },
+          { status: 400 }
+        );
+      }
+
+      if (!practiceId) {
+        return NextResponse.json(
+          { error: "No practiceId provided" },
           { status: 400 }
         );
       }
       const consentLinks = await prisma.consentFormLink.findMany({
-        where: { dentistId },
+        where: { dentistId, practiceId },
         include: {
           procedure: { select: { id: true, name: true } },
           dentist: { select: { id: true, email: true } },
@@ -152,7 +159,13 @@ export async function POST(req: NextRequest) {
     const dentistId = token?.id;
     const body = await req.json();
 
-    if (!dentistId || !body.patientId || !body.procedureId || !body.expiresAt) {
+    if (
+      !dentistId ||
+      !body.patientId ||
+      !body.procedureId ||
+      !body.expiresAt ||
+      !body.practiceId
+    ) {
       return NextResponse.json(
         { message: "Missing required fields" },
         { status: 400 }
@@ -166,6 +179,25 @@ export async function POST(req: NextRequest) {
         dentistId: dentistId,
       },
     });
+
+    const practice = await prisma.procedure.findUnique({
+      where: { id: body.procedureId },
+      select: { Practice: true },
+    });
+
+    if (practice?.Practice.id !== body.practiceId) {
+      return NextResponse.json(
+        { message: "Invalid Practice Id" },
+        { status: 400 }
+      );
+    }
+
+    if (!practice) {
+      return NextResponse.json(
+        { message: "Practice for this procedure does not exists." },
+        { status: 400 }
+      );
+    }
 
     // Create true snapshot copies in the new table
     const snapshotMCQs = currentMCQs.map((mcq) => ({
@@ -182,6 +214,7 @@ export async function POST(req: NextRequest) {
         dentistId: dentistId,
         patientId: body.patientId,
         procedureId: body.procedureId,
+        practiceId: practice.Practice.id,
         expiresAt: new Date(body.expiresAt),
         status: "PENDING",
         progressPercentage: 0,

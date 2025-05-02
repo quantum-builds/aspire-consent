@@ -5,21 +5,32 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
   try {
+    const { searchParams } = new URL(req.url);
     const token = await getToken({ req });
     if (!token) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     const dentistId = token.id;
 
+    const practiceId = searchParams.get("practiceId");
+    if (!practiceId) {
+      return NextResponse.json(
+        createResponse(false, "Practice Id is required", null),
+        {
+          status: 400,
+        }
+      );
+    }
+
     // Get total count of consent forms by this dentist
     const totalCount = await prisma.consentFormLink.count({
-      where: { dentistId },
+      where: { dentistId, practiceId },
     });
 
     // Get count grouped by status
     const statusGroups = await prisma.consentFormLink.groupBy({
       by: ["status"],
-      where: { dentistId },
+      where: { dentistId, practiceId },
       _count: {
         _all: true,
       },

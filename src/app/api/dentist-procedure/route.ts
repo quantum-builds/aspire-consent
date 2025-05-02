@@ -20,6 +20,16 @@ export async function GET(req: NextRequest) {
     const rawProcedureId = searchParams.get("procedureId");
     const procedureId =
       rawProcedureId === "undefined" ? undefined : rawProcedureId;
+    const rawPracticeId = searchParams.get("practiceId");
+    const practiceId =
+      rawPracticeId === "undefined" ? undefined : rawPracticeId;
+
+    if (!practiceId) {
+      return NextResponse.json(
+        { message: "PracticeId is required" },
+        { status: 400 }
+      );
+    }
 
     const whereClause: { dentistId?: string; procedureId?: string } = {};
     if (dentistId) whereClause.dentistId = dentistId;
@@ -35,12 +45,12 @@ export async function GET(req: NextRequest) {
       include = { dentist: true, procedure: true };
     }
 
-    const dp = await prisma.dentistToProcedure.findMany({
+    const dps = await prisma.dentistToProcedure.findMany({
       where: whereClause,
       include,
     });
 
-    if (dp.length === 0) {
+    if (dps.length === 0) {
       return NextResponse.json(
         createResponse(false, "No dentist procedure link found", null),
         { status: 404 }
@@ -48,7 +58,11 @@ export async function GET(req: NextRequest) {
     }
 
     return NextResponse.json(
-      createResponse(true, "Dentist Procedure(s) fetched successfully", dp),
+      createResponse(
+        true,
+        "Dentist Procedure(s) fetched successfully",
+        dps.filter((dp) => dp.procedure.practiceId === practiceId)
+      ),
       { status: 200 }
     );
   } catch (error) {

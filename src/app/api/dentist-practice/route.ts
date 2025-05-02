@@ -1,38 +1,61 @@
 import prisma from "@/lib/db";
+import { createResponse } from "@/utils/createResponse";
+import { getToken } from "next-auth/jwt";
+import { unstable_noStore } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(req: NextRequest) {
-  const { practiceId, dentistEmail } = await req.json();
+const secret = process.env.NEXTAUTH_SECRET;
 
+export async function GET(req: NextRequest) {
+  unstable_noStore();
   try {
-    if (!practiceId || !dentistEmail) {
+    const token = await getToken({ req: req, secret });
+    if (!token) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    // const userId = token.sub;
+
+    const { searchParams } = new URL(req.url);
+    const dentistId = token?.id;
+    const rawPracticeId = searchParams.get("practiceId");
+    const practiceId =
+      rawPracticeId === "undefined" ? undefined : rawPracticeId;
+
+    const whereClause: { dentistId?: string; practiceId?: string } = {};
+    if (dentistId) whereClause.dentistId = dentistId;
+    if (practiceId) whereClause.practiceId = practiceId;
+
+    let include: { dentist?: boolean; practice?: boolean } = {};
+
+    if (dentistId && !practiceId) {
+      include = { practice: true };
+    } else if (practiceId && !dentistId) {
+      include = { dentist: true };
+    } else if (!dentistId && !practiceId) {
+      include = { dentist: true, practice: true };
+    }
+
+    const dp = await prisma.dentistToPractice.findMany({
+      where: whereClause,
+      include,
+    });
+
+    if (dp.length === 0) {
       return NextResponse.json(
-        { message: "practice id and dentist email is required" },
-        { status: 400 }
+        createResponse(false, "No dentist practice link found", null),
+        { status: 404 }
       );
     }
 
-    const user = await prisma.user.findUnique({
-      where: { email: dentistEmail },
-    });
-    if (!user) {
-      return NextResponse.json(
-        { message: "User with this email does not exist" },
-        { status: 400 }
-      );
-    }
-    await prisma.dentistToPractice.create({
-      data: { practiceId: practiceId, dentistId: user.id },
-    });
     return NextResponse.json(
-      { message: "Dentist Practice created succesfully" },
-      { status: 201 }
+      createResponse(true, "Dentist Practice(s) fetched successfully", dp),
+      { status: 200 }
     );
-  } catch (err) {
-    console.log(err);
-    return NextResponse.json(
-      { message: "Internal server error" },
-      { status: 500 }
-    );
+  } catch (error) {
+    console.error("Error in fetching dentist practices:", error);
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    return NextResponse.json(createResponse(false, errorMessage, null), {
+      status: 500,
+    });
   }
 }

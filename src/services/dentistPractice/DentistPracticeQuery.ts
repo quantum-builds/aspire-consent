@@ -2,7 +2,7 @@ import { axiosInstance, ENDPOINTS } from "@/config/api-config";
 import axios from "axios";
 import { cookies } from "next/headers";
 
-export async function getDentistProcedure(procedureId?: string) {
+export async function getDentistPractice(practiceId?: string) {
   try {
     const cookieStore = cookies();
     const cookieHeader = (await cookieStore)
@@ -11,7 +11,7 @@ export async function getDentistProcedure(procedureId?: string) {
       .join("; ");
 
     const response = await axiosInstance.get(
-      ENDPOINTS.dentistProcedure.getDentistProcedure(procedureId),
+      ENDPOINTS.dentistPractice.getDentistPractice(practiceId),
       {
         headers: {
           Cookie: cookieHeader,
@@ -26,7 +26,7 @@ export async function getDentistProcedure(procedureId?: string) {
     } else {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
-      console.error("Error in fetching dentist-procedure: ", errorMessage);
+      console.error("Error in fetching dentist-practice: ", errorMessage);
       return { errorMessage };
     }
   }

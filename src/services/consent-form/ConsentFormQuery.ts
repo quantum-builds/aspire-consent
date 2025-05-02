@@ -10,10 +10,12 @@ import { cookies } from "next/headers";
 export async function getConsentForm({
   role,
   token,
+  practiceId,
 }: {
   role: string;
   token?: string;
   dentistId?: string;
+  practiceId?: string;
 }) {
   try {
     const cookieStore = cookies();
@@ -23,7 +25,7 @@ export async function getConsentForm({
       .join("; ");
 
     const response = await axiosInstance.get(
-      ENDPOINTS.consentLink.getConsentForm(role, token),
+      ENDPOINTS.consentLink.getConsentForm(role, practiceId, token),
       {
         headers: {
           Cookie: cookieHeader,

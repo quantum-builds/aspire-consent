@@ -8,17 +8,20 @@ export const useCreateConsentFormLink = () => {
       patientId,
       procedureId,
       expiresAt,
+      practiceId,
     }: {
       patientId: string;
       procedureId: string;
       expiresAt: string;
+      practiceId: string;
     }) => {
       const response = await axiosInstance.post(
         ENDPOINTS.consentLink.createConsentFormLink,
         {
-          patientId: patientId,
-          procedureId: procedureId,
-          expiresAt: expiresAt,
+          patientId,
+          procedureId,
+          expiresAt,
+          practiceId,
         }
       );
       return response.data.data;

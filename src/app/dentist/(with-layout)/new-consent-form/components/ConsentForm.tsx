@@ -59,12 +59,14 @@ type ConstsentFormProps = {
   patients: ExtendedTUser[];
   procedureErrorMessage?: string;
   patientErrorMessage?: string;
+  practiceId: string;
 };
 
 //https://${process.env.NEXT_PUBLIC_AWS_BUCKET_NAME}.s3.${process.env.NEXT_PUBLIC_AWS_REGION}.amazonaws.com/uploads/aspire-consent/aspire-consent-black-logo.svg
 export default function ConsentForm({
   procedures,
   patients,
+  practiceId,
 }: ConstsentFormProps) {
   const { mutate: createConsentLink, isPending: isLinkPending } =
     useCreateConsentFormLink();
@@ -90,6 +92,7 @@ export default function ConsentForm({
         patientId: data.patient,
         procedureId: data.treatment,
         expiresAt: data.treatmentDate,
+        practiceId: practiceId,
       },
       {
         onSuccess: (responseData) => {

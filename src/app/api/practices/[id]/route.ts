@@ -1,6 +1,7 @@
 import prisma from "@/lib/db";
 import { createResponse } from "@/utils/createResponse";
 import { isCuid } from "cuid";
+import { revalidatePath } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
@@ -16,7 +17,6 @@ export async function GET(req: NextRequest) {
 
     const practice = await prisma.practice.findUnique({
       where: { id: id },
-      include: { users: true },
     });
 
     if (!practice) {
@@ -41,6 +41,7 @@ export async function GET(req: NextRequest) {
 
 export async function PATCH(req: NextRequest) {
   const id = req.nextUrl.pathname.split("/").pop();
+
   try {
     if (!id || !isCuid(id)) {
       return NextResponse.json(
@@ -48,29 +49,22 @@ export async function PATCH(req: NextRequest) {
         { status: 400 }
       );
     }
-    const { updateData, email } = await req.json();
+    const updateData = await req.json();
 
-    const user = await prisma.user.findUnique({ where: { email: email } });
-    if (!user) {
-      return NextResponse.json(
-        { message: "User with this email does not exist" },
-        { status: 400 }
-      );
-    }
     const updatedPractice = await prisma.practice.update({
-      where: { id: user.id },
+      where: { id },
       data: updateData,
     });
 
     return NextResponse.json(
       {
         message: "Practice updated successfully",
-        updatedPractice,
+        updatedPractice: updatedPractice,
       },
       { status: 200 }
     );
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return NextResponse.json(
       { error: "Failed to update practice" },
       { status: 500 }
@@ -90,13 +84,13 @@ export async function DELETE(req: NextRequest) {
     await prisma.practice.delete({
       where: { id },
     });
-
+    revalidatePath("/dentist/dashboard");
     return NextResponse.json(
       { message: "Practice deleted successfully" },
       { status: 200 }
     );
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return NextResponse.json(
       { error: "Failed to delete practice" },
       { status: 500 }

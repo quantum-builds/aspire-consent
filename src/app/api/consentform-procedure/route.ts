@@ -5,11 +5,22 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
   try {
+    const { searchParams } = new URL(req.url);
     const token = await getToken({ req });
     if (!token) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     const dentistId = token.id;
+
+    const practiceId = searchParams.get("practiceId");
+    if (!practiceId) {
+      return NextResponse.json(
+        createResponse(false, "Practice Id is required", null),
+        {
+          status: 400,
+        }
+      );
+    }
 
     const [procedureConsentCounts, totalConsentForms] =
       await prisma.$transaction([
