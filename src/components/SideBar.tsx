@@ -33,7 +33,7 @@ export default function SideBar({ data, practices }: SideBarProps) {
 
     // Trigger navigation with updated query param
     router.push(`${pathname}?${params.toString()}`);
-  }, [selectedPractice, pathname, router, searchParams]);
+  }, [selectedPractice]);
 
   // Initialize selected practice when practices are available
   useEffect(() => {
