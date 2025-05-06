@@ -253,60 +253,59 @@ export default function ConsentFormContent({
   }
 
   return (
-    <div className="flex flex-col gap-4 my-auto max-w-xl mx-auto ">
+    <div className="flex flex-col gap-4 my-auto max-w-2xl mx-auto ">
       <div className="text-center">
-      <h1 className="text-2xl font-bold mb-2 text-indigo-600">
+        <h1 className="text-2xl font-bold mb-2 text-indigo-600">
           {data.procedure.name}
         </h1>
       </div>
 
-      <div className="flex items-center gap-2">
-        <span className="text-sm font-medium text-gray-600">
-          {showSummary
-            ? "Review"
-            : `Question ${currentQuestionIndex + 1} of ${
-                data.snapshotMCQs.length
-              }`}
-        </span>
-
-        {!showSummary && (
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-6 w-6 rounded-full hover:bg-indigo-50"
-                >
-                  <Info className="h-4 w-4 text-indigo-500" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent className="bg-white border border-indigo-100 shadow-lg">
-                <p className="max-w-xs text-gray-700">
-                  Answer all questions correctly to proceed. You can watch the
-                  video for help.
-                </p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        )}
-      </div>
-
-      {!showSummary && (
-        <div className="relative h-1.5 bg-gray-100 rounded-full">
-          <motion.div
-            className="absolute top-0 left-0 h-full bg-indigo-600 rounded-full"
-            initial={{ width: 0 }}
-            animate={{ width: `${progressPercentage}%` }}
-            transition={{ duration: 0.3 }}
-          />
-        </div>
-      )}
-
       <Card className="overflow-hidden border border-gray-200 shadow-sm">
         <CardContent className="p-0">
+          <div className="flex items-center gap-2 px-6 pb-2 pt-4">
+            <span className="text-sm font-medium text-gray-600">
+              {showSummary
+                ? "Review"
+                : `Question ${currentQuestionIndex + 1} of ${
+                    data.snapshotMCQs.length
+                  }`}
+            </span>
+
+            {!showSummary && (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-6 w-6 rounded-full hover:bg-indigo-50"
+                    >
+                      <Info className="h-4 w-4 text-indigo-500" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent className="bg-white border border-indigo-100 shadow-lg">
+                    <p className="max-w-xs text-gray-700">
+                      Answer all questions correctly to proceed. You can watch
+                      the video for help.
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
+          </div>
+
+          {!showSummary && (
+            <div className="relative h-1.5 bg-gray-100 rounded-full mx-6 mb-4">
+              <motion.div
+                className="absolute top-0 left-0 h-full bg-indigo-600 rounded-full"
+                initial={{ width: 0 }}
+                animate={{ width: `${progressPercentage}%` }}
+                transition={{ duration: 0.3 }}
+              />
+            </div>
+          )}
           <form onSubmit={handleSubmit}>
-            <div className="p-6">
+            <div className="px-6 py-2">
               <div className="flex justify-end items-center mb-6">
                 <Button
                   type="button"
@@ -314,7 +313,7 @@ export default function ConsentFormContent({
                   size="sm"
                   onClick={handleSaveDraft}
                   disabled={isSavingDraft}
-                  className="text-indigo-700 border-indigo-300 hover:bg-indigo-50 hover:text-indigo-800"
+                  className="text-indigo-400 border-indigo-300 hover:bg-indigo-50 hover:text-indigo-500"
                 >
                   {isSavingDraft ? "Saving..." : "Save Progress"}
                 </Button>

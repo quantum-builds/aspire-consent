@@ -69,8 +69,8 @@ export function VideoQuestionViewer({
           }
         }}
       >
-        <DialogContent className="max-w-[90vw] lg:max-w-[1200px] w-full h-[70vh] p-0 overflow-hidden bg-white border-0 shadow-lg rounded-xl">
-          <DialogHeader className="p-6 pb-2">
+        <DialogContent className="max-w-[90vw] lg:max-w-[1200px] w-full h-[80vh] p-0 bg-white border-0 shadow-lg rounded-xl">
+          <DialogHeader className="p-6 pb-0">
             <DialogTitle className="text-xl font-bold text-indigo-700">
               Video Questions
             </DialogTitle>
@@ -79,9 +79,9 @@ export function VideoQuestionViewer({
             </DialogDescription>
           </DialogHeader>
           {data && selectedQuestion !== null ? (
-            <div className="grid grid-cols-1 md:grid-cols-3 h-full">
+            <div className="grid grid-cols-1 md:grid-cols-3 h-[calc(100%-80px)]">
               {/* Left panel - Current question and video */}
-              <div className="col-span-2 p-6 flex flex-col h-full overflow-hidden">
+              <div className="col-span-2 p-6 flex flex-col h-full">
                 <div className="mb-4">
                   <div className="flex items-center gap-2">
                     <h3 className="text-lg font-semibold text-gray-800">
@@ -111,11 +111,11 @@ export function VideoQuestionViewer({
                     {data[selectedQuestion].questionText}
                   </p>
                 </div>
-                <div className="flex-grow relative min-h-0 rounded-lg overflow-hidden border border-gray-200 shadow-sm">
+                <div className="flex-grow relative rounded-lg border border-gray-200 shadow-sm bg-gray-900 overflow-hidden">
                   <video
                     src={data[selectedQuestion].videoUrl}
                     controls
-                    className="w-full h-full object-contain bg-gray-900"
+                    className="w-full h-full object-contain"
                     onEnded={handleVideoEnded}
                   >
                     Your browser does not support the video tag.
@@ -129,12 +129,12 @@ export function VideoQuestionViewer({
                 </div>
               </div>
 
-              <div className="border-l border-gray-200 h-full overflow-hidden bg-gray-50">
-                <ScrollArea className="h-full">
+              <div className="border-l border-gray-200 h-full flex flex-col bg-gray-50">
+                <div className="p-4 border-b border-gray-200">
+                  <h3 className="font-medium text-gray-700">All Questions</h3>
+                </div>
+                <ScrollArea className="flex-1 h-[calc(100%-48px)]">
                   <div className="p-4">
-                    <h3 className="font-medium mb-3 text-gray-700">
-                      All Questions
-                    </h3>
                     <ul className="space-y-2">
                       {data.map((question, index) => (
                         <li key={question.id}>
