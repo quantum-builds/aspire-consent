@@ -7,10 +7,10 @@ export default function ConsentFormContentSkeleton() {
   return (
     <div className="flex flex-col gap-10 max-w-6xl mx-auto">
       {/* Logo Skeleton */}
-      <Skeleton className="h-10 w-36" />
+      {/* <Skeleton className="h-10 w-36" /> */}
 
       {/* Introduction Box Skeleton */}
-      <div className="py-10 px-10 bg-gray-100 rounded-lg shadow-sm border border-gray-200">
+      <div className="py-10 px-10 bg-gray-100 rounded-lg shadow-sm border border-gray-200 mt-22">
         <Skeleton className="h-6 w-3/4 mb-3" />
         <Skeleton className="h-6 w-full mb-3" />
         <Skeleton className="h-6 w-5/6" />

@@ -1,15 +1,15 @@
 import { Suspense } from "react";
-import ConsentForm from "@/app/consent-form/components/ConsentForm";
+import ConsentFormWrapper from "@/app/consent-form/components/ConsentFormWrapper";
 import ConsentFormContentSkeleton from "@/app/consent-form/components/ConsentFormContentSkeleton";
 
 type Params = Promise<{ slug: string }>;
 export default async function Page({ params }: { params: Params }) {
   const { slug } = await params;
   const token = decodeURIComponent(slug);
-  // console.log("token is ", token);
+
   return (
     <Suspense fallback={<ConsentFormContentSkeleton />}>
-      <ConsentForm token={token} />
+      <ConsentFormWrapper token={token} />
     </Suspense>
   );
 }
