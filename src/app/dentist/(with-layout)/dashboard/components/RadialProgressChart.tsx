@@ -84,11 +84,11 @@ export default function RadialProgressChart({
   };
 
   // Show error or empty state
-  if (!data || chartData.length === 0) {
+  if (!data || chartData.length === 0 || errorMessage) {
     return (
       <div className="w-full p-6 bg-white rounded-lg shadow-md h-full flex items-center justify-center">
         <p className="text-gray-500">
-          {errorMessage || "No consent form status data available"}
+          {"No consent form status data available"}
         </p>
       </div>
     );

@@ -102,12 +102,10 @@ export default function PatientBarChart({
   const yTicks = getYAxisTicks();
 
   // Fallback display when no data is available
-  if (!data) {
+  if (!data && errMessage) {
     return (
       <div className="w-full p-6 bg-white rounded-lg shadow-md h-full flex items-center justify-center">
-        <p className="text-gray-500">
-          {errMessage || "No consent form data available"}
-        </p>
+        <p className="text-gray-500">{"No consent form data available"}</p>
       </div>
     );
   }

@@ -77,7 +77,9 @@ export default function ConsentDataTable({
     return (
       <div className="rounded-md border p-5">
         <div className="flex items-center justify-center h-24">
-          <p className="text-center text-red-500">{errorMessage}</p>
+          <p className="text-center text-gray-500">
+            No consent form data available
+          </p>
         </div>
       </div>
     );

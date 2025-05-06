@@ -138,8 +138,8 @@ export default function DashboardCards({
     return (
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card className="col-span-4">
-          <CardContent className="pt-4 text-center text-red-500">
-            {errorMessage}
+          <CardContent className="pt-4 text-center text-gray-500">
+            No consent form data available
           </CardContent>
         </Card>
       </div>
