@@ -20,8 +20,6 @@ import {
 } from "@/services/consent-form/ConsentFomMutation";
 import { useRouter } from "next/navigation";
 import getPathAfterUploadsImages from "@/utils/getSplittedPath";
-import Image from "next/image";
-import { AspireConsentBlackLogo } from "@/asssets";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Card, CardContent } from "@/components/ui/card";
@@ -46,7 +44,6 @@ type ConsentFormContentProps = {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
 };
 
-// Animation variants
 const questionVariants = {
   enter: (direction: number) => ({
     x: direction > 0 ? 100 : -100,
@@ -70,18 +67,6 @@ const questionVariants = {
   }),
 };
 
-const optionVariants = {
-  initial: { opacity: 0, y: 10 },
-  animate: (index: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { delay: index * 0.08, duration: 0.3 },
-  }),
-  hover: { scale: 1.02, backgroundColor: "rgba(243, 244, 246, 1)" },
-  tap: { scale: 0.98 },
-  selected: { scale: 1.02, backgroundColor: "rgba(243, 244, 246, 1)" },
-};
-
 export default function ConsentFormContent({
   data,
   formId,
@@ -96,7 +81,7 @@ export default function ConsentFormContent({
     autoplay: boolean;
   } | null>(null);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [direction, setDirection] = useState(0); // 1 for forward, -1 for backward
+  const [direction, setDirection] = useState(0);
   const [showSummary, setShowSummary] = useState(false);
   const [jumpToSummary, setJumpToSummary] = useState(false);
   const [showWatchVideo, setShowWatchVideo] = useState(false);
@@ -268,137 +253,73 @@ export default function ConsentFormContent({
   }
 
   return (
-    <div className="flex flex-col gap-6 max-w-4xl mx-auto">
-      <div className="flex items-center justify-between">
-        <Image
-          src={AspireConsentBlackLogo || "/placeholder.svg"}
-          alt="Aspire Logo"
-          width={140}
-          height={50}
-          className="object-contain"
-          priority
-        />
-        <div className="text-sm text-gray-500">
-          Patient:{" "}
-          <span className="font-medium text-gray-700">
-            {data.patient.fullName}
-          </span>
-        </div>
+    <div className="flex flex-col gap-4 my-auto max-w-xl mx-auto ">
+      <div className="text-center">
+      <h1 className="text-2xl font-bold mb-2 text-indigo-600">
+          {data.procedure.name}
+        </h1>
       </div>
 
-      <Card className="overflow-hidden border-none shadow-lg">
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-6">
-          <h1 className="text-2xl font-bold mb-2">
-            Consent Form: {data.procedure.name}
-          </h1>
-          <p className="opacity-90">
-            Please complete this short quiz to understand your procedure better.
-            Watch the videos if you need help.
-          </p>
-        </div>
+      <div className="flex items-center gap-2">
+        <span className="text-sm font-medium text-gray-600">
+          {showSummary
+            ? "Review"
+            : `Question ${currentQuestionIndex + 1} of ${
+                data.snapshotMCQs.length
+              }`}
+        </span>
 
-        <div className="relative h-1.5 bg-gray-100">
+        {!showSummary && (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6 rounded-full hover:bg-indigo-50"
+                >
+                  <Info className="h-4 w-4 text-indigo-500" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent className="bg-white border border-indigo-100 shadow-lg">
+                <p className="max-w-xs text-gray-700">
+                  Answer all questions correctly to proceed. You can watch the
+                  video for help.
+                </p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        )}
+      </div>
+
+      {!showSummary && (
+        <div className="relative h-1.5 bg-gray-100 rounded-full">
           <motion.div
-            className="absolute top-0 left-0 h-full bg-blue-600"
+            className="absolute top-0 left-0 h-full bg-indigo-600 rounded-full"
             initial={{ width: 0 }}
             animate={{ width: `${progressPercentage}%` }}
             transition={{ duration: 0.3 }}
           />
         </div>
+      )}
 
+      <Card className="overflow-hidden border border-gray-200 shadow-sm">
         <CardContent className="p-0">
           <form onSubmit={handleSubmit}>
             <div className="p-6">
-              {/* Progress indicator */}
-              <div className="flex justify-between items-center mb-8">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium text-gray-600">
-                    {showSummary
-                      ? "Review"
-                      : `Question ${currentQuestionIndex + 1} of ${
-                          data.snapshotMCQs.length
-                        }`}
-                  </span>
-
-                  {!showSummary && (
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-6 w-6 rounded-full"
-                          >
-                            <Info className="h-4 w-4 text-gray-500" />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p className="max-w-xs">
-                            Answer all questions correctly to proceed. You can
-                            watch the video for help.
-                          </p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  )}
-                </div>
-
-                <div className="flex gap-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={handleSaveDraft}
-                    disabled={isSavingDraft}
-                    className="text-xs cursor-pointer"
-                  >
-                    {isSavingDraft ? "Saving..." : "Save Progress"}
-                  </Button>
-                </div>
+              <div className="flex justify-end items-center mb-6">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleSaveDraft}
+                  disabled={isSavingDraft}
+                  className="text-indigo-700 border-indigo-300 hover:bg-indigo-50 hover:text-indigo-800"
+                >
+                  {isSavingDraft ? "Saving..." : "Save Progress"}
+                </Button>
               </div>
 
-              {/* Question navigation dots */}
-              {/* <div className="flex justify-center gap-1.5 mb-8">
-                {data.snapshotMCQs.map((mcq, index) => (
-                  <button
-                    key={mcq.id}
-                    type="button"
-                    onClick={() => {
-                      setDirection(index > currentQuestionIndex ? 1 : -1);
-                      setCurrentQuestionIndex(index);
-                      setShowSummary(false);
-                    }}
-                    className={`relative h-2.5 w-2.5 rounded-full transition-all ${
-                      index === currentQuestionIndex && !showSummary
-                        ? "bg-blue-600 scale-125"
-                        : answers[mcq.id]
-                        ? answerStatus[mcq.id]
-                          ? "bg-green-500"
-                          : "bg-red-500"
-                        : "bg-gray-300"
-                    }`}
-                    aria-label={`Go to question ${index + 1}`}
-                  >
-                    {answers[mcq.id] && (
-                      <span
-                        className={`absolute -top-1 -right-1 h-2 w-2 rounded-full ${
-                          answerStatus[mcq.id] ? "bg-green-500" : "bg-red-500"
-                        }`}
-                      />
-                    )}
-                  </button>
-                ))}
-                <button
-                  type="button"
-                  onClick={() => setShowSummary(true)}
-                  className={`h-2.5 w-2.5 rounded-full transition-all ${
-                    showSummary ? "bg-blue-600 scale-125" : "bg-gray-300"
-                  }`}
-                  aria-label="Review answers"
-                />
-              </div> */}
-
-              {/* Animated question container */}
               <div className="relative min-h-[400px]">
                 <AnimatePresence mode="wait" custom={direction}>
                   {showSummary ? (
@@ -446,7 +367,7 @@ export default function ConsentFormContent({
                                   setShowSummary(false);
                                   setJumpToSummary(true);
                                 }}
-                                className="text-xs"
+                                className="text-indigo-600 hover:bg-indigo-50"
                               >
                                 Edit
                               </Button>
@@ -466,18 +387,18 @@ export default function ConsentFormContent({
                       </div>
 
                       {/* Consent checkbox */}
-                      <div className="p-5 border border-gray-200 rounded-lg bg-blue-50 mt-8">
+                      <div className="p-5 border border-indigo-200 rounded-lg bg-indigo-50 mt-8">
                         <div className="flex items-start gap-3">
                           <div
                             className={`mt-0.5 w-5 h-5 border rounded flex-shrink-0 flex items-center justify-center cursor-pointer ${
                               consent
-                                ? "border-[#5353FF] bg-blue-100"
+                                ? "border-indigo-600 bg-indigo-100"
                                 : "border-gray-300 bg-white"
                             }`}
                             onClick={() => setConsent(!consent)}
                           >
                             {consent && (
-                              <Check className="w-4 h-4 text-[#5353FF]" />
+                              <Check className="w-4 h-4 text-indigo-600" />
                             )}
                           </div>
                           <label
@@ -485,7 +406,7 @@ export default function ConsentFormContent({
                             onClick={() => setConsent(!consent)}
                           >
                             I understand the information provided about{" "}
-                            <span className="font-medium">
+                            <span className="font-medium text-indigo-700">
                               {data.procedure.name}
                             </span>{" "}
                             and consent to the treatment.
@@ -511,62 +432,36 @@ export default function ConsentFormContent({
                         onValueChange={(value) =>
                           handleAnswerSelect(currentMcq.id, value)
                         }
-                        className="space-y-4"
+                        className="space-y-3"
                       >
                         {currentMcq.options.map((option, index) => {
                           const letter = String.fromCharCode(65 + index);
                           const isSelected = answers[currentMcq.id] === option;
-                          // const isCorrect =
-                          //   isSelected && answerStatus[currentMcq.id];
-                          // const isIncorrect =
-                          //   isSelected && !answerStatus[currentMcq.id];
 
                           return (
-                            //  ${
-                            //     isSelected
-                            //       ? isCorrect
-                            //         ? "border-green-500 bg-green-50 ring-1 ring-green-500"
-                            //         : isIncorrect
-                            //         ? "border-red-500 bg-red-50 ring-1 ring-red-500"
-                            //         : "border-gray-300"
-                            //       :
-                            //   } "
                             <motion.div
                               key={`${currentMcq.id}-${option}`}
                               custom={index}
-                              variants={optionVariants}
                               initial="initial"
                               animate="animate"
                               whileHover={!isSelected ? "hover" : undefined}
                               whileTap="tap"
-                              className={`relative overflow-hidden rounded-lg border transition-all border-gray-300 hover:border-gray-400`}
+                              className={`relative overflow-hidden rounded-lg border transition-all ${
+                                isSelected
+                                  ? "border-indigo-300 bg-indigo-50 ring-1 ring-indigo-200"
+                                  : "border-gray-300 hover:border-indigo-300 bg-white"
+                              }`}
                             >
-                              {/* {isSelected && (
-                                <motion.div
-                                  initial={{ opacity: 0 }}
-                                  animate={{ opacity: 0.05 }}
-                                  className={`absolute inset-0 ${
-                                    isCorrect
-                                      ? "bg-green-500"
-                                      : isIncorrect
-                                      ? "bg-red-500"
-                                      : "bg-gray-500"
-                                  }`}
-                                />
-                              )} */}
                               <label
                                 htmlFor={`${currentMcq.id}-${option}`}
                                 className="flex items-center gap-4 p-4 cursor-pointer relative z-10"
                               >
-                                {/* {isSelected
-                                  ? isCorrect
-                                    ? "bg-green-500"
-                                    : isIncorrect
-                                    ? "bg-red-500"
-                                    : "bg-blue-500"
-                                  : ""} */}
                                 <div
-                                  className={`flex items-center justify-center w-8 h-8 rounded-full text-white font-medium  bg-gray-200 text-gray-700`}
+                                  className={`flex items-center justify-center w-8 h-8 rounded-full font-medium ${
+                                    isSelected
+                                      ? "bg-indigo-600 text-white"
+                                      : "bg-indigo-100 text-indigo-700"
+                                  }`}
                                 >
                                   {letter}
                                 </div>
@@ -580,11 +475,7 @@ export default function ConsentFormContent({
                                 </span>
                                 {isSelected && (
                                   <div className="flex-shrink-0">
-                                    {/* {isCorrect ? ( */}
-                                    <Check className="h-5 w-5 text-green-600" />
-                                    {/* ) : ( */}
-                                    {/* <X className="h-5 w-5 text-red-600" /> */}
-                                    {/* )} */}
+                                    <Check className="h-5 w-5 text-indigo-600" />
                                   </div>
                                 )}
                               </label>
@@ -592,41 +483,6 @@ export default function ConsentFormContent({
                           );
                         })}
                       </RadioGroup>
-
-                      {/* {answers[currentMcq.id] &&
-                        !answerStatus[currentMcq.id] && (
-                          <motion.div
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="mt-4 p-3 bg-red-50 border border-red-100 rounded-md text-red-700 text-sm flex items-start gap-2"
-                          >
-                            <AlertCircle className="h-5 w-5 flex-shrink-0 mt-0.5" />
-                            <div>
-                              <p className="font-medium">Incorrect answer</p>
-                              <p className="text-red-600 mt-1">
-                                Please try again or watch the video for more
-                                information.
-                              </p>
-                            </div>
-                          </motion.div>
-                        )} */}
-
-                      {/* {answers[currentMcq.id] &&
-                        answerStatus[currentMcq.id] && (
-                          <motion.div
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="mt-4 p-3 bg-green-50 border border-green-100 rounded-md text-green-700 text-sm flex items-start gap-2"
-                          >
-                            <CheckCircle2 className="h-5 w-5 flex-shrink-0 mt-0.5" />
-                            <div>
-                              <p className="font-medium">Correct!</p>
-                              <p className="text-green-600 mt-1">
-                                You can proceed to the next question.
-                              </p>
-                            </div>
-                          </motion.div>
-                        )} */}
 
                       {currentVideo?.mcqId === currentMcq.id && (
                         <motion.div
@@ -660,7 +516,7 @@ export default function ConsentFormContent({
               </div>
             </div>
 
-            <Separator />
+            <Separator className="bg-gray-200" />
 
             {/* Footer with navigation */}
             <div className="p-6 bg-gray-50">
@@ -677,7 +533,7 @@ export default function ConsentFormContent({
                       type="button"
                       variant="outline"
                       size="sm"
-                      className="flex items-center gap-2 cursor-pointer"
+                      className="flex items-center gap-2 text-indigo-700 border-indigo-300 hover:bg-indigo-50"
                       onClick={() => setIsOpen(true)}
                     >
                       <Play className="w-4 h-4" />
@@ -692,7 +548,7 @@ export default function ConsentFormContent({
                     variant="outline"
                     onClick={goToPrevQuestion}
                     disabled={isFirstQuestion && !showSummary}
-                    className="flex items-center gap-2 cursor-pointer"
+                    className="flex items-center gap-2 text-gray-700 border-gray-300 hover:bg-gray-100"
                   >
                     <ChevronLeft className="w-4 h-4" />
                     {showSummary ? "Back to Questions" : "Previous"}
@@ -701,7 +557,7 @@ export default function ConsentFormContent({
                   {showSummary ? (
                     <Button
                       type="submit"
-                      className="cursor-pointer bg-[#5353FF] hover:bg-[#698AFF]"
+                      className="bg-indigo-600 hover:bg-indigo-700 text-white"
                       disabled={!allCorrect || !consent || isSubmitting}
                     >
                       {isSubmitting ? "Submitting..." : "Submit Form"}
@@ -711,7 +567,7 @@ export default function ConsentFormContent({
                       type="button"
                       onClick={goToNextQuestion}
                       disabled={!answers[currentMcq.id]}
-                      className="flex items-center gap-2 cursor-pointer bg-[#5353FF] hover:bg-[#698AFF]"
+                      className="bg-indigo-600 hover:bg-indigo-700 text-white"
                     >
                       {isLastQuestion || jumpToSummary
                         ? "Review Answers"

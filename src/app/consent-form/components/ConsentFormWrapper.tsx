@@ -28,7 +28,7 @@ export default async function ConsentFormWrapper({
   console.log(consentForm?.snapshotMCQs);
 
   return (
-    <div className="p-6 md:p-12">
+    <div className="p-6 md:p-12 bg-indigo-50 min-h-screen">
       {/* <Header showSearch={false} /> */}
       {errorMessage ? (
         <div className="max-w-2xl mx-auto p-4 bg-white rounded-lg shadow-sm border border-gray-200 mt-8">
