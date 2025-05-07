@@ -249,7 +249,7 @@ export default function ConsentFormContent({
   };
 
   if (!data || !currentMcq) {
-    return <div className="p-6 text-center">Loading consent form...</div>;
+    return <div className="p-6 text-center">No Questionnaires Added</div>;
   }
 
   return (
@@ -278,7 +278,7 @@ export default function ConsentFormContent({
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-6 w-6 rounded-full hover:bg-indigo-50"
+                      className="h-6 w-6 rounded-full hover:bg-indigo-50 cursor-pointer"
                     >
                       <Info className="h-4 w-4 text-indigo-500" />
                     </Button>
@@ -313,7 +313,7 @@ export default function ConsentFormContent({
                   size="sm"
                   onClick={handleSaveDraft}
                   disabled={isSavingDraft}
-                  className="text-indigo-400 border-indigo-300 hover:bg-indigo-50 hover:text-indigo-500"
+                  className="text-indigo-400 border-indigo-300 hover:bg-indigo-50 hover:text-indigo-500 cursor-pointer"
                 >
                   {isSavingDraft ? "Saving..." : "Save Progress"}
                 </Button>
@@ -366,7 +366,7 @@ export default function ConsentFormContent({
                                   setShowSummary(false);
                                   setJumpToSummary(true);
                                 }}
-                                className="text-indigo-600 hover:bg-indigo-50"
+                                className="text-indigo-600 hover:bg-indigo-50 cursor-pointer"
                               >
                                 Edit
                               </Button>
@@ -532,7 +532,7 @@ export default function ConsentFormContent({
                       type="button"
                       variant="outline"
                       size="sm"
-                      className="flex items-center gap-2 text-indigo-700 border-indigo-300 hover:bg-indigo-50"
+                      className="flex items-center gap-2 text-indigo-700 border-indigo-300 hover:bg-indigo-50 cursor-pointer"
                       onClick={() => setIsOpen(true)}
                     >
                       <Play className="w-4 h-4" />
@@ -547,7 +547,7 @@ export default function ConsentFormContent({
                     variant="outline"
                     onClick={goToPrevQuestion}
                     disabled={isFirstQuestion && !showSummary}
-                    className="flex items-center gap-2 text-gray-700 border-gray-300 hover:bg-gray-100"
+                    className="flex items-center gap-2 text-gray-700 border-gray-300 hover:bg-gray-100 cursor-pointer"
                   >
                     <ChevronLeft className="w-4 h-4" />
                     {showSummary ? "Back to Questions" : "Previous"}
@@ -556,7 +556,7 @@ export default function ConsentFormContent({
                   {showSummary ? (
                     <Button
                       type="submit"
-                      className="bg-indigo-600 hover:bg-indigo-700 text-white"
+                      className="bg-indigo-600 hover:bg-indigo-700 text-white cursor-pointer"
                       disabled={!allCorrect || !consent || isSubmitting}
                     >
                       {isSubmitting ? "Submitting..." : "Submit Form"}
@@ -566,7 +566,7 @@ export default function ConsentFormContent({
                       type="button"
                       onClick={goToNextQuestion}
                       disabled={!answers[currentMcq.id]}
-                      className="bg-indigo-600 hover:bg-indigo-700 text-white"
+                      className="bg-indigo-600 hover:bg-indigo-700 text-white cursor-pointer"
                     >
                       {isLastQuestion || jumpToSummary
                         ? "Review Answers"

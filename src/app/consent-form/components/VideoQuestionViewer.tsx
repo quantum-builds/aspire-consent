@@ -69,7 +69,7 @@ export function VideoQuestionViewer({
           }
         }}
       >
-        <DialogContent className="max-w-[90vw] lg:max-w-[1200px] w-full h-[80vh] p-0 bg-white border-0 shadow-lg rounded-xl">
+        <DialogContent className="max-w-[90vw] lg:max-w-[1200px] w-full max-h-[90vh] h-[80vh] p-0 bg-white border-0 shadow-lg rounded-xl overflow-hidden">
           <DialogHeader className="p-6 pb-0">
             <DialogTitle className="text-xl font-bold text-indigo-700">
               Video Questions
@@ -79,9 +79,9 @@ export function VideoQuestionViewer({
             </DialogDescription>
           </DialogHeader>
           {data && selectedQuestion !== null ? (
-            <div className="grid grid-cols-1 md:grid-cols-3 h-[calc(100%-80px)]">
+            <div className="grid grid-cols-1 md:grid-cols-3 h-[calc(100%-80px)] min-h-0">
               {/* Left panel - Current question and video */}
-              <div className="col-span-2 p-6 flex flex-col h-full">
+              <div className="col-span-2 p-6 flex flex-col h-full min-h-0">
                 <div className="mb-4">
                   <div className="flex items-center gap-2">
                     <h3 className="text-lg font-semibold text-gray-800">
@@ -93,7 +93,7 @@ export function VideoQuestionViewer({
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-6 w-6 rounded-full hover:bg-indigo-50"
+                            className="h-6 w-6 rounded-full hover:bg-indigo-50 cursor-pointer"
                           >
                             <Info className="h-4 w-4 text-indigo-500" />
                           </Button>
@@ -111,7 +111,7 @@ export function VideoQuestionViewer({
                     {data[selectedQuestion].questionText}
                   </p>
                 </div>
-                <div className="flex-grow relative rounded-lg border border-gray-200 shadow-sm bg-gray-900 overflow-hidden">
+                <div className="flex-grow min-h-0 relative rounded-lg border border-gray-200 shadow-sm bg-gray-900 overflow-hidden">
                   <video
                     src={data[selectedQuestion].videoUrl}
                     controls
@@ -129,7 +129,7 @@ export function VideoQuestionViewer({
                 </div>
               </div>
 
-              <div className="border-l border-gray-200 h-full flex flex-col bg-gray-50">
+              <div className="border-l border-gray-200 h-full flex flex-col bg-gray-50 min-h-0">
                 <div className="p-4 border-b border-gray-200">
                   <h3 className="font-medium text-gray-700">All Questions</h3>
                 </div>
@@ -141,7 +141,7 @@ export function VideoQuestionViewer({
                           <button
                             onClick={() => setSelectedQuestion(index)}
                             className={cn(
-                              "w-full text-left p-3 rounded-lg transition-colors",
+                              "w-full text-left p-3 rounded-lg transition-colors cursor-pointer",
                               selectedQuestion === index
                                 ? "bg-indigo-100 border border-indigo-200"
                                 : "bg-white border border-gray-200 hover:border-indigo-200 hover:bg-indigo-50"
@@ -195,13 +195,13 @@ export function VideoQuestionViewer({
           <DialogFooter className="mt-6 gap-3">
             <Button
               variant="outline"
-              className="border-gray-300 text-gray-700 hover:bg-gray-100"
+              className="border-gray-300 text-gray-700 hover:bg-gray-100 cursor-pointer"
               onClick={() => setShowConfirmation(false)}
             >
               Continue Watching
             </Button>
             <Button
-              className="bg-indigo-600 hover:bg-indigo-700 text-white"
+              className="bg-indigo-600 hover:bg-indigo-700 text-white cursor-pointer"
               onClick={() => {
                 setShowConfirmation(false);
                 setIsOpen(false);

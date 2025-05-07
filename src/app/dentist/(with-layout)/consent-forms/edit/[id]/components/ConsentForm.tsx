@@ -740,7 +740,11 @@ export default function ConsentForm({ data, formId }: ConsentFormProps) {
                 >
                   + Add New Question
                 </Button>
-                <Button type="submit" disabled={!isDirty || isSubmittingForm}>
+                <Button
+                  type="submit"
+                  disabled={!isDirty || isSubmittingForm}
+                  className="bg-[#698AFF] hover:bg-bg-[#698AFF]"
+                >
                   {isSubmittingForm ? (
                     <span className="flex items-center gap-2">
                       <span className="animate-spin">↻</span>
