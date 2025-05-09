@@ -50,22 +50,14 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
+import { FilterType } from "@/types/common";
+import { formatDate, formatDateTimeLocal } from "@/utils/dateFormatter";
 
 interface DataTableProps {
   data: TConsentForm[] | null;
   error?: string;
   isLoading?: boolean;
 }
-
-type FilterType = {
-  patientEmail: string;
-  procedureName: string;
-  status: string;
-  createdDateStart: Date | null;
-  createdDateEnd: Date | null;
-  expiryDateStart: Date | null;
-  expiryDateEnd: Date | null;
-};
 
 export default function DataTable({
   data,
@@ -259,15 +251,7 @@ export default function DataTable({
     startIndex,
     startIndex + itemsPerPage
   );
-
   // Format date function
-  const formatDate = (date: Date) => {
-    return new Date(date).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-  };
 
   const getStatusClasses = (status: string) => {
     switch (status.toLowerCase()) {
@@ -290,11 +274,6 @@ export default function DataTable({
   ).length;
 
   // Add this function to your component (outside the return statement)
-  const formatDateTimeLocal = (date: Date) => {
-    const d = new Date(date);
-    d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
-    return d.toISOString().slice(0, 16);
-  };
 
   return (
     <div className="space-y-4">
@@ -389,10 +368,7 @@ export default function DataTable({
                   )}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent
-                className="w-[480px] p-4 absolute -right-5"
-                align="start"
-              >
+              <PopoverContent className="w-[480px] p-4" align="end">
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <h3 className="font-medium">Filter Consent Forms</h3>
@@ -441,7 +417,6 @@ export default function DataTable({
                         <SelectValue placeholder="Select status" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="ALL">All statuses</SelectItem>
                         <SelectItem value="PENDING">Pending</SelectItem>
                         <SelectItem value="IN_PROGRESS">In Progress</SelectItem>
                         <SelectItem value="COMPLETED">Completed</SelectItem>

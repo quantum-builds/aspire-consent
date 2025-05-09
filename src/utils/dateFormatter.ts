@@ -17,3 +17,17 @@ export const formatDateForInput = (
 
   return `${year}-${month}-${day}T${hours}:${minutes}`;
 };
+
+export const formatDate = (date: Date) => {
+  return new Date(date).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+};
+
+export const formatDateTimeLocal = (date: Date) => {
+  const d = new Date(date);
+  d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+  return d.toISOString().slice(0, 16);
+};

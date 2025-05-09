@@ -43,3 +43,13 @@ export type TPdfData = {
     time: Date;
   }[];
 };
+
+export type FilterType = {
+  patientEmail: string;
+  procedureName: string;
+  status?: string;
+  createdDateStart: Date | null;
+  createdDateEnd: Date | null;
+  expiryDateStart: Date | null;
+  expiryDateEnd: Date | null;
+};
