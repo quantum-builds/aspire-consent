@@ -1,0 +1,11 @@
+{
+  "routes": [
+    {
+      "src": "/api/.*",
+      "dest": "/api",
+      "headers": {
+        "Strict-Transport-Security": "max-age=0"
+      }
+    }
+  ]
+}
