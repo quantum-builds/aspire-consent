@@ -2,9 +2,6 @@ import prisma from "@/lib/db";
 import { NextResponse } from "next/server";
 
 export async function GET() {
-  // const mcq = await prisma.mCQ.findMany({});
-  // console.log(mcq);
-  // return NextResponse.json("Hello from Vercel!");
   const now = new Date();
 
   try {
@@ -19,7 +16,7 @@ export async function GET() {
         status: "EXPIRED",
       },
     });
-
+    console.log("updated ", updated);
     return NextResponse.json({ updated: updated.count });
   } catch (error) {
     console.error(error);
