@@ -81,7 +81,7 @@ export function DashboardSkeleton() {
 
         {/* Tabs */}
         <div className="flex gap-2 mb-6">
-          {["Completed", "Pending", "In Progress & Expired"].map((tab) => (
+          {["Completed", "Pending", "In Progress"].map((tab) => (
             <Skeleton key={tab} className="h-12 w-32 rounded-full" />
           ))}
         </div>

@@ -78,9 +78,7 @@ export default function ProgressExpiryTable({
             </TableHead>
             <TableHead className="text-lg font-semibold">Procedure</TableHead>
             <TableHead className="text-lg font-semibold">Status</TableHead>
-            <TableHead className="text-lg font-semibold">
-              Expires/Expired At
-            </TableHead>
+            <TableHead className="text-lg font-semibold">Expired At</TableHead>
             <TableHead className="text-lg font-semibold">Progress</TableHead>
             <TableHead className="text-lg font-semibold">Action</TableHead>
           </TableRow>

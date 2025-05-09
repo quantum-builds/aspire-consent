@@ -148,7 +148,7 @@ export default function ConsentDataTable({
       data-[state=active]:bg-[#B15EFF] data-[state=active]:text-white
       data-[state=inactive]:hover:bg-gray-200 data-[state=inactive]:hover:text-[#00000080]"
             >
-              In Progress & Expired ({activeAndExpiredForms.length})
+              In Progress ({activeAndExpiredForms.length})
             </TabsTrigger>
           </TabsList>
 
