@@ -85,7 +85,6 @@ export async function getConsentTableData(
   practiceId: string
 ) {
   try {
-    console.log("practice id in query is ", practiceId);
     const response = await axiosInstance.get(
       ENDPOINTS.dentistDashboardConsentTable.getdashboardConsentTable(
         practiceId
@@ -96,11 +95,8 @@ export async function getConsentTableData(
         },
       }
     );
-    // console.log("response is ", response.data);
     return response.data;
   } catch (error) {
-    // console.error("Error fetching consent forms for table:", error);
-    // throw error;
     if (axios.isAxiosError(error) && error.response) {
       return error.response.data;
     } else {

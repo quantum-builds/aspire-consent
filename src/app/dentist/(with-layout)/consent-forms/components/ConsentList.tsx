@@ -300,7 +300,7 @@ export default function DataTable({
     <div className="space-y-4">
       <div className="rounded-md border p-5 flex flex-col gap-5 relative">
         <div className="flex items-center justify-between mt-4">
-          <div className="flex items-center justify-end gap-2 w-full px-6">
+          <div className="flex items-center justify-end gap-2 w-full">
             {activeFilterCount > 0 && (
               <div className="flex flex-wrap gap-2 mt-2">
                 {filters.patientEmail && (
@@ -383,7 +383,7 @@ export default function DataTable({
                   <Filter className="h-4 w-4" />
                   Filters
                   {activeFilterCount > 0 && (
-                    <Badge className="ml-1 bg-primary text-white">
+                    <Badge className="ml-1 bg-[#698AFF] text-white">
                       {activeFilterCount}
                     </Badge>
                   )}
@@ -531,7 +531,7 @@ export default function DataTable({
                     </div>
                   </div>
                   <Button
-                    className="w-full mt-4"
+                    className="w-full mt-4 bg-[#698AFF]"
                     onClick={() => setIsFilterOpen(false)}
                   >
                     Apply Filters
