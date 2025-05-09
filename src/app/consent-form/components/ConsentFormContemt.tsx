@@ -471,47 +471,51 @@ export default function ConsentFormContent({
               )}
             </div>
 
-            <div className="flex gap-3">
+            <div className="flex flex-col items-center justify-center md:justify-end md:flex-row gap-3 w-full">
               <Button
                 type="button"
                 variant="outline"
                 size="sm"
                 onClick={handleSaveDraft}
                 disabled={isSavingDraft}
-                className="text-indigo-600 border-indigo-300 hover:bg-indigo-50"
+                className="text-indigo-600 border-indigo-300 hover:bg-indigo-50 order-2 md:order-1"
               >
                 {isSavingDraft ? "Saving..." : "Save Progress"}
               </Button>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={goToPrevQuestion}
-                disabled={isFirstQuestion && !showSummary}
-                className="flex items-center gap-2 text-gray-700 border-gray-300 hover:bg-gray-100"
-              >
-                <ChevronLeft className="w-4 h-4" />
-                {showSummary ? "Back to Questions" : "Previous"}
-              </Button>
-
-              {showSummary ? (
-                <Button
-                  type="submit"
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white"
-                  disabled={!allCorrect || !consent || isSubmitting}
-                >
-                  {isSubmitting ? "Submitting..." : "Submit Form"}
-                </Button>
-              ) : (
+              <div className="flex gap-3 order-1 md:order-2">
                 <Button
                   type="button"
-                  onClick={goToNextQuestion}
-                  disabled={!answers[currentMcq.id]}
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white"
+                  variant="outline"
+                  onClick={goToPrevQuestion}
+                  disabled={isFirstQuestion && !showSummary}
+                  className="flex items-center gap-2 text-gray-700 border-gray-300 hover:bg-gray-100"
                 >
-                  {isLastQuestion || jumpToSummary ? "Review Answers" : "Next"}
-                  <ChevronRight className="w-4 h-4 ml-2" />
+                  <ChevronLeft className="w-4 h-4" />
+                  {showSummary ? "Back to Questions" : "Previous"}
                 </Button>
-              )}
+
+                {showSummary ? (
+                  <Button
+                    type="submit"
+                    className="bg-indigo-600 hover:bg-indigo-700 text-white"
+                    disabled={!allCorrect || !consent || isSubmitting}
+                  >
+                    {isSubmitting ? "Submitting..." : "Submit Form"}
+                  </Button>
+                ) : (
+                  <Button
+                    type="button"
+                    onClick={goToNextQuestion}
+                    disabled={!answers[currentMcq.id]}
+                    className="bg-indigo-600 hover:bg-indigo-700 text-white"
+                  >
+                    {isLastQuestion || jumpToSummary
+                      ? "Review Answers"
+                      : "Next"}
+                    <ChevronRight className="w-4 h-4 ml-2" />
+                  </Button>
+                )}
+              </div>
             </div>
           </div>
         </form>

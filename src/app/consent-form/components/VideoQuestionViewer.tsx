@@ -106,7 +106,7 @@ export function VideoQuestionViewer({
           Move to Questions
         </Button>
       </div> */}
-      <main className="container mx-auto px-4 py-2 flex-grow flex flex-col lg:flex-row gap-6">
+      <main className="container mx-auto py-2 flex-grow flex flex-col lg:flex-row gap-6">
         {data ? (
           <>
             <div className="flex flex-col gap-6">
@@ -261,7 +261,7 @@ export function VideoQuestionViewer({
                     {/* </div> */}
 
                     {/* <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-4"> */}
-                    <div className="flex justify-between items-center">
+                    <div className="flex flex-col md:flex-row gap-3 justify-between items-center">
                       <div className="flex-1" />
                       <div className="flex items-center justify-center gap-2 flex-1">
                         {data.snapshotMCQs.map((_, index) => (
@@ -285,49 +285,52 @@ export function VideoQuestionViewer({
                         ))}
                       </div>
 
-                      <div className="flex-1 flex flex-row items-center gap-4 justify-end">
+                      <div className="flex-1 flex flex-col md:flex-row items-center gap-4 justify-end">
                         {/* <div className="container mx-auto px-4 py-2 flex justify-end"> */}
                         <Button
                           variant="outline"
                           onClick={handleMoveToQuestions}
-                          className="bg-indigo-600 hover:bg-indigo-700 text-white hover:text-white cursor-pointer"
+                          className="bg-indigo-600 hover:bg-indigo-700 text-white hover:text-white cursor-pointer order-3 md:order-1"
                         >
                           Move to Questions
                         </Button>
                         {/* </div> */}
-                        <Button
-                          variant="outline"
-                          disabled={currentVideoIndex === 0}
-                          onClick={() => {
-                            setCurrentVideoIndex((prev) =>
-                              Math.max(0, prev - 1)
-                            );
-                            if (isPlaying) {
-                              setTimeout(() => videoRef.current?.play(), 100);
+                        <div className="flex gap-1 md:gap-3 order-1 md:order-2">
+                          <Button
+                            variant="outline"
+                            disabled={currentVideoIndex === 0}
+                            className="order-1 md:order-2"
+                            onClick={() => {
+                              setCurrentVideoIndex((prev) =>
+                                Math.max(0, prev - 1)
+                              );
+                              if (isPlaying) {
+                                setTimeout(() => videoRef.current?.play(), 100);
+                              }
+                            }}
+                          >
+                            <ChevronLeft className="w-2 h-4" />
+                            Previous Video
+                          </Button>
+                          <Button
+                            variant="outline"
+                            disabled={
+                              currentVideoIndex === data.snapshotMCQs.length - 1
                             }
-                          }}
-                        >
-                          <ChevronLeft className="w-4 h-4" />
-                          Previous Video
-                        </Button>
-                        <Button
-                          variant="outline"
-                          disabled={
-                            currentVideoIndex === data.snapshotMCQs.length - 1
-                          }
-                          onClick={() => {
-                            setCurrentVideoIndex((prev) =>
-                              Math.min(data.snapshotMCQs.length - 1, prev + 1)
-                            );
-                            if (isPlaying) {
-                              setTimeout(() => videoRef.current?.play(), 100);
-                            }
-                          }}
-                          className="bg-indigo-600 text-white"
-                        >
-                          Next Video
-                          <ChevronRight className="w-4 h-4 " />
-                        </Button>
+                            className="order-2 md:order-3 bg-indigo-600 text-white"
+                            onClick={() => {
+                              setCurrentVideoIndex((prev) =>
+                                Math.min(data.snapshotMCQs.length - 1, prev + 1)
+                              );
+                              if (isPlaying) {
+                                setTimeout(() => videoRef.current?.play(), 100);
+                              }
+                            }}
+                          >
+                            Next Video
+                            <ChevronRight className="w-2 h-4 " />
+                          </Button>
+                        </div>
                       </div>
                     </div>
                   </div>
