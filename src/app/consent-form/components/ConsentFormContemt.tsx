@@ -248,7 +248,7 @@ export default function ConsentFormContent({
   }
 
   return (
-    <div className="flex flex-col items-center justify-center ">
+    <div className="flex flex-col items-center justify-center min-h-screen 2xl:pt-12">
       {/* Main content */}
       <main className="flex-1 p-6 max-w-4xl mx-auto w-full flex flex-col gap-5">
         <form onSubmit={handleSubmit} className="h-full flex flex-col">
@@ -475,6 +475,16 @@ export default function ConsentFormContent({
               <Button
                 type="button"
                 variant="outline"
+                size="sm"
+                onClick={handleSaveDraft}
+                disabled={isSavingDraft}
+                className="text-indigo-600 border-indigo-300 hover:bg-indigo-50"
+              >
+                {isSavingDraft ? "Saving..." : "Save Progress"}
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
                 onClick={goToPrevQuestion}
                 disabled={isFirstQuestion && !showSummary}
                 className="flex items-center gap-2 text-gray-700 border-gray-300 hover:bg-gray-100"
@@ -536,17 +546,6 @@ export default function ConsentFormContent({
                 </TooltipProvider>
               )}
             </div>
-
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={handleSaveDraft}
-              disabled={isSavingDraft}
-              className="text-indigo-600 border-indigo-300 hover:bg-indigo-50"
-            >
-              {isSavingDraft ? "Saving..." : "Save Progress"}
-            </Button>
           </div>
 
           {!showSummary && (

@@ -102,9 +102,14 @@ export default function ConsentDataTable({
     <div className="space-y-4">
       <div className="rounded-md border p-5 flex flex-col gap-5">
         <div className="flex justify-between">
-          <h2 className="text-xl xl:text-2xl font-medium text-gray-800">
-            Consents
-          </h2>
+          <div>
+            <h2 className="text-xl xl:text-2xl font-medium text-gray-800">
+              Consents
+            </h2>
+            <p className="text-sm text-gray-500 mt-1">
+              The following forms will expire within the next 7 days.
+            </p>
+          </div>
           <div className="relative w-full max-w-lg">
             <Search className="absolute left-2.5 top-4 h-4 w-4 text-gray-500" />
             <Input

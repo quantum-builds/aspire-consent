@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import ConsentFormWrapper from "@/app/consent-form/components/ConsentFormWrapper";
-import ConsentFormContentSkeleton from "@/app/consent-form/components/ConsentFormContentSkeleton";
+import { VideoQuestionViewerSkeleton } from "../components/VideoQuestionSkeleton";
 
 type Params = Promise<{ slug: string }>;
 export default async function Page({ params }: { params: Params }) {
@@ -8,7 +8,7 @@ export default async function Page({ params }: { params: Params }) {
   const token = decodeURIComponent(slug);
 
   return (
-    <Suspense fallback={<ConsentFormContentSkeleton />}>
+    <Suspense fallback={<VideoQuestionViewerSkeleton />}>
       <ConsentFormWrapper token={token} />
     </Suspense>
   );

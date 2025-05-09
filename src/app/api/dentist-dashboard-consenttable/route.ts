@@ -24,16 +24,25 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    // Get all consent forms for dentist
+    const now = new Date();
+    const oneWeekFromNow = new Date();
+    oneWeekFromNow.setDate(now.getDate() + 7);
+
     const consentForms = await prisma.consentFormLink.findMany({
-      where: { dentistId, practiceId },
+      where: {
+        dentistId,
+        practiceId,
+        expiresAt: {
+          gte: now, // expires in the future
+          lte: oneWeekFromNow, // and within 7 days
+        },
+      },
       include: {
         procedure: { select: { name: true } },
         patient: { select: { email: true } },
       },
       orderBy: { lastUpdated: "desc" },
     });
-    // console.log(consentForms);
 
     // Format responses to match TConsentFormData
     const responseData = consentForms.map((form) => ({
