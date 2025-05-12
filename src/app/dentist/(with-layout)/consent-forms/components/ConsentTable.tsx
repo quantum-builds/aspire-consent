@@ -271,7 +271,7 @@ export default function ConsentTable({
                         {record.status.replace("_", " ")}
                       </span>
                     </TableCell>
-                    <TableCell className="whitespace-nowrap hidden XL:table-cell">
+                    <TableCell className="whitespace-nowrap hidden xl:table-cell">
                       {formatDate(record.createdAt)}
                     </TableCell>
                     <TableCell className="whitespace-nowrap hidden md:table-cell">
