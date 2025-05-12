@@ -376,7 +376,7 @@ export default function QuestionForm({
   };
 
   return (
-    <div className="space-y-6">
+    <div className=" space-y-6">
       {/* Form Progress Bar */}
       <div className="bg-gray-100 h-2 rounded-full w-full mb-6">
         <div
@@ -395,7 +395,7 @@ export default function QuestionForm({
       )}
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
+        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8 ">
           <Card className="mb-6 border-none shadow-none w-11/12 mx-auto">
             <CardHeader className="px-0">
               <CardTitle className="text-xl font-semibold">

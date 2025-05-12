@@ -159,8 +159,12 @@ export default function SignupForm() {
         <Tabs defaultValue="patient" className="mb-6">
           <div className="bg-gray-100 p-1 rounded-lg mb-6">
             <TabsList className="grid grid-cols-2 w-full">
-              <TabsTrigger value="patient">Patient</TabsTrigger>
-              <TabsTrigger value="dentist">Dentist</TabsTrigger>
+              <TabsTrigger value="patient" className="cursor-pointer">
+                Patient
+              </TabsTrigger>
+              <TabsTrigger value="dentist" className="cursor-pointer">
+                Dentist
+              </TabsTrigger>
             </TabsList>
           </div>
 

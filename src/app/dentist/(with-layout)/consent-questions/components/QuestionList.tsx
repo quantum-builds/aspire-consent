@@ -53,12 +53,10 @@ export default function QuestionList({
 
       // Process new MCQs (create)
       if (newMCQs.length > 0) {
-        // console.log("in create mcq");
         const processedNewMCQs: TMCQProcessed[] = await Promise.all(
           newMCQs.map(async (mcq) => {
             let videoUrl = "";
             if (mcq.videoUrl) {
-              // console.log("video file is ", mcq.videoUrl);
               await uploadFile({
                 selectedFile: mcq.videoUrl,
               });
@@ -79,7 +77,6 @@ export default function QuestionList({
           { data: processedNewMCQs },
           {
             onSuccess: () => {
-              // console.log("data is ", data);
               toast.success("MCQ created successfully");
             },
             onError: (error) => {
@@ -91,8 +88,6 @@ export default function QuestionList({
 
       // Process existing MCQs (patch) - only send changed fields
       if (existingMCQs.length > 0) {
-        // console.log("in edit mcq");
-
         await Promise.all(
           existingMCQs.map(async (mcq) => {
             const updateData: Partial<TMCQProcessed> = {};
@@ -105,13 +100,10 @@ export default function QuestionList({
 
             if (dirtyFields.correctAnswer || dirtyFields.options) {
               updateData.correctAnswer = mcq.correctAnswer;
-              // console.log("options are ", dirtyFields.options);
               updateData.options = mcq.options;
             }
 
             if (dirtyFields.videoUrl && mcq.videoUrl) {
-              // console.log("dirty file is ", dirtyFields.videoUrl);
-              // console.log("mcq dfile is ", mcq.videoUrl);
               await uploadFile({
                 selectedFile: mcq.videoUrl,
               });
@@ -161,18 +153,16 @@ export default function QuestionList({
   };
 
   return (
-    <div>
-      <QuestionForm
-        onSubmit={handleSubmit}
-        data={data}
-        onDelete={handleDelete}
-        isPending={
-          isCreatePending || isDeletePending || isFilePending || isPatchPending
-        }
-        onCancel={closeForm}
-        procedureId={procedureId}
-        procedureName={consentName}
-      />
-    </div>
+    <QuestionForm
+      onSubmit={handleSubmit}
+      data={data}
+      onDelete={handleDelete}
+      isPending={
+        isCreatePending || isDeletePending || isFilePending || isPatchPending
+      }
+      onCancel={closeForm}
+      procedureId={procedureId}
+      procedureName={consentName}
+    />
   );
 }

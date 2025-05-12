@@ -6,3 +6,4 @@ export { default as PatientIcon } from "./patients-icon.svg";
 export { default as SettingIcon } from "./settings-icon.svg";
 export { default as LogoutIcon } from "./logout-cion.svg";
 export { default as ProfilePic } from "./profile-pic.svg";
+export { default as LeftArrow } from "./left-arrow.png";

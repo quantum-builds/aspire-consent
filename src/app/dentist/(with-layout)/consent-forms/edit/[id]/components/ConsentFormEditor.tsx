@@ -1,7 +1,7 @@
 "use client";
 
 import { TConsentForm } from "@/types/consent-form";
-import { Calendar, CheckCircle, Clock, Plus, Trash2, User } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 import { useEffect } from "react";
 import { useForm, Controller, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,8 +20,7 @@ import { useSaveDraftAnswers } from "@/services/consent-form/ConsentFomMutation"
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import ConsentFormEditorHeader from "./ConsentFormEditorHeader";
 
 const formSchema = z.object({
   patient: z.object({
@@ -67,27 +66,9 @@ interface ConsentFormProps {
   formId: string;
 }
 
-export default function ConsentForm({ data, formId }: ConsentFormProps) {
+export default function ConsentFormEditor({ data, formId }: ConsentFormProps) {
   const router = useRouter();
 
-  const formatDateForInput = (date: Date) => {
-    if (!(date instanceof Date) || isNaN(date.getTime())) return "";
-
-    const pad = (num: number) => num.toString().padStart(2, "0");
-    const localDate = new Date(
-      date.getTime() - date.getTimezoneOffset() * 60000
-    );
-
-    return `${localDate.getFullYear()}-${pad(localDate.getMonth() + 1)}-${pad(
-      localDate.getDate()
-    )}T${pad(localDate.getHours())}:${pad(localDate.getMinutes())}`;
-  };
-
-  const getCurrentLocalDatetime = () => {
-    const now = new Date();
-    const localNow = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
-    return localNow.toISOString().slice(0, 16);
-  };
   const formMethods = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -248,285 +229,15 @@ export default function ConsentForm({ data, formId }: ConsentFormProps) {
 
   return (
     <div className="flex flex-col gap-10 max-w-6xl mx-auto">
-      {/* <MoveLeft
-        size={20}
-        className="cursor-pointer"
-        onClick={() => router.back()}
-      /> */}
-
       <FormProvider {...formMethods}>
         <form
           onSubmit={handleSubmit(handleSaveDraft)}
           className="flex flex-col gap-6"
         >
-          {/* <div className="py-10 px-10 bg-[#698AFF4D] rounded-lg shadow-sm border border-gray-200 text-lg">
-            <div>
-              <FormField
-                name="patient.fullName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="font-medium">
-                      Patient name:{" "}
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        className="border rounded px-2 py-1"
-                        disabled={true}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div className="mt-2">
-              <FormField
-                name="procedure.name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="font-medium">
-                      Procedure name:{" "}
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        className="border rounded px-2 py-1"
-                        disabled={true}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <div className="mt-4">
-              <FormField
-                name="expiresAt"
-                render={({ field }) => {
-                  // Helper function to format Date for datetime-local input
-                  const formatDateForInput = (date: Date) => {
-                    if (!(date instanceof Date) || isNaN(date.getTime()))
-                      return "";
-
-                    const pad = (num: number) =>
-                      num.toString().padStart(2, "0");
-                    const localDate = new Date(
-                      date.getTime() - date.getTimezoneOffset() * 60000
-                    );
-
-                    return `${localDate.getFullYear()}-${pad(
-                      localDate.getMonth() + 1
-                    )}-${pad(localDate.getDate())}T${pad(
-                      localDate.getHours()
-                    )}:${pad(localDate.getMinutes())}`;
-                  };
-
-                  // Get current datetime in local timezone for min attribute
-                  const getCurrentLocalDatetime = () => {
-                    const now = new Date();
-                    const localNow = new Date(
-                      now.getTime() - now.getTimezoneOffset() * 60000
-                    );
-                    return localNow.toISOString().slice(0, 16);
-                  };
-
-                  const value =
-                    field.value instanceof Date
-                      ? formatDateForInput(field.value)
-                      : "";
-
-                  return (
-                    <FormItem>
-                      <FormLabel className="font-medium">
-                        Expiration Date:
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          type="datetime-local"
-                          value={value}
-                          min={getCurrentLocalDatetime()}
-                          onChange={(e) => {
-                            const newValue = e.target.value;
-                            if (!newValue) {
-                              field.onChange(null);
-                              return;
-                            }
-
-                            // Convert to Date object in local timezone
-                            const localDate = new Date(newValue);
-                            const offset =
-                              localDate.getTimezoneOffset() * 60000;
-                            const adjustedDate = new Date(
-                              localDate.getTime() + offset
-                            );
-
-                            field.onChange(adjustedDate);
-                          }}
-                          className="border rounded px-3 py-2 w-full"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  );
-                }}
-              />
-            </div>
-
-            <div className="mt-4 flex items-center gap-2">
-              <FormField
-                name="isActive"
-                render={({ field }) => (
-                  <FormItem className="flex items-center gap-2">
-                    <FormControl>
-                      <input
-                        type="checkbox"
-                        checked={field.value}
-                        onChange={field.onChange}
-                        className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                      />
-                    </FormControl>
-                    <FormLabel className="font-medium">Active Form</FormLabel>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-          </div> */}
-          <Card className="overflow-hidden border-gray-200 shadow-sm">
-            <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 py-4 md:py-6 px-4">
-              <CardTitle className="flex items-center gap-3 text-xl md:text-2xl font-semibold text-gray-800 h-full">
-                <Clock className="h-5 w-5 text-blue-600" />
-                Consent Details
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6 p-6">
-              <div className="grid gap-6 md:grid-cols-2">
-                {/* Patient Name Field */}
-                <FormField
-                  name="patient.fullName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="flex items-center gap-2 font-medium text-gray-700">
-                        <User className="h-4 w-4 text-blue-600" />
-                        Patient Name
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          disabled={true}
-                          className="mt-1 border-gray-300 bg-gray-50 focus-visible:ring-blue-500"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                {/* Procedure Name Field */}
-                <FormField
-                  name="procedure.name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="flex items-center gap-2 font-medium text-gray-700">
-                        <Clock className="h-4 w-4 text-blue-600" />
-                        Procedure Name
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          disabled={true}
-                          className="mt-1 border-gray-300 bg-gray-50 focus-visible:ring-blue-500"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              {/* Expiration Date Field */}
-              <FormField
-                name="expiresAt"
-                render={({ field }) => {
-                  const value =
-                    field.value instanceof Date
-                      ? formatDateForInput(field.value)
-                      : "";
-
-                  return (
-                    <FormItem>
-                      <FormLabel className="flex items-center gap-2 font-medium text-gray-700">
-                        <Calendar className="h-4 w-4 text-blue-600" />
-                        Expiration Date
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          type="datetime-local"
-                          value={value}
-                          min={getCurrentLocalDatetime()}
-                          onChange={(e) => {
-                            const newValue = e.target.value;
-                            if (!newValue) {
-                              field.onChange(null);
-                              return;
-                            }
-
-                            // Convert to Date object in local timezone
-                            const localDate = new Date(newValue);
-                            const offset =
-                              localDate.getTimezoneOffset() * 60000;
-                            const adjustedDate = new Date(
-                              localDate.getTime() + offset
-                            );
-
-                            field.onChange(adjustedDate);
-                          }}
-                          className="mt-1 border-gray-300 focus-visible:ring-blue-500"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  );
-                }}
-              />
-
-              {/* Active Status Field */}
-              <FormField
-                name="isActive"
-                render={({ field }) => (
-                  <FormItem className="flex items-start space-x-3 space-y-0 rounded-md border border-gray-100 bg-gray-50 p-4">
-                    <FormControl>
-                      <Checkbox
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                        className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white"
-                      />
-                    </FormControl>
-                    <div className="space-y-1 leading-none">
-                      <FormLabel className="flex items-center gap-2 font-medium text-gray-700">
-                        <CheckCircle className="h-4 w-4 text-blue-600" />
-                        Active Form
-                      </FormLabel>
-                      <p className="text-sm text-gray-500">
-                        Enable this to make the procedure active
-                      </p>
-                    </div>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </CardContent>
-          </Card>
+          <ConsentFormEditorHeader />
 
           <div className="p-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* {formMethods.watch("snapshotMCQs")?.length > 0 ? (
-                <div>length is greater then 0</div>
-              ) : (
-                <div>Nothing here</div>
-              )} */}
               {formMethods.watch("snapshotMCQs")?.map((mcq, mcqIndex) => {
                 return (
                   <div
@@ -712,7 +423,7 @@ export default function ConsentForm({ data, formId }: ConsentFormProps) {
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => router.push("/dentist/consent-forms")}
+                onClick={() => router.back()}
                 disabled={isSubmittingForm}
               >
                 Cancel

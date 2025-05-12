@@ -14,7 +14,7 @@ export function ConsentListSkeleton() {
       <div className="rounded-md border p-5 flex flex-col gap-5">
         {/* Search Bar */}
         <div className="flex justify-end">
-          <div className="relative w-full max-w-lg">
+          <div className="relative w-full max-w-24">
             <Skeleton className="h-12 w-full" />
           </div>
         </div>

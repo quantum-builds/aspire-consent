@@ -6,6 +6,10 @@ import RadialProgressCHartCard from "./RadialProgressChartCard";
 import DashboardCardComponent from "./DashBoardCardComponent";
 import PatientBarChartCard from "./PatientBarChartCard";
 import ConsentDataTableComponent from "./ConsentDataTableComponent";
+import { TDentistPractice } from "@/types/dentist-practice";
+import { Response } from "@/types/common";
+import { getDentistPractice } from "@/services/dentistPractice/DentistPracticeQuery";
+import { SIDE_BAR_DATA } from "@/constants/SideBarData";
 
 type DashboardWrapperProps = {
   practiceId: string;
@@ -19,9 +23,21 @@ export default async function DashboardWrapper({
     .map((c) => `${c.name}=${c.value}`)
     .join("; ");
 
+  let dentistPractices: TDentistPractice[] = [];
+  const dentistPracticeResponse: Response<TDentistPractice[]> =
+    await getDentistPractice();
+
+  if (dentistPracticeResponse.status) {
+    dentistPractices = dentistPracticeResponse.data;
+  }
+
   return (
     <>
-      <Header />
+      <Header
+        data={SIDE_BAR_DATA}
+        practices={dentistPractices}
+        showSearch={false}
+      />
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center my-4">
         <div className="flex flex-col gap-2">
           <p className="text-2xl font-bold mb-3">Dashboard</p>

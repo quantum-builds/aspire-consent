@@ -4,6 +4,9 @@ import { ExtendedTMCQ } from "@/types/mcq";
 import { Response } from "@/types/common";
 import { getMCQs } from "@/services/mcq/MCQQuery";
 import ConsentTitle from "./ConsentTitle";
+import { TDentistPractice } from "@/types/dentist-practice";
+import { getDentistPractice } from "@/services/dentistPractice/DentistPracticeQuery";
+import { SIDE_BAR_DATA } from "@/constants/SideBarData";
 
 type ConsentQuestionProps = {
   procedureId: string;
@@ -28,10 +31,22 @@ export default async function ConsentQuestion({
     errorMessage = response.message;
   }
 
+  let dentistPractices: TDentistPractice[] = [];
+  const dentistPracticeResponse: Response<TDentistPractice[]> =
+    await getDentistPractice();
+
+  if (dentistPracticeResponse.status) {
+    dentistPractices = dentistPracticeResponse.data;
+  }
+
   console.log(errorMessage);
   return (
     <div>
-      <Header showSearch={false} />
+      <Header
+        data={SIDE_BAR_DATA}
+        practices={dentistPractices}
+        showSearch={false}
+      />
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center my-4">
         <div className="flex flex-col gap-2">
           <ConsentTitle />

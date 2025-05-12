@@ -7,7 +7,11 @@ import getPathAfterUploadsImages from "@/utils/getSplittedPath";
 import DownloadPdfButton from "@/components/DownloadPdfButton";
 import ConsentQuestionHeader from "@/components/ConsentQuestionHeader";
 
-export default function ConsentForm({ data }: { data: TConsentForm | null }) {
+export default function ConsentFormViewer({
+  data,
+}: {
+  data: TConsentForm | null;
+}) {
   const [currentVideo, setCurrentVideo] = useState<{
     mcqId: string;
     autoplay: boolean;

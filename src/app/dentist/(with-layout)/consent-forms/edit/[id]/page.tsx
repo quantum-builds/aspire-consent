@@ -1,7 +1,11 @@
 import { getConsentForm } from "@/services/consent-form/ConsentFormQuery";
 import { notFound } from "next/navigation";
-import ConsentForm from "@/app/dentist/(with-layout)/consent-forms/edit/[id]/components/ConsentForm";
+import ConsentFormEditor from "@/app/dentist/(with-layout)/consent-forms/edit/[id]/components/ConsentFormEditor";
 import Header from "@/components/Header";
+import { TDentistPractice } from "@/types/dentist-practice";
+import { getDentistPractice } from "@/services/dentistPractice/DentistPracticeQuery";
+import { Response } from "@/types/common";
+import { SIDE_BAR_DATA } from "@/constants/SideBarData";
 
 type Params = Promise<{ id: string }>;
 export default async function ViewConsentFormPage({
@@ -16,10 +20,22 @@ export default async function ViewConsentFormPage({
     return notFound();
   }
 
+  let dentistPractices: TDentistPractice[] = [];
+  const dentistPracticeResponse: Response<TDentistPractice[]> =
+    await getDentistPractice();
+
+  if (dentistPracticeResponse.status) {
+    dentistPractices = dentistPracticeResponse.data;
+  }
+
   return (
     <div>
-      <Header showSearch={false} />
-      <ConsentForm data={response.data} formId={id} />;
+      <Header
+        data={SIDE_BAR_DATA}
+        practices={dentistPractices}
+        showSearch={false}
+      />
+      <ConsentFormEditor data={response.data} formId={id} />;
     </div>
   );
 }
