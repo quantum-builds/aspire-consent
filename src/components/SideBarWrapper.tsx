@@ -19,10 +19,8 @@ export default async function SideBarWrapper({ data }: SideBarWrapperProps) {
   }
 
   return (
-    <div>
-      <Suspense fallback={<SideBarSkeleton />}>
-        <SideBar data={data} practices={dentistPractices} />
-      </Suspense>
-    </div>
+    <Suspense fallback={<SideBarSkeleton />}>
+      <SideBar data={data} practices={dentistPractices} />
+    </Suspense>
   );
 }

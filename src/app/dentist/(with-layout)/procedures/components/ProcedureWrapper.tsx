@@ -5,14 +5,15 @@ import { Response } from "@/types/common";
 import { TDentistProcedure } from "@/types/dentist-procedure";
 import ModalForm from "@/app/dentist/(with-layout)/procedures/components/AddProcedureModal";
 import { TDentistPractice } from "@/types/dentist-practice";
-import { getDentistPractice } from "@/services/dentistPractice/DentistPracticeQuery";
 import { SIDE_BAR_DATA } from "@/constants/SideBarData";
 
 type ProcedureWrapperProps = {
   practiceId: string;
+  dentistPractices: TDentistPractice[];
 };
 export default async function ProcedureWrapper({
   practiceId,
+  dentistPractices,
 }: ProcedureWrapperProps) {
   let errorMessage = undefined;
   let consentForms: TDentistProcedure[] = [];
@@ -26,17 +27,13 @@ export default async function ProcedureWrapper({
     errorMessage = response.message;
   }
 
-  let dentistPractices: TDentistPractice[] = [];
-  const dentistPracticeResponse: Response<TDentistPractice[]> =
-    await getDentistPractice();
-
-  if (dentistPracticeResponse.status) {
-    dentistPractices = dentistPracticeResponse.data;
-  }
-
   return (
     <div className="container mx-auto ">
-      <Header data={SIDE_BAR_DATA} practices={dentistPractices} showSearch={false} />
+      <Header
+        data={SIDE_BAR_DATA}
+        practices={dentistPractices}
+        showSearch={false}
+      />
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center my-4">
         <div className="flex flex-col gap-2">
           <p className="text-2xl font-bold mb-2">Procedures</p>

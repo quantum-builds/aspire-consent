@@ -3,33 +3,25 @@ import { Plus } from "lucide-react";
 import Link from "next/link";
 import { cookies } from "next/headers";
 import RadialProgressCHartCard from "./RadialProgressChartCard";
-import DashboardCardComponent from "./DashBoardCardComponent";
 import PatientBarChartCard from "./PatientBarChartCard";
-import ConsentDataTableComponent from "./ConsentDataTableComponent";
 import { TDentistPractice } from "@/types/dentist-practice";
-import { Response } from "@/types/common";
-import { getDentistPractice } from "@/services/dentistPractice/DentistPracticeQuery";
 import { SIDE_BAR_DATA } from "@/constants/SideBarData";
+import ConsentDataTableWrapper from "./ConsentDataTableWrapper";
+import DashboardCardWrapper from "./DashBoardCardWrapper";
 
 type DashboardWrapperProps = {
   practiceId: string;
+  dentistPractices: TDentistPractice[];
 };
 export default async function DashboardWrapper({
   practiceId,
+  dentistPractices,
 }: DashboardWrapperProps) {
   const cookieStore = cookies();
   const cookieHeader = (await cookieStore)
     .getAll()
     .map((c) => `${c.name}=${c.value}`)
     .join("; ");
-
-  let dentistPractices: TDentistPractice[] = [];
-  const dentistPracticeResponse: Response<TDentistPractice[]> =
-    await getDentistPractice();
-
-  if (dentistPracticeResponse.status) {
-    dentistPractices = dentistPracticeResponse.data;
-  }
 
   return (
     <>
@@ -54,7 +46,7 @@ export default async function DashboardWrapper({
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-3 gap-y-5">
         <div className="col-span-1 lg:col-span-3">
-          <DashboardCardComponent practiceId={practiceId} />
+          <DashboardCardWrapper practiceId={practiceId} />
         </div>
         <div className="col-span-1 lg:col-span-2">
           <PatientBarChartCard
@@ -70,7 +62,7 @@ export default async function DashboardWrapper({
         </div>
 
         <div className="col-span-full">
-          <ConsentDataTableComponent
+          <ConsentDataTableWrapper
             cookieHeader={cookieHeader}
             practiceId={practiceId}
           />

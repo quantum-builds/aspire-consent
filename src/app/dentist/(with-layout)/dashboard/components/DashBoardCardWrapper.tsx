@@ -5,7 +5,7 @@ import DashboardCards from "./DashboardCard";
 type DashboardCardComponentProps = {
   practiceId: string;
 };
-export default async function DashboardCardComponent({
+export default async function DashboardCardWrapper({
   practiceId,
 }: DashboardCardComponentProps) {
   let dashboardStats: TCountStats | null = null;

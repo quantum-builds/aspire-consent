@@ -8,14 +8,15 @@ import { getUsers } from "@/services/user/UserQuery";
 import Link from "next/link";
 import { MoveLeft } from "lucide-react";
 import { TDentistPractice } from "@/types/dentist-practice";
-import { getDentistPractice } from "@/services/dentistPractice/DentistPracticeQuery";
 import { SIDE_BAR_DATA } from "@/constants/SideBarData";
 
 type ConsetFormWrapperProps = {
   practiceId: string;
+  dentistPractices: TDentistPractice[];
 };
 export default async function ConsetFormWrapper({
   practiceId,
+  dentistPractices,
 }: ConsetFormWrapperProps) {
   let procedureErrorMessage = undefined;
   let procedureData: TDentistProcedure[] = [];
@@ -41,17 +42,13 @@ export default async function ConsetFormWrapper({
     patientErrorMessage = patientResponse.message;
   }
 
-  let dentistPractices: TDentistPractice[] = [];
-  const dentistPracticeResponse: Response<TDentistPractice[]> =
-    await getDentistPractice();
-
-  if (dentistPracticeResponse.status) {
-    dentistPractices = dentistPracticeResponse.data;
-  }
-
   return (
     <div className="container mx-auto">
-      <Header data={SIDE_BAR_DATA} practices={dentistPractices} showSearch={false} />
+      <Header
+        data={SIDE_BAR_DATA}
+        practices={dentistPractices}
+        showSearch={false}
+      />
       <div className="flex gap-5">
         <Link href={`/dentist/dashboard?practiceId=${practiceId}`}>
           <MoveLeft height={40} width={20} className="cursor-pointer" />

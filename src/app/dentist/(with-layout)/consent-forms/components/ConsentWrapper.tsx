@@ -5,15 +5,16 @@ import { Plus } from "lucide-react";
 import { Response } from "@/types/common";
 import Link from "next/link";
 import Header from "@/components/Header";
-import { getDentistPractice } from "@/services/dentistPractice/DentistPracticeQuery";
 import { TDentistPractice } from "@/types/dentist-practice";
 import { SIDE_BAR_DATA } from "@/constants/SideBarData";
 
 type ConsentWrapperProps = {
   practiceId: string;
+  dentistPractices: TDentistPractice[];
 };
 export default async function ConsentWrapper({
   practiceId,
+  dentistPractices,
 }: ConsentWrapperProps) {
   let errorMessage = undefined;
   let consentForms: TConsentForm[] | null = null;
@@ -26,20 +27,15 @@ export default async function ConsentWrapper({
     consentForms = response.data;
   } else {
     errorMessage = response.message;
-    // console.log("error is: ", errorMessage);
-  }
-
-  let dentistPractices: TDentistPractice[] = [];
-  const dentistPracticeResponse: Response<TDentistPractice[]> =
-    await getDentistPractice();
-
-  if (dentistPracticeResponse.status) {
-    dentistPractices = dentistPracticeResponse.data;
   }
 
   return (
     <div className="container mx-auto">
-      <Header data={SIDE_BAR_DATA} practices={dentistPractices} showSearch={false} />
+      <Header
+        data={SIDE_BAR_DATA}
+        practices={dentistPractices}
+        showSearch={false}
+      />
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center my-4">
         <div className="flex flex-col gap-2">
           <p className="text-2xl font-bold mb-2">Consent Forms</p>

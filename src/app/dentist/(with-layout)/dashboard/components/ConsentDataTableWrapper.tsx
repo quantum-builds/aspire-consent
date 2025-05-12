@@ -7,7 +7,7 @@ type ConsentDataTableComponentProps = {
   cookieHeader: string;
   practiceId: string;
 };
-export default async function ConsentDataTableComponent({
+export default async function ConsentDataTableWrapper({
   cookieHeader,
   practiceId,
 }: ConsentDataTableComponentProps) {
