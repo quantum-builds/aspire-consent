@@ -51,7 +51,7 @@ export default function RootLayout({
   return (
     <div className="flex flex-col lg:flex-row min-h-screen">
       {/* Desktop Sidebar - always visible on lg and up */}
-      <div className="hidden lg:block lg:w-64 2xl:w-72 fixed h-full z-30">
+      <div className="hidden lg:block lg:w-64 2xl:w-72 fixed min-h-screen z-30 ">
         <SideBarWrapper data={SIDE_BAR_DATA} />
       </div>
 

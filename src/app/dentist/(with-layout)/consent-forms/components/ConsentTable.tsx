@@ -238,7 +238,7 @@ export default function ConsentTable({
               <TableHead className="min-w-[180px]">Patient</TableHead>
               <TableHead className="min-w-[150px]">Procedure</TableHead>
               <TableHead className="whitespace-nowrap">Status</TableHead>
-              <TableHead className="whitespace-nowrap hidden lg:table-cell">
+              <TableHead className="whitespace-nowrap hidden xl:table-cell">
                 Created
               </TableHead>
               <TableHead className="whitespace-nowrap hidden md:table-cell">
@@ -257,7 +257,7 @@ export default function ConsentTable({
                   <TableRow key={record.id}>
                     <TableCell>
                       <div>{record.patient.email}</div>
-                      <div className="text-sm text-gray-500 lg:hidden">
+                      <div className="text-sm text-gray-500 xl:hidden">
                         Created: {formatDate(record.createdAt)}
                       </div>
                     </TableCell>
@@ -271,7 +271,7 @@ export default function ConsentTable({
                         {record.status.replace("_", " ")}
                       </span>
                     </TableCell>
-                    <TableCell className="whitespace-nowrap hidden lg:table-cell">
+                    <TableCell className="whitespace-nowrap hidden XL:table-cell">
                       {formatDate(record.createdAt)}
                     </TableCell>
                     <TableCell className="whitespace-nowrap hidden md:table-cell">

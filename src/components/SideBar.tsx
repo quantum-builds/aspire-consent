@@ -502,7 +502,7 @@ export default function SideBar({
 
   return (
     <div
-      className={`bg-[#5353FF] w-64 h-full px-6 py-8 flex flex-col z-50 overflow-y-auto fixed lg:static lg:min-h-screen transform ${
+      className={`bg-[#5353FF] w-64 h-full px-6 py-8 flex flex-col z-50 overflow-y-auto fixed lg:static min-h-screen transform ${
         // For mobile (when menuStatus is defined)
         menuStatus !== undefined
           ? menuStatus
