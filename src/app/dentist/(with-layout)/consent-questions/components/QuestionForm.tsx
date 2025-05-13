@@ -574,15 +574,16 @@ export default function QuestionForm({
 
               <div className="flex justify-between items-center mt-6">
                 {onCancel && (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={onCancel}
-                    className="px-5 py-2"
-                    disabled={isSubmitting}
-                  >
-                    Cancel
-                  </Button>
+                  // <Button
+                  //   type="button"
+                  //   variant="outline"
+                  //   onClick={onCancel}
+                  //   className="px-5 py-2"
+                  //   disabled={isSubmitting}
+                  // >
+                  //   Cancel
+                  // </Button>
+                  <div className="flex-1"></div>
                 )}
                 <div className="space-x-2 flex items-center ">
                   <Button

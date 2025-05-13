@@ -420,14 +420,15 @@ export default function ConsentFormEditor({ data, formId }: ConsentFormProps) {
             </div>
 
             <div className="mt-6 flex items-center justify-between">
-              <Button
+              {/* <Button
                 type="button"
                 variant="outline"
                 onClick={() => router.back()}
                 disabled={isSubmittingForm}
               >
                 Cancel
-              </Button>
+              </Button> */}
+              <div className="flex-1"></div>
 
               <div className="flex justify-end items-center gap-4">
                 <Button
