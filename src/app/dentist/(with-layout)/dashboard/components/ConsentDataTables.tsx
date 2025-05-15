@@ -21,11 +21,11 @@ import { Badge } from "@/components/ui/badge";
 
 // Define types for consent form data
 
-type ConsentDataTableProps = {
+interface ConsentDataTableProps {
   data: TConsentFormData[];
   errorMessage?: string | null;
   isLoading?: boolean;
-};
+}
 
 export default function ConsentDataTable({
   data,

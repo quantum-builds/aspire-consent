@@ -25,7 +25,7 @@ import { useRouter } from "next/navigation";
 import { useDeleteConsentForm } from "@/services/consent-form/ConsentFomMutation";
 import toast from "react-hot-toast";
 
-type PendingTableProps = {
+interface PendingTableProps {
   currentPendingForms: TConsentFormData[];
   pendingForms: TConsentFormData[];
   totalPendingPages: number;
@@ -33,7 +33,7 @@ type PendingTableProps = {
   itemsPerPage: number;
   isLoading: boolean;
   setCurrentPage: Dispatch<SetStateAction<number>>;
-};
+}
 
 export default function PendingTable({
   currentPendingForms,

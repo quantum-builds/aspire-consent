@@ -4,7 +4,7 @@ import ConsentFormContent from "./ConsentFormContemt";
 import { VideoQuestionViewer } from "./VideoQuestionViewer";
 import { TConsentForm } from "@/types/consent-form";
 
-type ConsentFormProps = {
+interface ConsentFormProps {
   consentForm: TConsentForm | null;
   token: string;
 };

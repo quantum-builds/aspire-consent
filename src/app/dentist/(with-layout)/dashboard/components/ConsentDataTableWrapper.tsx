@@ -3,10 +3,10 @@ import ConsentDataTable from "./ConsentDataTables";
 import { Response } from "@/types/common";
 import { getConsentTableData } from "@/services/dentist-consentform/DentistConsentFormQuery";
 
-type ConsentDataTableComponentProps = {
+interface ConsentDataTableComponentProps {
   cookieHeader: string;
   practiceId: string;
-};
+}
 export default async function ConsentDataTableWrapper({
   cookieHeader,
   practiceId,

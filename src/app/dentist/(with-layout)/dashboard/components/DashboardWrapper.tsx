@@ -9,10 +9,10 @@ import { SIDE_BAR_DATA } from "@/constants/SideBarData";
 import ConsentDataTableWrapper from "./ConsentDataTableWrapper";
 import DashboardCardWrapper from "./DashBoardCardWrapper";
 
-type DashboardWrapperProps = {
+interface DashboardWrapperProps {
   practiceId: string;
   dentistPractices: TDentistPractice[];
-};
+}
 export default async function DashboardWrapper({
   practiceId,
   dentistPractices,

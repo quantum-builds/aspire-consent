@@ -1,6 +1,6 @@
 "use client";
 
-import { Search, Trash, List } from "lucide-react";
+import { Search, Trash2, Eye, Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -27,11 +27,11 @@ import { useRouter } from "next/navigation";
 import Pagination from "@/app/dentist/components/Pagination";
 import { Skeleton } from "@/components/ui/skeleton";
 
-type ProcedureQuestionFormListProps = {
+interface ProcedureQuestionFormListProps {
   data: TDentistProcedure[];
   errorMessage?: string | null;
   isLoading?: boolean;
-};
+}
 
 export default function ProcedureQuestionFormsList({
   data,
@@ -85,7 +85,7 @@ export default function ProcedureQuestionFormsList({
     );
   }
 
-  if (!data) {
+  if (data.length === 0) {
     return (
       <div className="rounded-md border p-5">
         <div className="flex items-center justify-center h-24">
@@ -149,11 +149,20 @@ export default function ProcedureQuestionFormsList({
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem asChild>
                         <Link
-                          href={`/dentist/consent-questions/${procedure.procedure.id}`}
+                          href={`/dentist/procedures/view/${procedure.procedure.id}`}
                           className="flex items-center"
                         >
-                          <List className="h-4 w-4 mr-2" />
-                          View Questions
+                          <Eye className="h-4 w-4 mr-2" />
+                          View
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link
+                          href={`/dentist/procedures/edit/${procedure.procedure.id}`}
+                          className="flex items-center"
+                        >
+                          <Edit className="h-4 w-4 mr-2" />
+                          Edit
                         </Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem
@@ -170,7 +179,7 @@ export default function ProcedureQuestionFormsList({
                           </span>
                         ) : (
                           <>
-                            <Trash className="h-4 w-4 mr-2" />
+                            <Trash2 className="h-4 w-4 mr-2" />
                             Delete
                           </>
                         )}
@@ -233,25 +242,37 @@ export default function ProcedureQuestionFormsList({
                       {procedure.procedure.name}
                     </TableCell>
                     <TableCell className="text-right">
-                      <div className="flex justify-end gap-2">
+                      <div className="flex justify-end space-x-2" >
                         <Button
                           variant="ghost"
-                          size="sm"
-                          className="h-8 hover:bg-gray-50"
+                          size="icon"
+                          className="h-8 w-8 hover:bg-gray-50"
                           asChild
                         >
                           <Link
-                            href={`/dentist/consent-questions/${procedure.procedure.id}`}
+                            href={`/dentist/procedures/view/${procedure.procedure.id}`}
                             className="flex items-center"
                           >
-                            <List className="h-4 w-4 mr-2" />
-                            View Questions
+                            <Eye className="h-4 w-4" />
                           </Link>
                         </Button>
                         <Button
                           variant="ghost"
-                          size="sm"
-                          className="h-8 text-red-500 hover:bg-red-50 hover:text-red-600"
+                          size="icon"
+                          className="h-8 w-8 hover:bg-gray-50"
+                          asChild
+                        >
+                          <Link
+                            href={`/dentist/procedures/edit/${procedure.procedure.id}`}
+                            className="flex items-center"
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Link>
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-red-500 hover:bg-red-50 hover:text-red-600"
                           onClick={() => handleDelete(procedure.procedureId)}
                           disabled={
                             isPending && deletingId === procedure.procedureId
@@ -259,13 +280,11 @@ export default function ProcedureQuestionFormsList({
                         >
                           {isPending && deletingId === procedure.procedureId ? (
                             <span className="animate-spin flex items-center">
-                              <span className="mr-2">↻</span>
-                              Deleting
+                              <span className="">↻</span>
                             </span>
                           ) : (
                             <>
-                              <Trash className="h-4 w-4 mr-2" />
-                              Delete
+                              <Trash2 className="h-4 w-4" />
                             </>
                           )}
                         </Button>

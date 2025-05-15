@@ -3,12 +3,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar, CheckCircle, Clock, User, XCircle } from "lucide-react";
 import { format } from "date-fns";
 
-type ConsentQuestionHeaderProps = {
+interface ConsentQuestionHeaderProps {
   patienFfullName: string;
   procedureName: string;
   expiresAt: Date | string;
   isActive: boolean;
-};
+}
 
 export default function ConsentQuestionHeader({
   patienFfullName,

@@ -9,14 +9,14 @@ import {
 } from "lucide-react";
 import { SetStateAction } from "react";
 
-type PaginationProps = {
+interface PaginationProps {
   startIndex: number;
   itemsPerPage: number;
   currentPage: number;
   filteredData: TConsentForm[] | TDentistProcedure[];
   totalPages: number;
   setCurrentPage: (value: SetStateAction<number>) => void;
-};
+}
 export default function Pagination({
   startIndex,
   itemsPerPage,

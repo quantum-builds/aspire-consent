@@ -11,6 +11,7 @@ import { revalidatePath } from "next/cache";
 
 export async function PATCH(req: NextRequest) {
   const token = req.nextUrl.pathname.split("/").pop();
+
   try {
     if (!token) {
       return NextResponse.json(
@@ -18,9 +19,6 @@ export async function PATCH(req: NextRequest) {
         { status: 400 }
       );
     }
-
-    //   const sessionToken = await getToken({ req });
-    //   const userRole = sessionToken?.role as UserRole;
 
     const form = await prisma.consentFormLink.findUnique({
       where: { token },
@@ -34,34 +32,9 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ error: "Form not found" }, { status: 404 });
     }
 
-    const now = new Date();
-    // Check expiration first
-    if (form.expiresAt < now) {
-      // Update status to EXPIRED if not already
-      if (form.status !== "EXPIRED") {
-        await prisma.consentFormLink.update({
-          where: { id: form.id },
-          data: {
-            status: "EXPIRED",
-            isActive: false,
-          },
-        });
-      }
-      return NextResponse.json(
-        { error: "This form has expired" },
-        { status: 410 }
-      );
-    }
-
-    if (!form.isActive) {
-      return NextResponse.json(
-        { error: "This form is no longer available for updates" },
-        { status: 410 }
-      );
-    }
-
     const requestBody = await req.json();
     const { role, ...body } = requestBody;
+
     if (role === "dentist") {
       // Dentist can update form metadata and MCQs
       const { expiresAt, isActive, snapshotMCQs } = body as {
@@ -71,9 +44,43 @@ export async function PATCH(req: NextRequest) {
         snapshotMCQs?: ConsentFormMCQSnapshot[];
       };
 
-      const updates: { expiresAt?: Date; isActive?: boolean } = {};
-      if (expiresAt !== undefined) updates.expiresAt = new Date(expiresAt);
-      if (isActive !== undefined) updates.isActive = isActive;
+      const now = new Date();
+      const newExpiresAt =
+        expiresAt !== undefined ? new Date(expiresAt) : form.expiresAt;
+      const newIsActive = isActive !== undefined ? isActive : form.isActive;
+
+      // Determine the correct status based on all conditions
+      const determineStatus = () => {
+        // Case 1: Expired by date (regardless of isActive)
+        if (newExpiresAt < now) return "EXPIRED";
+
+        // Case 2: Explicitly inactive (regardless of date)
+        if (newIsActive === false) return "EXPIRED";
+
+        // Case 3: Valid and active form
+        return form.progressPercentage > 0 ? "IN_PROGRESS" : "PENDING";
+      };
+
+      const updates: {
+        expiresAt?: Date;
+        isActive?: boolean;
+        status?: "PENDING" | "IN_PROGRESS" | "EXPIRED";
+      } = {};
+
+      // Apply updates if values are changing
+      if (expiresAt !== undefined) updates.expiresAt = newExpiresAt;
+      if (isActive !== undefined) updates.isActive = newIsActive;
+
+      // Always enforce consistent status
+      const newStatus = determineStatus();
+      if (form.status !== newStatus) {
+        updates.status = newStatus;
+      }
+
+      // Ensure isActive is false if expired
+      if (newStatus === "EXPIRED" && newIsActive !== false) {
+        updates.isActive = false;
+      }
 
       const data = await prisma.$transaction([
         // Update form metadata
@@ -118,8 +125,35 @@ export async function PATCH(req: NextRequest) {
 
       return NextResponse.json({ success: true, data });
     } else {
+      // [Rest of the patient logic remains unchanged...]
       // Patient can only update answers
       const { answers } = body as { role: string; answers: AnswerInput[] };
+
+      const now = new Date();
+      // Check expiration first
+      if (form.expiresAt < now) {
+        // Update status to EXPIRED if not already
+        if (form.status !== "EXPIRED") {
+          await prisma.consentFormLink.update({
+            where: { id: form.id },
+            data: {
+              status: "EXPIRED",
+              isActive: false,
+            },
+          });
+        }
+        return NextResponse.json(
+          { error: "This form has expired" },
+          { status: 410 }
+        );
+      }
+
+      if (!form.isActive) {
+        return NextResponse.json(
+          { error: "This form is no longer available for updates" },
+          { status: 410 }
+        );
+      }
 
       const formAnswersData: FormAnswerCreateInput[] = answers.map((a) => {
         const mcq = form.snapshotMCQs.find((m) => m.id === a.mcqId);
@@ -149,7 +183,6 @@ export async function PATCH(req: NextRequest) {
         }),
       ]);
 
-      // Get all answers (including non-draft ones)
       const allAnswers = await prisma.formAnswer.findMany({
         where: {
           consentFormLinkId: form.id,
@@ -158,13 +191,8 @@ export async function PATCH(req: NextRequest) {
 
       const totalQuestions = form.snapshotMCQs.length;
       const answeredCount = allAnswers.length;
-      // const correctAnswers = allAnswers.filter((a) => a.isCorrect).length;
 
       const progress = Math.round((answeredCount / totalQuestions) * 100);
-
-      // Only mark as COMPLETED if all answers are correct and all questions are answered
-      // const isCompleted =
-      //   answeredCount === totalQuestions && correctAnswers === totalQuestions;
 
       await prisma.consentFormLink.update({
         where: { id: form.id },

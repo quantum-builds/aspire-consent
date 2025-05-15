@@ -71,9 +71,9 @@ const styles = StyleSheet.create({
   },
 });
 
-type PdfDocumentProps = {
+interface PdfDocumentProps {
   data: TPdfData;
-};
+}
 export default function PdfDocument({ data }: PdfDocumentProps) {
   const { patient, procedure, date, qa } = data;
 

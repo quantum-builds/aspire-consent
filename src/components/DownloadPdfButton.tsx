@@ -1,13 +1,14 @@
+"use client";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import PdfDocument from "@/components/PDFDownloader";
 import { TPdfData } from "@/types/common";
 import { ReactNode, CSSProperties } from "react";
 
-type DownloadPdfButtonProps = {
+interface DownloadPdfButtonProps {
   data: TPdfData;
   fileName?: string;
   children?: ReactNode;
-};
+}
 
 export default function DownloadPdfButton({
   data,

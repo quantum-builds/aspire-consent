@@ -19,11 +19,11 @@ import { format } from "date-fns";
 import { Filter, X } from "lucide-react";
 import { Dispatch, SetStateAction, useState } from "react";
 
-type FilterPopOverProps = {
+interface FilterPopOverProps {
   filters: FilterType;
   setFilters: Dispatch<SetStateAction<FilterType>>;
   setCurrentPage: Dispatch<SetStateAction<number>>;
-};
+}
 export default function FilterPopOver({
   filters,
   setFilters,

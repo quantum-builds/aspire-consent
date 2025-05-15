@@ -1,23 +1,24 @@
-import { getConsentForm } from "@/services/consent-form/ConsentFormQuery";
-import { notFound } from "next/navigation";
 import Header from "@/components/Header";
-import ConsentFormViewer from "@/app/dentist/(with-layout)/consent-forms/view/[id]/components/ConsentFormViewer";
 import { TDentistPractice } from "@/types/dentist-practice";
-import { Response } from "@/types/common";
 import { getDentistPractice } from "@/services/dentistPractice/DentistPracticeQuery";
+import { Response } from "@/types/common";
 import { SIDE_BAR_DATA } from "@/constants/SideBarData";
+import { ExtendedTMCQ } from "@/types/mcq";
+import { getMCQs } from "@/services/mcq/MCQQuery";
+import ProcedureQuestionsEditor from "./components/ProcedureQuestionsEditor";
 
 type Params = Promise<{ id: string }>;
-export default async function ViewConsentFormPage({
+export default async function ViewProcedurePage({
   params,
 }: {
   params: Params;
 }) {
   const { id } = await params;
-  const response = await getConsentForm({ role: "dentist", token: id });
 
-  if (!response.status) {
-    return notFound();
+  let mcqs: ExtendedTMCQ[] = [];
+  const response: Response<ExtendedTMCQ[] | string> = await getMCQs(id);
+  if (response.status && Array.isArray(response.data)) {
+    mcqs = response.data;
   }
 
   let dentistPractices: TDentistPractice[] = [];
@@ -29,13 +30,13 @@ export default async function ViewConsentFormPage({
   }
 
   return (
-    <div className="container mx-auto">
+    <div>
       <Header
         data={SIDE_BAR_DATA}
         practices={dentistPractices}
         showSearch={false}
       />
-      <ConsentFormViewer data={response.data} />
+      <ProcedureQuestionsEditor data={mcqs} formId={id} />;
     </div>
   );
 }

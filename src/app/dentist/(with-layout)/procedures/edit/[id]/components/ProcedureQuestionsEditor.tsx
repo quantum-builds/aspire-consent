@@ -1,29 +1,20 @@
 "use client";
 
-import { TConsentForm } from "@/types/consent-form";
 import { useEffect } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
-import { useSaveDraftAnswers } from "@/services/consent-form/ConsentFomMutation";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import ConsentFormEditorHeader from "./ConsentFormEditorHeader";
+import { ExtendedTMCQ } from "@/types/mcq";
+import ProcedureQuestionEditorHeader from "./ProcedureQuestionEditorHeader";
+import { usePatchProcedure } from "@/services/procedure/ProcedureMutation";
 import MCQEditor from "@/app/dentist/components/QuestionCard";
 
 const formSchema = z.object({
-  patient: z.object({
-    fullName: z.string().min(1, "Patient name is required"),
-  }),
-  procedure: z.object({
-    name: z.string().min(1, "Procedure name is required"),
-  }),
-  expiresAt: z.date({
-    required_error: "Expiration date is required",
-    invalid_type_error: "Invalid date format",
-  }),
-  isActive: z.boolean(),
+  name: z.string().min(1, "Procedure name is required"),
+  description: z.string().optional(),
   mcqs: z.array(
     z.object({
       id: z.string(),
@@ -37,10 +28,8 @@ const formSchema = z.object({
 });
 
 type FormValues = {
-  patient: { fullName: string };
-  procedure: { name: string };
-  expiresAt: Date;
-  isActive: boolean;
+  name: string;
+  description?: string;
   mcqs: {
     id: string;
     questionText: string;
@@ -51,23 +40,24 @@ type FormValues = {
   }[];
 };
 
-interface ConsentFormProps {
-  data: TConsentForm | null;
+interface ProcedureQuestionsProps {
+  data: ExtendedTMCQ[];
   formId: string;
 }
 
-export default function ConsentFormEditor({ data, formId }: ConsentFormProps) {
+export default function ProcedureQuestionsEditor({
+  data,
+  formId,
+}: ProcedureQuestionsProps) {
   const router = useRouter();
 
   const formMethods = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      patient: { fullName: data?.patient?.fullName || "" },
-      procedure: { name: data?.procedure?.name || "" },
-      expiresAt: data?.expiresAt ? new Date(data.expiresAt) : new Date(),
-      isActive: data?.isActive ?? true,
-      mcqs: data?.snapshotMCQs?.length
-        ? data.snapshotMCQs.map((mcq) => ({
+      name: data.length > 0 ? data[0].procedure.name : "",
+      description: data.length > 0 ? data[0].procedure.description : "",
+      mcqs: data.length
+        ? data.map((mcq) => ({
             id: mcq.id,
             questionText: mcq.questionText,
             options: mcq.options || ["", ""], // Ensure at least two empty options
@@ -93,23 +83,16 @@ export default function ConsentFormEditor({ data, formId }: ConsentFormProps) {
     reset,
   } = formMethods;
 
-  const { mutate: saveDraft, isPending: isSavingDraft } = useSaveDraftAnswers();
-
-  const isSubmittingForm = isSavingDraft;
+  const { mutate: saveMCQs, isPending: isSavingMCQs } = usePatchProcedure();
+  const isSubmittingForm = isSavingMCQs;
 
   useEffect(() => {
     if (data) {
       reset({
-        patient: {
-          fullName: data.patient?.fullName || "",
-        },
-        procedure: {
-          name: data.procedure?.name || "",
-        },
-        expiresAt: data.expiresAt ? new Date(data.expiresAt) : new Date(),
-        isActive: data.isActive === undefined ? true : data.isActive,
-        mcqs: data.snapshotMCQs?.length
-          ? data.snapshotMCQs.map((mcq) => ({
+        name: data[0]?.procedure.name || "",
+        description: data[0]?.procedure.description || "",
+        mcqs: data.length
+          ? data.map((mcq) => ({
               id: mcq.id,
               questionText: mcq.questionText,
               options: mcq.options || ["", ""],
@@ -140,11 +123,6 @@ export default function ConsentFormEditor({ data, formId }: ConsentFormProps) {
       return;
     }
 
-    const formUpdates = {
-      expiresAt: formData.expiresAt,
-      isActive: formData.isActive,
-    };
-
     const mcqUpdates = formData.mcqs.map((mcq) => {
       const videoPath =
         typeof mcq.videoFile === "object" && mcq.videoFile instanceof File
@@ -160,8 +138,13 @@ export default function ConsentFormEditor({ data, formId }: ConsentFormProps) {
       };
     });
 
-    saveDraft(
-      { role: "dentist", formId: formId, formUpdates, mcqUpdates },
+    saveMCQs(
+      {
+        name: formData.name,
+        description: formData.description,
+        procedureId: formId,
+        mcqs: mcqUpdates,
+      },
       {
         onSuccess: () => {
           toast.success("Form updated successfully");
@@ -176,13 +159,13 @@ export default function ConsentFormEditor({ data, formId }: ConsentFormProps) {
   const defaultVideoUrls: { [key: string]: string | undefined } = {};
   const defaultVideoNames: { [key: string]: string | undefined } = {};
 
-  data?.snapshotMCQs?.forEach((mcq, index) => {
+  data?.forEach((mcq, index) => {
     defaultVideoUrls[index] = mcq.videoUrl;
     defaultVideoNames[index] = mcq.videoName;
   });
 
   if (!data) {
-    return <div>Loading consent form...</div>;
+    return <div>Loading procedure data...</div>;
   }
 
   return (
@@ -192,7 +175,7 @@ export default function ConsentFormEditor({ data, formId }: ConsentFormProps) {
           onSubmit={handleSubmit(handleSaveDraft)}
           className="flex flex-col gap-6"
         >
-          <ConsentFormEditorHeader />
+          <ProcedureQuestionEditorHeader />
 
           <div className="py-4">
             <MCQEditor

@@ -282,7 +282,7 @@ export default function ConsentTable({
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-8 w-8"
+                          className="h-8 w-8 hover:bg-gray-50"
                           asChild
                         >
                           <Link
@@ -294,7 +294,7 @@ export default function ConsentTable({
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-8 w-8"
+                          className="h-8 w-8 hover:bg-gray-50"
                           asChild
                         >
                           <Link

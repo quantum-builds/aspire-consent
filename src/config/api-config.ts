@@ -37,6 +37,7 @@ export const ENDPOINTS = {
   },
   procedure: {
     createProcedure: "/api/procedures",
+    updateProcedure: (id: string) => `/api/procedures/${id}`,
     deleteProcedure: (id: string) => `/api/procedures/${id}`,
   },
   mcq: {

@@ -1,4 +1,5 @@
 import { FormAnswer } from "./consent-form";
+import { TProcedure } from "./procedure";
 
 export type TMCQ = {
   id: string;
@@ -15,7 +16,9 @@ export type TMCQ = {
 export type ExtendedTMCQ = {
   id: string;
   questionText: string;
-  procedureName: string;
+  // procedureName: string;
+  // description?: string;
+  procedure: TProcedure;
   correctAnswer: string;
   options: string[];
   videoUrl: string;

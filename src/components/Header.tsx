@@ -86,11 +86,11 @@ import { StaticImageData } from "next/image";
 import { useEffect, useState } from "react";
 import SideBar from "./SideBar";
 
-type HeaderProps = {
+interface HeaderProps {
   practices: TDentistPractice[];
   data: { text: string; logo: StaticImageData; link: string }[];
   showSearch?: boolean;
-};
+}
 
 export default function Header({
   practices,

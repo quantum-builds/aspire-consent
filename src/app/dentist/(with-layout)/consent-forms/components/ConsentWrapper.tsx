@@ -8,10 +8,10 @@ import Header from "@/components/Header";
 import { TDentistPractice } from "@/types/dentist-practice";
 import { SIDE_BAR_DATA } from "@/constants/SideBarData";
 
-type ConsentWrapperProps = {
+interface ConsentWrapperProps {
   practiceId: string;
   dentistPractices: TDentistPractice[];
-};
+}
 export default async function ConsentWrapper({
   practiceId,
   dentistPractices,

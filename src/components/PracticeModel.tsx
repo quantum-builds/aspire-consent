@@ -36,10 +36,10 @@ const practiceFormSchema = z.object({
 // Infer the type from the schema
 type PracticeFormValues = z.infer<typeof practiceFormSchema>;
 
-type PracticeModalProps = {
+interface PracticeModalProps {
   isModalOpen: boolean;
   setIsModalOpen: Dispatch<SetStateAction<boolean>>;
-};
+}
 
 export default function PracticeModal({
   isModalOpen,

@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
-type ManualNavigationDialogProps = {
+interface ManualNavigationDialogProps {
   showConfirmDialog: boolean;
   setShowConfirmDialog: Dispatch<SetStateAction<boolean>>;
   setCurrentPage: Dispatch<SetStateAction<"videos" | "mcqs">>;

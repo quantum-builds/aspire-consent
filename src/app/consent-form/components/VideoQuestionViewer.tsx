@@ -20,10 +20,10 @@ import { Progress } from "@/components/ui/progress";
 import CompletionDialog from "./CompletionDialog";
 import ManualNavigationDialog from "./ManualNavigationDialog";
 
-type VideoQuestionViewerProps = {
+interface VideoQuestionViewerProps {
   data: TConsentForm | null;
   setCurrentPage: Dispatch<SetStateAction<"videos" | "mcqs">>;
-};
+}
 
 export function VideoQuestionViewer({
   data,

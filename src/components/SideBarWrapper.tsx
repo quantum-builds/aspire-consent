@@ -6,9 +6,9 @@ import { getDentistPractice } from "@/services/dentistPractice/DentistPracticeQu
 import { Suspense } from "react";
 import { SideBarSkeleton } from "./SideBarSkeletion";
 
-type SideBarWrapperProps = {
+interface SideBarWrapperProps {
   data: { text: string; logo: StaticImageData; link: string }[];
-};
+}
 export default async function SideBarWrapper({ data }: SideBarWrapperProps) {
   let dentistPractices: TDentistPractice[] = [];
   const dentistPracticeResponse: Response<TDentistPractice[]> =

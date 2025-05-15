@@ -18,10 +18,10 @@ export enum BarChartTypes {
   YEARLY = "yearly",
 }
 
-type PatientBarChartProps = {
+interface PatientBarChartProps {
   data: TConsentFormTimeCountsResponse | null;
   errMessage?: string | null;
-};
+}
 
 export default function PatientBarChart({
   data,

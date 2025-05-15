@@ -1,21 +1,13 @@
-"use client";
-
 import { TConsentForm } from "@/types/consent-form";
-import { Play } from "lucide-react";
-import { useState } from "react";
-import getPathAfterUploadsImages from "@/utils/getSplittedPath";
 import DownloadPdfButton from "@/components/DownloadPdfButton";
 import ConsentQuestionHeader from "@/components/ConsentQuestionHeader";
+import QuestionsList from "@/app/dentist/components/QuestionsList";
 
 export default function ConsentFormViewer({
   data,
 }: {
   data: TConsentForm | null;
 }) {
-  const [currentVideo, setCurrentVideo] = useState<{
-    mcqId: string;
-    autoplay: boolean;
-  } | null>(null);
   if (!data) {
     return <div>Loading consent form...</div>;
   }
@@ -36,7 +28,7 @@ export default function ConsentFormViewer({
         expiresAt={data.expiresAt}
         isActive={data.isActive}
       />
-
+      {/* 
       <div className="p-4 bg-white rounded-lg shadow-sm border border-gray-200">
         {data.snapshotMCQs?.length ? (
           <div className="space-y-6">
@@ -186,8 +178,12 @@ export default function ConsentFormViewer({
             No MCQs found in this consent form
           </div>
         )}
-      </div>
-
+      </div> */}
+      <QuestionsList
+        data={data.snapshotMCQs}
+        answers={answers}
+        isProcedure={false}
+      />
       {data.status === "COMPLETED" && (
         <div>
           <DownloadPdfButton

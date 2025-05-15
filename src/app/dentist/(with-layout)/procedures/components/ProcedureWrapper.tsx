@@ -7,10 +7,10 @@ import ModalForm from "@/app/dentist/(with-layout)/procedures/components/AddProc
 import { TDentistPractice } from "@/types/dentist-practice";
 import { SIDE_BAR_DATA } from "@/constants/SideBarData";
 
-type ProcedureWrapperProps = {
+interface ProcedureWrapperProps {
   practiceId: string;
   dentistPractices: TDentistPractice[];
-};
+}
 export default async function ProcedureWrapper({
   practiceId,
   dentistPractices,

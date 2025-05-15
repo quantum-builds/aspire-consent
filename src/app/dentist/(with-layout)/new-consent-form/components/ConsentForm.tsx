@@ -54,13 +54,13 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-type ConstsentFormProps = {
+interface ConstsentFormProps {
   procedures: TDentistProcedure[];
   patients: ExtendedTUser[];
   procedureErrorMessage?: string;
   patientErrorMessage?: string;
   practiceId: string;
-};
+}
 
 //https://${process.env.NEXT_PUBLIC_AWS_BUCKET_NAME}.s3.${process.env.NEXT_PUBLIC_AWS_REGION}.amazonaws.com/uploads/aspire-consent/aspire-consent-black-logo.svg
 export default function ConsentForm({

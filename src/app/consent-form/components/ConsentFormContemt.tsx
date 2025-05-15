@@ -36,7 +36,7 @@ const submitFormSchema = z.object({
   }),
 });
 
-type ConsentFormContentProps = {
+interface ConsentFormContentProps {
   data: TConsentForm | null;
   setCurrentPage: Dispatch<SetStateAction<"videos" | "mcqs">>;
   formId: string;

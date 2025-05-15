@@ -38,9 +38,9 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-type ModalFormProps = {
+interface ModalFormProps {
   practiceId: string;
-};
+}
 export default function ModalForm({ practiceId }: ModalFormProps) {
   const [open, setOpen] = useState(false);
   const { mutate: createProcedure } = useCreateProcedure();

@@ -116,9 +116,6 @@ export const useSaveDraftAnswers = () => {
         videoUrl?: string;
       }>;
     }) => {
-      // console.log("IN MUTATION ", formId);
-      // console.log("snap shot mcq is ", mcqUpdates);
-      // For patients - only answers
       if (role === "dentist") {
         const response = await axiosInstance.patch(
           ENDPOINTS.consentLink.updatePatientFormAnswers(formId),

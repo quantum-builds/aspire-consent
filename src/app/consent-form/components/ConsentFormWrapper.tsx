@@ -3,7 +3,7 @@ import { Response } from "@/types/common";
 import { getConsentForm } from "@/services/consent-form/ConsentFormQuery";
 import ConsentForm from "./ConsentForm";
 
-type ConsentFormWrapperProps = {
+interface ConsentFormWrapperProps{
   token: string;
 };
 export default async function ConsentFormWrapper({

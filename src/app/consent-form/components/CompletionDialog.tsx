@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
-type CompletionDialogProps = {
+interface CompletionDialogProps {
   showCompletionDialog: boolean;
   setShowCompletionDialog: Dispatch<SetStateAction<boolean>>;
   setCurrentPage: Dispatch<SetStateAction<"videos" | "mcqs">>;

@@ -6,9 +6,9 @@ import { getDentistPractice } from "@/services/dentistPractice/DentistPracticeQu
 import { SideBarSkeleton } from "./SideBarSkeletion";
 import { Suspense } from "react";
 
-type SmallScreenSideBarWrapperProps = {
+interface SmallScreenSideBarWrapperProps {
   data: { text: string; logo: StaticImageData; link: string }[];
-};
+}
 export default async function SmallScreenSideBarWrapper({
   data,
 }: SmallScreenSideBarWrapperProps) {

@@ -6,10 +6,10 @@ import { StaticImageData } from "next/image";
 import SideBar from "./SideBar";
 import { TDentistPractice } from "@/types/dentist-practice";
 
-type SideBarProps = {
+interface SideBarProps {
   data: { text: string; logo: StaticImageData; link: string }[];
   practices: TDentistPractice[];
-};
+}
 
 export default function SmallScreenSideBar({ data, practices }: SideBarProps) {
   const [isOpen, setIsOpen] = useState(false);

@@ -3,10 +3,10 @@ import { Response } from "@/types/common";
 import { TConsentFormTimeCountsResponse } from "@/types/dentist-consentForm";
 import PatientBarChart from "./PatientBarChart";
 
-type PatientBarChartCardProps = {
+interface PatientBarChartCardProps {
   cookieHeader: string;
   practiceId: string;
-};
+}
 export default async function PatientBarChartCard({
   cookieHeader,
   practiceId,

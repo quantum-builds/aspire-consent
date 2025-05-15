@@ -10,10 +10,10 @@ import { MoveLeft } from "lucide-react";
 import { TDentistPractice } from "@/types/dentist-practice";
 import { SIDE_BAR_DATA } from "@/constants/SideBarData";
 
-type ConsetFormWrapperProps = {
+interface ConsetFormWrapperProps {
   practiceId: string;
   dentistPractices: TDentistPractice[];
-};
+}
 export default async function ConsetFormWrapper({
   practiceId,
   dentistPractices,

@@ -25,7 +25,7 @@ import toast from "react-hot-toast";
 import { useDeleteConsentForm } from "@/services/consent-form/ConsentFomMutation";
 import { useRouter } from "next/navigation";
 
-type CompleteTableProps = {
+interface CompleteTableProps {
   currentCompletedForms: TConsentFormData[];
   completedForms: TConsentFormData[];
   totalCompletedPages: number;
@@ -33,7 +33,7 @@ type CompleteTableProps = {
   itemsPerPage: number;
   isLoading: boolean;
   setCurrentPage: Dispatch<SetStateAction<number>>;
-};
+}
 export default function CompleteTable({
   completedForms,
   totalCompletedPages,

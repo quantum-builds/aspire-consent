@@ -90,7 +90,6 @@ const useFileUploader = (
         preview: defaultPreview,
         size: 0,
         type: isVideoType ? "video/mp4" : "image/jpeg",
-        formattedSize: "0 B",
         lastModified: 0,
         webkitRelativePath: "",
         arrayBuffer: () => Promise.reject("Not implemented"),
