@@ -326,7 +326,7 @@ export default function ConsentTable({
                     colSpan={6}
                     className="h-24 text-center text-red-500"
                   >
-                    No results found.
+                    No consents found.
                   </TableCell>
                 </TableRow>
               )}

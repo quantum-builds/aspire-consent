@@ -75,27 +75,29 @@ export default function ProcedureQuestionFormsList({
     startIndex + itemsPerPage
   );
 
-  if (errorMessage) {
-    return (
-      <div className="rounded-md border p-5">
-        <div className="flex items-center justify-center h-24">
-          <p className="text-center text-red-500">{errorMessage}</p>
-        </div>
-      </div>
-    );
-  }
+  // if (errorMessage) {
+  //   return (
+  //     <div className="rounded-md border p-5">
+  //       <div className="flex items-center justify-center h-24">
+  //         <p className="text-center text-red-500">{errorMessage}</p>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
-  if (data.length === 0) {
-    return (
-      <div className="rounded-md border p-5">
-        <div className="flex items-center justify-center h-24">
-          <p className="text-center text-red-500">
-            No procedure data available
-          </p>
-        </div>
-      </div>
-    );
-  }
+  console.log(errorMessage);
+
+  // if (data.length === 0) {
+  //   return (
+  //     <div className="rounded-md border p-5">
+  //       <div className="flex items-center justify-center h-24">
+  //         <p className="text-center text-red-500">
+  //           No procedure data available
+  //         </p>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="space-y-4">
@@ -242,7 +244,7 @@ export default function ProcedureQuestionFormsList({
                       {procedure.procedure.name}
                     </TableCell>
                     <TableCell className="text-right">
-                      <div className="flex justify-end space-x-2" >
+                      <div className="flex justify-end space-x-2">
                         <Button
                           variant="ghost"
                           size="icon"
@@ -296,7 +298,7 @@ export default function ProcedureQuestionFormsList({
                 <TableRow>
                   <TableCell
                     colSpan={2}
-                    className="h-24 text-center text-gray-500"
+                    className="h-24 text-center text-red-500"
                   >
                     No procedures found
                   </TableCell>

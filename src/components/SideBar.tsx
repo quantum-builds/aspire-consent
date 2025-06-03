@@ -93,22 +93,37 @@ export default function SideBar({
         >
           {selectedPractice ? (
             <>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Building2 className="h-5 w-5 text-white opacity-80" />
-                  <span className="text-white font-medium">
-                    {selectedPractice.name}
-                  </span>
+              <div className="flex items-center justify-between min-w-0">
+                <div className="flex items-center gap-2 min-w-0 flex-1 overflow-hidden">
+                  <Building2 className="h-5 w-5 text-white opacity-80 flex-shrink-0" />
+                  <div className="relative min-w-0 flex-1 overflow-hidden group">
+                    {/* Make this div the hover target with 'peer' */}
+                    <div className="peer truncate text-white font-medium block w-full cursor-default">
+                      {selectedPractice.name}
+                    </div>
+                    {/* This tooltip is now a sibling and will respond to hover */}
+                    <div className="absolute invisible peer-hover:visible bottom-full left-0 mb-2 bg-gray-800 text-white text-sm px-2 py-1 rounded whitespace-nowrap z-10">
+                      {selectedPractice.name}
+                    </div>
+                  </div>
                 </div>
                 {isDropdownOpen ? (
-                  <ChevronUp className="h-5 w-5 text-white" />
+                  <ChevronUp className="h-5 w-5 text-white flex-shrink-0" />
                 ) : (
-                  <ChevronDown className="h-5 w-5 text-white" />
+                  <ChevronDown className="h-5 w-5 text-white flex-shrink-0" />
                 )}
               </div>
-              <div className="mt-1 text-xs text-white opacity-70 flex items-start gap-1.5">
+
+              <div className="mt-1 text-xs text-white opacity-70 flex items-start gap-1.5 min-w-0">
                 <MapPin className="h-3.5 w-3.5 flex-shrink-0 mt-0.5" />
-                <span>{selectedPractice.address}</span>
+                <div className="relative min-w-0 flex-1 overflow-hidden group">
+                  <div className="peer truncate line-clamp-2 block w-full cursor-default">
+                    {selectedPractice.address}
+                  </div>
+                  <div className="absolute invisible peer-hover:visible bottom-full left-0 mb-2 bg-gray-800 text-white text-sm px-2 py-1 rounded max-w-xs z-10">
+                    {selectedPractice.address}
+                  </div>
+                </div>
               </div>
             </>
           ) : (
