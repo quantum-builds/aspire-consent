@@ -4,7 +4,7 @@ import { ToasterProvider } from "@/providers/ToasterProvider";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Aspire Academy",
+  title: "Aspire Consent",
   icons: {
     icon: "/aspire-consent-white-logo.svg",
   },
