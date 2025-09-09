@@ -21,6 +21,8 @@ model User {
   practices            DentistToPractice[]
   procedures           DentistToProcedure[]
   MCQs                 MCQ[]
+
+  @@index([email])
 }
 
 model Practice {

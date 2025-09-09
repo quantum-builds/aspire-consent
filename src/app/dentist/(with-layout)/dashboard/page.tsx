@@ -1,5 +1,3 @@
-import { Suspense } from "react";
-import { DashboardSkeleton } from "./components/DashboardSkeleton";
 import DashboardWrapper from "./components/DashboardWrapper";
 import { redirect } from "next/navigation";
 import { getDentistPractice } from "@/services/dentistPractice/DentistPracticeQuery";
@@ -23,12 +21,12 @@ export default async function Page(props: {
   }
 
   return (
-    <Suspense key={practiceId} fallback={<DashboardSkeleton />}>
-      <DashboardWrapper
-        practiceId={practiceId}
-        dentistPractices={dentistPractices}
-      />
-    </Suspense>
+    // <Suspense key={practiceId} fallback={<DashboardSkeleton />}>
+    <DashboardWrapper
+      practiceId={practiceId}
+      dentistPractices={dentistPractices}
+    />
+    // </Suspense>
   );
 }
 

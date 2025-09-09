@@ -2,6 +2,8 @@ import { getDentistConsentForms } from "@/services/dentist-consentform/DentistCo
 import { Response } from "@/types/common";
 import { TConsentFormTimeCountsResponse } from "@/types/dentist-consentForm";
 import PatientBarChart from "./PatientBarChart";
+import PatientBarChartSkeleton from "./skeleton/PatientBarChartSkeleton";
+import { Suspense } from "react";
 
 interface PatientBarChartCardProps {
   cookieHeader: string;
@@ -23,9 +25,11 @@ export default async function PatientBarChartCard({
   }
   // console.log("chart data is ", consentFormByDentist);
   return (
-    <PatientBarChart
-      data={consentFormByDentist}
-      errMessage={errorMessageConsentFormTimeCountsResponse}
-    />
+    <Suspense key={practiceId} fallback={<PatientBarChartSkeleton />}>
+      <PatientBarChart
+        data={consentFormByDentist}
+        errMessage={errorMessageConsentFormTimeCountsResponse}
+      />
+    </Suspense>
   );
 }

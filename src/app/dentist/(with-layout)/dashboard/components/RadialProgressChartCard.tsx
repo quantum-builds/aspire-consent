@@ -2,6 +2,8 @@ import { getConsentFormByStatus } from "@/services/dentist-consentform/DentistCo
 import { Response } from "@/types/common";
 import { TConsentFormStatus } from "@/types/dentist-consentForm";
 import RadialProgressChart from "./RadialProgressChart";
+import { Suspense } from "react";
+import RadialProgessChartSkeleton from "./skeleton/RadialProgressChartSkeleton";
 
 interface RadialProgressCHartCardProps {
   cookieHeader: string;
@@ -22,9 +24,11 @@ export default async function RadialProgressCHartCard({
     errorMessageConsentFormByStatus = responseConsentFormByStatus.message;
   }
   return (
-    <RadialProgressChart
-      data={consentFormByStatus}
-      errorMessage={errorMessageConsentFormByStatus}
-    />
+    <Suspense key={practiceId} fallback={<RadialProgessChartSkeleton />}>
+      <RadialProgressChart
+        data={consentFormByStatus}
+        errorMessage={errorMessageConsentFormByStatus}
+      />
+    </Suspense>
   );
 }
