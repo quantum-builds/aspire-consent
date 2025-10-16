@@ -28,8 +28,9 @@ export default async function DashboardWrapper({
     if (response.status && response.data.length > 0) {
       dentistPractices = response.data;
       redirect(`/dentist/dashboard?practiceId=${response.data[0].practice.id}`);
+    } else {
+      redirect(`dentist/dashboard?practiceId=${practiceId}`);
     }
-    redirect(`dentist/dashboard?practiceId=${practiceId}`);
   }
 
   return (
