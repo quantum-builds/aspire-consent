@@ -1,12 +1,11 @@
 import { getDashboardStats } from "@/services/dashboardStats/DashboardStatsQuery";
 import { Response, TCountStats } from "@/types/common";
 import DashboardCards from "./DashboardCard";
-import { Suspense } from "react";
-import DashboardCardSkeleton from "./skeleton/DashboardCardSkeleton";
 
 interface DashboardCardComponentProps {
   practiceId: string;
 }
+
 export default async function DashboardCardWrapper({
   practiceId,
 }: DashboardCardComponentProps) {
@@ -21,11 +20,9 @@ export default async function DashboardCardWrapper({
     errMessageDashboardStats = responseDashboardStats.message;
   }
   return (
-    <Suspense key={practiceId} fallback={<DashboardCardSkeleton />}>
-      <DashboardCards
-        data={dashboardStats}
-        errorMessage={errMessageDashboardStats}
-      />
-    </Suspense>
+    <DashboardCards
+      data={dashboardStats}
+      errorMessage={errMessageDashboardStats}
+    />
   );
 }

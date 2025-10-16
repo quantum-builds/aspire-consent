@@ -1,34 +1,20 @@
 import DashboardWrapper from "./components/DashboardWrapper";
-import { redirect } from "next/navigation";
-import { getDentistPractice } from "@/services/dentistPractice/DentistPracticeQuery";
-import { TDentistPractice } from "@/types/dentist-practice";
-import { Response } from "@/types/common";
+import { Suspense } from "react";
+import { DashboardSkeleton } from "./components/DashboardSkeleton";
 
 export default async function Page(props: {
-  searchParams?: Promise<{ practiceId: string }>;
+  searchParams?: Promise<{ practiceId?: string }>;
 }) {
   const searchParams = await props.searchParams;
   const practiceId = searchParams?.practiceId || "";
 
-  let dentistPractices: TDentistPractice[] = [];
-  if (!practiceId) {
-    const response: Response<TDentistPractice[]> = await getDentistPractice();
-    if (response.status && response.data.length > 0) {
-      dentistPractices = response.data;
-      redirect(`/dentist/dashboard?practiceId=${response.data[0].practice.id}`);
-    }
-    redirect(`dentist/dashboard?practiceId=${practiceId}`);
-  }
-
   return (
-    // <Suspense key={practiceId} fallback={<DashboardSkeleton />}>
-    <DashboardWrapper
-      practiceId={practiceId}
-      dentistPractices={dentistPractices}
-    />
-    // </Suspense>
+    <Suspense key={practiceId} fallback={<DashboardSkeleton />}>
+      <DashboardWrapper practiceId={practiceId} />
+    </Suspense>
   );
 }
+
 
 // "use client";
 

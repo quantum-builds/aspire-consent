@@ -84,21 +84,18 @@ export default function DashboardCards({
   errorMessage,
   isLoading = false,
 }: DashboardCardsProps) {
-  // Generate chart data based on current counts
+
   const generateChartData = (currentValue: number, weeklyChange: number) => {
-    // Calculate a base value from last week
+
     const lastWeekValue =
       weeklyChange !== 0
         ? currentValue / (1 + Math.abs(weeklyChange) / 100)
-        : currentValue * 0.8; // Default to 20% less if no change
+        : currentValue * 0.8;
 
-    // Generate 7 data points with some random variation
     return Array.from({ length: 7 }, (_, i) => {
-      // Calculate a base progression from last week to current value
       const baseValue =
         lastWeekValue + (currentValue - lastWeekValue) * (i / 6);
 
-      // Add some random variation (10-20% of the difference)
       const variation =
         (currentValue - lastWeekValue) * (0.1 + Math.random() * 0.1);
       const variedValue = baseValue + (i < 3 ? -variation : variation);
