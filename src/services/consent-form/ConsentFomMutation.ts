@@ -1,6 +1,5 @@
 import { axiosInstance, ENDPOINTS } from "@/config/api-config";
 import { useMutation } from "@tanstack/react-query";
-// import { cookies } from "next/headers";
 
 export const useCreateConsentFormLink = () => {
   return useMutation({

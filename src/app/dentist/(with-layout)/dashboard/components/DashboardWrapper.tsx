@@ -1,5 +1,4 @@
 import Header from "@/components/Header";
-import { cookies } from "next/headers";
 import RadialProgressCHartCard from "./RadialProgressChartCard";
 import PatientBarChartCard from "./PatientBarChartCard";
 import { SIDE_BAR_DATA } from "@/constants/SideBarData";
@@ -29,12 +28,6 @@ export default async function DashboardWrapper({
     }
     redirect(`dentist/dashboard?practiceId=${practiceId}`);
   }
-  
-  const cookieStore = cookies();
-  const cookieHeader = (await cookieStore)
-    .getAll()
-    .map((c) => `${c.name}=${c.value}`)
-    .join("; ");
 
   return (
     <>
@@ -54,20 +47,17 @@ export default async function DashboardWrapper({
         </div>
         <div className="col-span-1 lg:col-span-2">
           <PatientBarChartCard
-            cookieHeader={cookieHeader}
             practiceId={practiceId}
           />
         </div>
         <div className="col-span-1">
           <RadialProgressCHartCard
-            cookieHeader={cookieHeader}
             practiceId={practiceId}
           />
         </div>
 
         <div className="col-span-full">
           <ConsentDataTableWrapper
-            cookieHeader={cookieHeader}
             practiceId={practiceId}
           />
         </div>

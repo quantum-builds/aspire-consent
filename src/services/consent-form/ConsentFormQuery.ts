@@ -1,11 +1,11 @@
 "use server";
 
-import { axiosInstance, ENDPOINTS } from "@/config/api-config";
+import {  ENDPOINTS } from "@/config/api-config";
 import { Response } from "@/types/common";
 import { TConsentForm } from "@/types/consent-form";
 import axios from "axios";
 import { getAMedia } from "../s3/s3Query";
-import { cookies } from "next/headers";
+import { createServerAxios } from "@/lib/server-axios";
 
 export async function getConsentForm({
   role,
@@ -18,19 +18,9 @@ export async function getConsentForm({
   practiceId?: string;
 }) {
   try {
-    const cookieStore = cookies();
-    const cookieHeader = (await cookieStore)
-      .getAll()
-      .map((c) => `${c.name}=${c.value}`)
-      .join("; ");
-
-    const response = await axiosInstance.get(
-      ENDPOINTS.consentLink.getConsentForm(role, practiceId, token),
-      {
-        headers: {
-          Cookie: cookieHeader,
-        },
-      }
+    const serverAxios = await createServerAxios()
+    const response = await serverAxios.get(
+      ENDPOINTS.consentLink.getConsentForm(role, practiceId, token)
     );
 
     // Check if the form is inactive or expired

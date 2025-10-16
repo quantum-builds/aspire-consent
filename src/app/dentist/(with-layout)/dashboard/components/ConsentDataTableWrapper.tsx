@@ -6,17 +6,15 @@ import { Suspense } from "react";
 import ConsentDataTableSkeleton from "./skeleton/ConsentDataTableSkeleton";
 
 interface ConsentDataTableComponentProps {
-  cookieHeader: string;
   practiceId: string;
 }
 export default async function ConsentDataTableWrapper({
-  cookieHeader,
   practiceId,
 }: ConsentDataTableComponentProps) {
   let errMessageConsentTable: string | null = null;
   let consentTable: TConsentFormData[] = [];
   const responseConsentTable: Response<TConsentFormData[]> =
-    await getConsentTableData(cookieHeader, practiceId);
+    await getConsentTableData(practiceId);
   if (responseConsentTable.status) {
     consentTable = responseConsentTable.data;
   } else {

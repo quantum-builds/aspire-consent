@@ -1,25 +1,15 @@
-import { axiosInstance, ENDPOINTS } from "@/config/api-config";
+import { ENDPOINTS } from "@/config/api-config";
+import { createServerAxios } from "@/lib/server-axios";
 import axios from "axios";
-import { cookies } from "next/headers";
 
 export async function getDentistProcedure(
   practiceId: string | null,
   procedureId?: string
 ) {
   try {
-    const cookieStore = cookies();
-    const cookieHeader = (await cookieStore)
-      .getAll()
-      .map((c) => `${c.name}=${c.value}`)
-      .join("; ");
-
-    const response = await axiosInstance.get(
-      ENDPOINTS.dentistProcedure.getDentistProcedure(practiceId, procedureId),
-      {
-        headers: {
-          Cookie: cookieHeader,
-        },
-      }
+    const serverAxios = await createServerAxios()
+    const response = await serverAxios.get(
+      ENDPOINTS.dentistProcedure.getDentistProcedure(practiceId, procedureId)
     );
 
     return response.data;

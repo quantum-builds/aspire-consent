@@ -1,19 +1,15 @@
 "use server";
-import { axiosInstance, ENDPOINTS } from "@/config/api-config";
+import { ENDPOINTS } from "@/config/api-config";
+import { createServerAxios } from "@/lib/server-axios";
 import axios from "axios";
 
 export async function getConsentByProcedure(
-  cookieHeader: string,
   practiceId: string
 ) {
   try {
-    const response = await axiosInstance.get(
-      ENDPOINTS.consentFormByProcedure.getConsentFormByProcedure(practiceId),
-      {
-        headers: {
-          Cookie: cookieHeader,
-        },
-      }
+    const serverAxios = await createServerAxios()
+    const response = await serverAxios.get(
+      ENDPOINTS.consentFormByProcedure.getConsentFormByProcedure(practiceId)
     );
     return response.data;
   } catch (error) {
@@ -29,17 +25,12 @@ export async function getConsentByProcedure(
 }
 
 export async function getConsentFormByStatus(
-  cookieHeader: string,
   practiceId: string
 ) {
   try {
-    const response = await axiosInstance.get(
-      ENDPOINTS.cosentFormByStatus.getConsentFormByStatus(practiceId),
-      {
-        headers: {
-          Cookie: cookieHeader,
-        },
-      }
+    const serverAxios = await createServerAxios()
+    const response = await serverAxios.get(
+      ENDPOINTS.cosentFormByStatus.getConsentFormByStatus(practiceId)
     );
     return response.data;
   } catch (error) {
@@ -55,17 +46,12 @@ export async function getConsentFormByStatus(
 }
 
 export async function getDentistConsentForms(
-  cookieHeader: string,
   practiceId: string
 ) {
   try {
-    const response = await axiosInstance.get(
-      ENDPOINTS.dentistConsentForms.getDentistConsentForms(practiceId),
-      {
-        headers: {
-          Cookie: cookieHeader,
-        },
-      }
+    const serverAxios = await createServerAxios()
+    const response = await serverAxios.get(
+      ENDPOINTS.dentistConsentForms.getDentistConsentForms(practiceId)
     );
     return response.data;
   } catch (error) {
@@ -81,19 +67,14 @@ export async function getDentistConsentForms(
 }
 
 export async function getConsentTableData(
-  cookieHeader: string,
   practiceId: string
 ) {
   try {
-    const response = await axiosInstance.get(
+    const serverAxios = await createServerAxios()
+    const response = await serverAxios.get(
       ENDPOINTS.dentistDashboardConsentTable.getdashboardConsentTable(
         practiceId
-      ),
-      {
-        headers: {
-          Cookie: cookieHeader,
-        },
-      }
+      )
     );
     return response.data;
   } catch (error) {

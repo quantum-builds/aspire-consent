@@ -1,26 +1,15 @@
-import { axiosInstance, ENDPOINTS } from "@/config/api-config";
+import { ENDPOINTS } from "@/config/api-config";
 import { Response } from "@/types/common";
 import { ExtendedTMCQ } from "@/types/mcq";
 import axios from "axios";
-import { cookies } from "next/headers";
 import { getAMedia } from "../s3/s3Query";
+import { createServerAxios } from "@/lib/server-axios";
 
 export async function getMCQs(procedureId?: string) {
   try {
-    // console.log("in quesry name is ", procedureId);
-    const cookieStore = cookies();
-    const cookieHeader = (await cookieStore)
-      .getAll()
-      .map((c) => `${c.name}=${c.value}`)
-      .join("; ");
-
-    const response = await axiosInstance.get(
-      ENDPOINTS.mcq.getMCQ(procedureId),
-      {
-        headers: {
-          Cookie: cookieHeader,
-        },
-      }
+    const serverAxios = await createServerAxios()
+    const response = await serverAxios.get(
+      ENDPOINTS.mcq.getMCQ(procedureId)
     );
 
     const responseData: Response<ExtendedTMCQ[] | string> = response.data;
