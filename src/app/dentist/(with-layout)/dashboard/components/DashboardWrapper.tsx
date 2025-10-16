@@ -4,13 +4,16 @@ import PatientBarChartCard from "./PatientBarChartCard";
 import { SIDE_BAR_DATA } from "@/constants/SideBarData";
 import ConsentDataTableWrapper from "./ConsentDataTableWrapper";
 import DashboardCardWrapper from "./DashBoardCardWrapper";
-import DashboardHeaderWrapper from "./DashboardHeaderWrapper";
 import { getDentistPractice } from "@/services/dentistPractice/DentistPracticeQuery";
 import { TDentistPractice } from "@/types/dentist-practice";
 import { Response } from "@/types/common";
 import { redirect } from "next/navigation";
 import DashboardCardSkeleton from "./skeleton/DashboardCardSkeleton";
 import { Suspense } from "react";
+import DashboardHeader from "./DashboardHeader";
+import PatientBarChartSkeleton from "./skeleton/PatientBarChartSkeleton";
+import RadialProgessChartSkeleton from "./skeleton/RadialProgressChartSkeleton";
+import ConsentDataTableSkeleton from "./skeleton/ConsentDataTableSkeleton";
 
 interface DashboardWrapperProps {
   practiceId: string;
@@ -36,7 +39,7 @@ export default async function DashboardWrapper({
         practices={dentistPractices}
         showSearch={false}
       />
-      <DashboardHeaderWrapper practiceId={practiceId} />
+      <DashboardHeader practiceId={practiceId} />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-3 gap-y-5">
         <div className="col-span-1 lg:col-span-3">
@@ -46,20 +49,26 @@ export default async function DashboardWrapper({
 
         </div>
         <div className="col-span-1 lg:col-span-2">
-          <PatientBarChartCard
-            practiceId={practiceId}
-          />
+          <Suspense key={practiceId} fallback={<PatientBarChartSkeleton />}>
+            <PatientBarChartCard
+              practiceId={practiceId}
+            />
+          </Suspense>
         </div>
         <div className="col-span-1">
-          <RadialProgressCHartCard
-            practiceId={practiceId}
-          />
+          <Suspense key={practiceId} fallback={<RadialProgessChartSkeleton />}>
+            <RadialProgressCHartCard
+              practiceId={practiceId}
+            />
+          </Suspense>
         </div>
 
         <div className="col-span-full">
-          <ConsentDataTableWrapper
-            practiceId={practiceId}
-          />
+          <Suspense key={practiceId} fallback={<ConsentDataTableSkeleton />}>
+            <ConsentDataTableWrapper
+              practiceId={practiceId}
+            />
+          </Suspense>
         </div>
       </div>
     </>

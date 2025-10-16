@@ -2,8 +2,6 @@ import { TConsentFormData } from "@/types/consent-form";
 import ConsentDataTable from "./ConsentDataTables";
 import { Response } from "@/types/common";
 import { getConsentTableData } from "@/services/dentist-consentform/DentistConsentFormQuery";
-import { Suspense } from "react";
-import ConsentDataTableSkeleton from "./skeleton/ConsentDataTableSkeleton";
 
 interface ConsentDataTableComponentProps {
   practiceId: string;
@@ -21,11 +19,9 @@ export default async function ConsentDataTableWrapper({
     errMessageConsentTable = responseConsentTable.message;
   }
   return (
-    <Suspense key={practiceId} fallback={<ConsentDataTableSkeleton />}>
       <ConsentDataTable
         data={consentTable}
         errorMessage={errMessageConsentTable}
       />
-    </Suspense>
   );
 }

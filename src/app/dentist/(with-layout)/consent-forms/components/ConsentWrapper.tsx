@@ -7,15 +7,29 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import { TDentistPractice } from "@/types/dentist-practice";
 import { SIDE_BAR_DATA } from "@/constants/SideBarData";
+import { redirect } from "next/navigation";
+import { getDentistPractice } from "@/services/dentistPractice/DentistPracticeQuery";
 
 interface ConsentWrapperProps {
   practiceId: string;
-  dentistPractices: TDentistPractice[];
 }
 export default async function ConsentWrapper({
   practiceId,
-  dentistPractices,
 }: ConsentWrapperProps) {
+
+
+  let dentistPractices: TDentistPractice[] = [];
+  if (!practiceId) {
+    const response: Response<TDentistPractice[]> = await getDentistPractice();
+    if (response.status && response.data.length > 0) {
+      dentistPractices = response.data;
+      redirect(
+        `/dentist/consent-forms?practiceId=${response.data[0].practice.id}`
+      );
+    }
+    redirect(`dentist/consent-forms?practiceId=${practiceId}`);
+  }
+
   let errorMessage = undefined;
   let consentForms: TConsentForm[] | null = null;
   const response: Response<TConsentForm[]> = await getConsentForm({

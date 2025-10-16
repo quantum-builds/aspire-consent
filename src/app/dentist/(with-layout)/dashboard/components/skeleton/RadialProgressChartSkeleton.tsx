@@ -2,7 +2,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function RadialProgessChartSkeleton() {
   return (
-    <div className="col-span-1 p-6 bg-white rounded-lg shadow-md">
+    <div className="col-span-1 h-[450px] p-6 bg-white rounded-lg shadow-md">
       <Skeleton className="h-7 w-48 mb-6" />
       <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
         <Skeleton className="h-[200px] w-[200px] rounded-full" />

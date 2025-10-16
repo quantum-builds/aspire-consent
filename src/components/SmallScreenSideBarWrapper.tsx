@@ -3,8 +3,6 @@ import SideBar from "./SideBar";
 import { TDentistPractice } from "@/types/dentist-practice";
 import { Response } from "@/types/common";
 import { getDentistPractice } from "@/services/dentistPractice/DentistPracticeQuery";
-import { SideBarSkeleton } from "./SideBarSkeletion";
-import { Suspense } from "react";
 
 interface SmallScreenSideBarWrapperProps {
   data: { text: string; logo: StaticImageData; link: string }[];
@@ -21,8 +19,6 @@ export default async function SmallScreenSideBarWrapper({
   }
 
   return (
-    <Suspense fallback={<SideBarSkeleton />}>
-      <SideBar data={data} practices={dentistPractices} />
-    </Suspense>
+    <SideBar data={data} practices={dentistPractices} />
   );
 }

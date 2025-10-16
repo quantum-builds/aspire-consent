@@ -11,7 +11,7 @@ export default function PatientBarChartSkeleton() {
           <Skeleton className="h-9 w-20 rounded-full" />
         </div>
       </div>
-      <Skeleton className="h-[300px] w-full" />
+      <Skeleton className="h-[346px] w-full" />
     </div>
   );
 }

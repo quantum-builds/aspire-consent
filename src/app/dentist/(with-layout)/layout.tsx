@@ -37,6 +37,8 @@
 import type { Metadata } from "next";
 import { SIDE_BAR_DATA } from "@/constants/SideBarData";
 import SideBarWrapper from "@/components/SideBarWrapper";
+import { Suspense } from "react";
+import { SideBarSkeleton } from "@/components/SideBarSkeletion";
 
 export const metadata: Metadata = {
   title: "Aspire Consent",
@@ -52,7 +54,9 @@ export default function RootLayout({
     <div className="flex flex-col lg:flex-row min-h-screen">
       {/* Desktop Sidebar - always visible on lg and up */}
       <div className="hidden lg:block lg:w-64 2xl:w-72 fixed min-h-screen z-30 ">
-        <SideBarWrapper data={SIDE_BAR_DATA} />
+        <Suspense fallback={<SideBarSkeleton />}>
+          <SideBarWrapper data={SIDE_BAR_DATA} />
+        </Suspense>
       </div>
 
       {/* Mobile Sidebar - handled by Header component */}

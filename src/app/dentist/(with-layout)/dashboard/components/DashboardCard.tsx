@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, FileText, Stethoscope, Activity } from "lucide-react";
 import { LineChart, Line, ResponsiveContainer } from "recharts";
@@ -46,9 +45,8 @@ const StatCard = ({
         <div className="text-2xl font-bold">{value}</div>
         <div className="flex items-center space-x-2 text-xs">
           <span
-            className={`flex items-center ${
-              change.isPositive ? "text-emerald-500" : "text-rose-500"
-            }`}
+            className={`flex items-center ${change.isPositive ? "text-emerald-500" : "text-rose-500"
+              }`}
           >
             {change.isPositive ? "+" : "-"}
             {Math.abs(change.percentage)}% ({change.value})
