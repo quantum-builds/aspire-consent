@@ -11,7 +11,7 @@ export default function DashboardHeaderWrapper({
 }: DashboardHeaderWrapperProps) {
   return (
     <Suspense key={practiceId} fallback={<HeaderSkeleton />}>
-      <DashboardHeader practiceId={practiceId} />;
+      <DashboardHeader practiceId={practiceId} />
     </Suspense>
   );
 }
